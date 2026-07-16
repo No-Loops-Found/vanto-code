@@ -1,0 +1,127 @@
+---
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+import { serverClient } from '../lib/supabase';
+import { MODULES } from '../lib/course-data';
+
+export const prerender = false;
+
+const supabase = serverClient(Astro.request, Astro.cookies);
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+if (!user) {
+  return Astro.redirect('/entrar?next=/cuenta');
+}
+
+const { data: progresoRows } = await supabase.from('progreso').select('nivel').eq('superado', true);
+const superados = new Set((progresoRows ?? []).map((r) => r.nivel as number));
+
+const { data: quizRows } = await supabase
+  .from('quiz_results')
+  .select('nivel, aciertos, total, created_at')
+  .order('created_at', { ascending: false })
+  .limit(8);
+
+const total = MODULES.length;
+const hechos = superados.size;
+const pct = Math.round((hechos / total) * 100);
+---
+
+<Base title="Mi cuenta · Vanto Code">
+  <header class="top">
+    <a class="logo" href="/">
+      <Mark variant="ink" />
+      <span class="wm">vanto<span class="code">·code</span></span>
+    </a>
+    <nav>
+      <a href="/#ruta">La ruta</a>
+      <button id="logout" class="linklike" type="button">Salir</button>
+    </nav>
+  </header>
+
+  <main class="wrap cuenta">
+    <p class="eyebrow">Tu cuenta</p>
+    <h1>Hola, {user.email}</h1>
+    <p class="lead">Este es tu avance en Vanto Code. Cada nivel superado se guarda aquí.</p>
+
+    <section class="card summary">
+      <div class="bignum">{hechos}<span>/ {total}</span></div>
+      <div class="bar"><span style={`width:${pct}%`}></span></div>
+      <p class="pct">{pct}% de la ruta completada</p>
+    </section>
+
+    <section>
+      <h2 class="sec">Tu ruta</h2>
+      <ol class="niveles">
+        {
+          MODULES.map((m) => (
+            <li class={superados.has(m.n) ? 'done' : ''}>
+              <span class="marca">{superados.has(m.n) ? '✓' : m.label}</span>
+              <a href={`/nivel/${m.n}`}>{m.title}</a>
+              {m.tool && <span class="tool">{m.tool}</span>}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    {
+      quizRows && quizRows.length > 0 && (
+        <section>
+          <h2 class="sec">Tests recientes</h2>
+          <ul class="quizzes">
+            {quizRows.map((q) => (
+              <li>
+                <span>Nivel {q.nivel}</span>
+                <strong>
+                  {q.aciertos}/{q.total}
+                </strong>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </main>
+</Base>
+
+<style>
+  .top { display: flex; align-items: center; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 20px 30px; }
+  .logo { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
+  .logo .mark { width: 24px; height: 24px; }
+  .wm { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 19px; letter-spacing: -.02em; }
+  .code { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--indigo-d); font-size: 14px; }
+  nav { display: flex; align-items: center; gap: 18px; font-size: 14px; }
+  nav a { text-decoration: none; color: var(--muted); }
+  .linklike { background: none; border: none; color: var(--indigo-d); font: inherit; font-weight: 600; cursor: pointer; }
+  .cuenta { padding: 24px 30px 90px; max-width: 760px; }
+  h1 { font-size: clamp(28px, 5vw, 40px); margin: 10px 0 6px; }
+  .lead { color: var(--muted); margin: 0 0 28px; }
+  .card { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
+  .summary { display: grid; gap: 12px; margin-bottom: 36px; }
+  .bignum { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 44px; line-height: 1; }
+  .bignum span { color: var(--muted); font-size: 20px; margin-left: 6px; }
+  .bar { height: 10px; background: var(--paper-2); border-radius: 999px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--indigo); border-radius: 999px; }
+  .pct { color: var(--muted); font-size: 14px; margin: 0; }
+  .sec { font-size: 18px; margin: 0 0 14px; }
+  .niveles { list-style: none; padding: 0; margin: 0 0 36px; display: grid; gap: 8px; }
+  .niveles li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--snow); }
+  .niveles li.done { border-color: var(--indigo); }
+  .niveles .marca { font-family: 'JetBrains Mono', monospace; font-size: 12px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; background: var(--paper-2); color: var(--muted); flex: none; }
+  .niveles li.done .marca { background: var(--indigo); color: #fff; }
+  .niveles a { text-decoration: none; font-weight: 500; flex: 1; }
+  .niveles .tool { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; }
+  .quizzes { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .quizzes li { display: flex; justify-content: space-between; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; }
+</style>
+
+<script>
+  import { browserClient } from '../lib/supabase';
+  document.getElementById('logout')?.addEventListener('click', async () => {
+    await browserClient().auth.signOut();
+    location.assign('/');
+  });
+</script>

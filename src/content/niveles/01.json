@@ -1,0 +1,100 @@
+{
+  "n": 1,
+  "title": "Guardar datos: variables y tipos",
+  "sub": "Toda app guarda información. Aquí aprendes a meter cada dato en su caja con nombre y a distinguir de qué tipo es.",
+  "intro": "Cualquier app que puedas imaginar hace lo mismo por dentro: <strong>guarda datos</strong>. Un nombre, una fecha, un precio, un “sí o no”. En este nivel aprendes a meter esos datos en <strong>cajas con nombre</strong> (variables) y a distinguir sus <strong>tipos</strong>. Es la pieza más básica de todo lo que viene después: sin datos guardados no hay cálculos, ni decisiones, ni pantalla.",
+  "blocks": [
+    {
+      "h": "Una variable es una caja con etiqueta",
+      "p": [
+        "Una <strong>variable</strong> es un sitio donde guardas un dato y le pones un nombre para volver a usarlo cuando quieras. Piensa en una caja con una etiqueta pegada: dentro va el dato, en la etiqueta va el nombre.",
+        "Cuando escribes el nombre de la variable, el ordenador va a la caja, mira qué hay dentro y usa ese valor. Así no tienes que repetir el dato una y otra vez: lo guardas una vez y lo llamas por su nombre."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "// A la izquierda el nombre, a la derecha el dato\nconst nombre = \"Lucía\";\nconsole.log(nombre);   // muestra: Lucía"
+      }
+    },
+    {
+      "h": "const y let: ¿el dato va a cambiar?",
+      "p": [
+        "Para crear una variable usas una de dos palabras: <strong>const</strong> o <strong>let</strong>. La diferencia es una sola pregunta: <em>¿este dato va a cambiar más adelante?</em>",
+        "Usa <strong>const</strong> cuando el dato se queda fijo (el nombre de una planta, tu nombre de usuario). Usa <strong>let</strong> cuando lo vas a modificar (un contador, unos días que pasan, un total que crece).",
+        "Consejo práctico: empieza siempre con <strong>const</strong>. Si en algún momento necesitas cambiar el valor, el editor te avisará y solo entonces lo cambias a <strong>let</strong>. Así usas cajas fijas por defecto y evitas cambios accidentales."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const especie = \"Tomatera\";   // no cambia → const\nlet diasSinAgua = 2;          // irá subiendo → let\n\ndiasSinAgua = 3;   // esto vale, es let\n// especie = \"Otra\";  // esto daría error: es const"
+      },
+      "note": "Cambiar el valor de una <b>const</b> da error. No es un fallo tuyo: es la propia caja diciéndote “a mí no se me toca”. Si de verdad necesita cambiar, era una <b>let</b>."
+    },
+    {
+      "h": "Los tipos de dato: texto, número y sí/no",
+      "p": [
+        "Según lo que metas en la caja, el dato es de un <strong>tipo</strong>. En este nivel te bastan tres:",
+        "<strong>Texto</strong> (string): cualquier cadena de caracteres. Va <strong>siempre entre comillas</strong>: \"Lucía\", \"12/07\", \"pendiente\".",
+        "<strong>Número</strong> (number): cantidades para calcular. Van <strong>sin comillas</strong>: 7, 2.5, 100. El separador de decimales es el punto, no la coma.",
+        "<strong>Booleano</strong> (boolean): solo dos valores posibles, <strong>true</strong> (verdadero) o <strong>false</strong> (falso). Perfecto para un “sí o no”: ¿está regada?, ¿está pagado?, ¿es titular?"
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const nombre = \"Albahaca\";   // texto  (string)\nconst altura = 15;           // número (number)\nlet regada = false;          // sí/no  (boolean)"
+      }
+    },
+    {
+      "h": "Cuidado: \"7\" no es 7",
+      "p": [
+        "Un número entre comillas <strong>deja de ser un número</strong> y pasa a ser texto. Parecen iguales a la vista, pero el ordenador los trata distinto: con un número puedes calcular; con un texto, no.",
+        "Si dudas del tipo de una variable, pregúntaselo al ordenador con <strong>typeof</strong>. Te dice exactamente qué hay en la caja."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const cantidad = 7;      // número\nconst codigo = \"7\";      // texto (lleva comillas)\n\nconsole.log(typeof cantidad);  // \"number\"\nconsole.log(typeof codigo);    // \"string\""
+      }
+    },
+    {
+      "h": "Nombres que se entienden solos",
+      "p": [
+        "El nombre de la variable lo eliges tú, pero conviene elegirlo bien: un buen nombre explica el dato sin necesidad de comentarios. Prefiere <strong>diasSinAgua</strong> antes que <strong>x</strong> o <strong>d</strong>.",
+        "Reglas prácticas: sin espacios, sin tildes ni eñes, y si son varias palabras se junta la segunda con mayúscula (esto se llama <em>camelCase</em>: <strong>fechaDeRiego</strong>, <strong>precioTotal</strong>). No empieces por número."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "// Mal: no se entiende, lleva espacio y tilde\n// const x año = 5;\n\n// Bien: claro y con las reglas\nconst edadEnAnios = 5;\nconst nombreCliente = \"Ana\";"
+      },
+      "note": "No hace falta que el nombre sea corto, hace falta que sea <b>claro</b>. Dentro de una semana, tú misma agradecerás leer <b>totalConIva</b> en vez de <b>t2</b>."
+    }
+  ],
+  "ex": [
+    { "t": "Declara tres variables para el elemento principal de <strong>tu</strong> app (por ejemplo una planta: nombre, especie y si está regada). Usa el tipo correcto en cada una.", "hint": "Texto entre comillas, número sin comillas, sí/no con true o false.", "sol": "const nombre = \"Tomatera\";\nconst especie = \"Solanácea\";\nlet regada = false;" },
+    { "t": "Muestra las tres variables en la consola con console.log, una por línea.", "hint": "Un console.log por cada variable.", "sol": "console.log(nombre);\nconsole.log(especie);\nconsole.log(regada);" },
+    { "t": "Crea una variable de tipo número con <strong>let</strong>, muéstrala, luego cámbiale el valor y vuelve a mostrarla. Comprueba que cambió.", "hint": "Con let puedes reasignar: diasSinAgua = 5;" },
+    { "t": "Reto: crea una variable con un número entre comillas y otra con el mismo número sin comillas. Usa typeof para demostrar que son de tipos distintos.", "reto": true, "hint": "console.log(typeof variable); te dice el tipo.", "sol": "const comoTexto = \"10\";\nconst comoNumero = 10;\nconsole.log(typeof comoTexto);  // \"string\"\nconsole.log(typeof comoNumero); // \"number\"" }
+  ],
+  "pitfalls": [
+    { "t": "“Assignment to constant variable.”", "p": "Intentaste cambiar una <b>const</b>. O bien no debía cambiar (revisa la lógica), o bien la declaraste mal y en realidad era una <b>let</b>." },
+    { "t": "“Mi número no calcula bien.”", "p": "Seguramente lo escribiste entre comillas y es un texto, no un número. Quita las comillas: 7, no \"7\"." },
+    { "t": "“Uncaught SyntaxError” al poner el nombre.", "p": "El nombre de la variable no puede llevar espacios, tildes ni empezar por número. Usa camelCase: diasSinAgua." },
+    { "t": "“Escribí Nombre y no reconoce nombre.”", "p": "JavaScript distingue mayúsculas y minúsculas: <b>nombre</b> y <b>Nombre</b> son dos cajas distintas. Escríbelo siempre igual." }
+  ],
+  "recap": [
+    "Una variable es una caja con nombre donde guardas un dato.",
+    "const para lo que no cambia; let para lo que sí. Empieza siempre por const.",
+    "Tres tipos básicos: texto (con comillas), número (sin comillas) y booleano (true/false).",
+    "\"7\" es texto y 7 es número: no son lo mismo. Comprueba el tipo con typeof.",
+    "Los nombres se escriben en camelCase, sin espacios ni tildes, y deben explicarse solos.",
+    "JavaScript distingue mayúsculas de minúsculas."
+  ],
+  "quiz": [
+    { "q": "¿Qué tipo es lo más adecuado para “¿está regada?”", "o": ["number", "string", "boolean"], "a": 2 },
+    { "q": "¿Cómo se escribe un texto en JavaScript?", "o": ["Entre comillas", "Sin comillas", "Con paréntesis"], "a": 0 },
+    { "q": "Para un dato que NO va a cambiar, usas…", "o": ["let", "const", "cambia igual"], "a": 1 },
+    { "q": "¿Qué muestra typeof \"7\"?", "o": ["\"number\"", "\"string\"", "7"], "a": 1 }
+  ],
+  "faq": [
+    { "q": "¿let o const? Nunca lo tengo claro.", "a": "Empieza siempre por const. Solo cambia a let cuando de verdad necesites reasignar el valor y el editor te lo pida. Así usas cajas fijas por defecto." },
+    { "q": "¿Puedo usar tildes o eñes en el nombre de una variable?", "a": "Técnicamente algunas funcionan, pero evítalas: usa nombres sin tildes ni espacios (diasSinAgua, precioTotal). Te ahorra errores raros." },
+    { "q": "¿Qué pasa si sumo un texto y un número?", "a": "JavaScript los pega como si fueran texto: \"7\" + 1 da \"71\", no 8. Por eso importa tanto que los números vayan sin comillas. Lo verás en el siguiente nivel." },
+    { "q": "¿Cuántas variables puedo crear?", "a": "Las que necesites. Cada dato importante de tu app suele merecer su propia variable con un buen nombre." }
+  ]
+}

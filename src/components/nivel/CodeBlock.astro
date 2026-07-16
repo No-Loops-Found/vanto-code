@@ -1,0 +1,20 @@
+---
+/**
+ * Bloque de código del prototipo: etiqueta + <pre>.
+ * El texto es texto plano con \n; se escapa &<> y se colorean los
+ * comentarios `//` como en vanto-nivel.html (línea code() del prototipo).
+ */
+interface Props {
+  label: string;
+  text: string;
+}
+const { label, text } = Astro.props;
+
+const html = text
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/(\/\/[^\n]*)/g, '<span class="cmt">$1</span>');
+---
+<div class="code-label">{label}</div>
+<pre set:html={html}></pre>

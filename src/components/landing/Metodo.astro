@@ -1,0 +1,36 @@
+---
+---
+<section class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">cómo funciona</div>
+      <h2>Lo que aprendes no cambia. Lo que construyes, tú.</h2>
+      <p>Cualquier curso de programación enseña lo mismo por dentro. Nosotros mantenemos ese temario intacto y le cambiamos la excusa: en vez de ejercicios sueltos, cada pieza la practicas construyendo un trozo de tu proyecto.</p>
+    </div>
+    <div class="method-grid reveal">
+      <div class="mcol fixed"><div class="k">lo que no cambia</div><h3>Los fundamentos</h3><p>Los mismos que en cualquier escuela: variables, condiciones, bucles, funciones, estructuras de datos, objetos, interfaz y base de datos. En el mismo orden, sin saltarse nada.</p></div>
+      <div class="mcol"><div class="k">lo que sí cambia</div><h3>Tu proyecto</h3><p>Cada fundamento se aprende construyendo una función de tu app. Elige el proyecto que quieras: el curso se adapta a él y avanza contigo hasta publicarlo.</p></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .band { padding: 78px 0; position: relative; }
+  .band-head { max-width: 60ch; margin-bottom: 38px; }
+  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  .band-head p { font-size: 18px; color: #41444d; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .method-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line-d); border-radius: 18px; overflow: hidden; background: var(--snow); }
+  @media (max-width: 720px) { .method-grid { grid-template-columns: 1fr; } }
+  .mcol { padding: 32px 30px; }
+  .mcol.fixed { background: var(--ink); color: #fff; border-right: 1px solid var(--ink-3); }
+  .mcol .k { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-d); margin-bottom: 12px; }
+  .mcol.fixed .k { color: var(--indigo-l); }
+  .mcol h3 { font-size: 23px; margin-bottom: 10px; }
+  .mcol p { font-size: 15.5px; color: #41444d; }
+  .mcol.fixed p { color: #C0C2CB; }
+
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; } }
+</style>

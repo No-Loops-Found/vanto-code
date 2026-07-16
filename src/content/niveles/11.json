@@ -1,0 +1,167 @@
+{
+  "n": 11,
+  "title": "Proyecto final: publicar tu app",
+  "sub": "Juntas todas las piezas y la pones en internet con una URL que puedes abrir desde cualquier móvil. Tu idea, por fin, en uso.",
+  "tool": "Vercel",
+  "intro": "Has llegado. Repasa lo que ya sabes hacer: guardar datos, decidir, repetir, funciones, listas, objetos, una interfaz que se toca, una base de datos que conserva y un panel que resume. Solo falta un último paso, el que lo cambia todo: <strong>publicarla</strong>. Que deje de vivir en tu editor y pase a tener una <strong>dirección web</strong> que puedas mandar por WhatsApp y abrir desde el móvil de tu abuela. En este nivel juntas las piezas, preparas el proyecto y lo despliegas en <strong>Vercel</strong> en unos clics. Y lo mejor: a partir de ahí, cada vez que hagas un <strong>commit</strong>, tu app publicada se actualiza sola. Es el nivel del “esto ya se usa”.",
+  "blocks": [
+    {
+      "h": "Qué significa publicar (y por qué Vercel)",
+      "p": [
+        "Hasta ahora tu app se abría en <strong>tu</strong> editor, en <strong>tu</strong> ordenador. Publicar (o <strong>desplegar</strong>) es ponerla en un servidor que está siempre encendido, para que <strong>cualquiera</strong> con el enlace pueda usarla, sin instalar nada.",
+        "Usaremos <strong>Vercel</strong>: coge tu repositorio de GitHub y lo convierte en una web con URL en un par de clics, gratis. Encaja perfecto con lo que ya tienes, porque tu código <strong>ya está en GitHub</strong> desde el Nivel 0."
+      ],
+      "note": "El círculo se cierra donde empezó: en el Nivel 0 creaste el repositorio en GitHub. Todos tus commits desde entonces son la historia de tu app. Vercel solo toma ese repositorio y lo enseña al mundo."
+    },
+    {
+      "h": "Antes de desplegar: deja el repo listo",
+      "p": [
+        "Un despliegue limpio empieza por un repositorio ordenado. Asegúrate de tener tu <code>index.html</code>, tu <code>app.js</code> y, si lo usas, tu <code>style.css</code>, todos subidos con un <strong>commit</strong>.",
+        "Y una regla de oro de seguridad: tus <strong>claves de Supabase no van escritas en el código</strong> que subes. Van aparte, en <strong>variables de entorno</strong> (lo verás en los pasos). En el repo, un pequeño archivo <code>.gitignore</code> evita subir lo que no debe subirse."
+      ],
+      "code": {
+        "label": "checklist antes del deploy",
+        "text": "index.html      // tu página\napp.js          // tu lógica\nstyle.css       // opcional: el aspecto\n.gitignore      // qué NO subir (claves, temporales)\n\n// Y un último commit con todo listo:\n// git: \"Preparo la app para publicar\""
+      }
+    },
+    {
+      "h": "Variables de entorno: las claves, fuera del código",
+      "p": [
+        "Una <strong>variable de entorno</strong> es un dato secreto (como tu clave de Supabase) que se configura <strong>en Vercel</strong>, no dentro de tu código. Así tu clave nunca aparece en el repositorio público y puedes cambiarla sin tocar el programa.",
+        "En tu código, en vez de escribir la clave a pelo, la lees desde esa configuración. La idea: <strong>el código es público, los secretos no</strong>."
+      ],
+      "code": {
+        "label": "app.js — leer la clave desde el entorno",
+        "text": "// En vez de escribir la clave directamente...\n// const CLAVE = 'eyJhbGc...';   // NO en el código\n\n// ...la lees de la variable de entorno configurada en Vercel:\nconst URL = import.meta.env.VITE_SUPABASE_URL;\nconst CLAVE = import.meta.env.VITE_SUPABASE_ANON_KEY;\n\nconst supabase = createClient(URL, CLAVE);"
+      },
+      "note": "La clave <b>anon public</b> de Supabase es la que va aquí: está pensada para el navegador. Aun así, se configura como variable de entorno por orden y comodidad. La clave <b>service_role</b> no se publica nunca, en ningún sitio del navegador."
+    },
+    {
+      "h": "Cada commit republica: el súper poder",
+      "p": [
+        "Una vez conectado, Vercel <strong>vigila</strong> tu repositorio. Cada vez que haces un <strong>commit</strong> (esa foto del Nivel 0), Vercel toma la última versión y <strong>vuelve a publicar</strong> tu app sola, en segundos.",
+        "Esto cambia tu forma de trabajar: arreglas una cosa, haces commit, y a los pocos segundos ya está corregido para todos los que usan tu app. Sin subir archivos a mano, sin pasos raros. Programar y publicar se funden en un solo gesto."
+      ],
+      "code": {
+        "label": "el ciclo de trabajo, para siempre",
+        "text": "1. Cambias algo en tu app.\n2. Commit: \"Arreglo el aviso de riego\".\n3. Vercel lo detecta y republica solo.\n4. En segundos, tu URL ya muestra el cambio."
+      }
+    },
+    {
+      "h": "Lo que has construido, en perspectiva",
+      "p": [
+        "Mira atrás un momento. Empezaste sin saber qué era una variable y ahora tienes una <strong>app publicada, con base de datos, que alguien usa de verdad</strong>. No un ejercicio que se borra: <strong>tu</strong> proyecto, el que elegiste porque te resolvía algo.",
+        "Y lo importante: los fundamentos que has aprendido —datos, decisiones, bucles, funciones, objetos, interfaz, base de datos, consultas— son <strong>los mismos</strong> de cualquier curso de programación. Los aprendiste con tu app en lugar de con la app del tiempo. Ese es el trato de Vanto Code, y lo has cumplido entero."
+      ],
+      "note": "<b>Tu idea, hacia delante.</b> Lo que sigue es tuyo: pulir el diseño, añadir funciones, compartir la URL. Ya no eres alguien que “quiere aprender a programar”; eres alguien que <b>ha publicado una app</b>."
+    }
+  ],
+  "steps": [
+    {
+      "t": "Deja tu repositorio actualizado en GitHub",
+      "p": "Comprueba que todos tus archivos están subidos con un commit reciente. Si trabajas en Codespaces o StackBlitz, haz el último commit con un mensaje como “Lista para publicar”. Sin esto, Vercel no tendrá qué desplegar."
+    },
+    {
+      "t": "Crea tu cuenta en Vercel con GitHub",
+      "p": "Entra en <b>vercel.com</b> y pulsa “Sign Up”. Elige “Continue with GitHub” y autoriza el acceso. Así Vercel ya puede ver tus repositorios. Es gratis."
+    },
+    {
+      "t": "Importa tu repositorio",
+      "p": "En el panel de Vercel pulsa “Add New…” → “Project”. Te aparecerá la lista de tus repos de GitHub: busca el de tu app y pulsa “Import”. Si no lo ves, dale permiso a Vercel sobre ese repositorio."
+    },
+    {
+      "t": "Añade las variables de entorno de Supabase",
+      "p": "Antes de desplegar, en la sección “Environment Variables” añade tus claves: por ejemplo <b>VITE_SUPABASE_URL</b> con tu Project URL y <b>VITE_SUPABASE_ANON_KEY</b> con tu clave anon public. Copia los nombres exactamente como los usas en el código."
+    },
+    {
+      "t": "Pulsa Deploy y espera tu URL",
+      "p": "Dale a “Deploy”. En unos segundos, Vercel construye y publica tu app y te da una <b>URL pública</b> del estilo <b>tu-app.vercel.app</b>. Ábrela: eso que ves está en internet, servido a todo el mundo."
+    },
+    {
+      "t": "Ábrela en el móvil y prueba el ciclo",
+      "p": "Manda el enlace a tu móvil y ábrelo: tu app funcionando fuera de tu ordenador. Ahora haz un cambio pequeño en el código, un commit, y vuelve a mirar en unos segundos: Vercel la habrá republicado sola. Ese es tu nuevo día a día."
+    }
+  ],
+  "ex": [
+    {
+      "t": "Deja tu repositorio con un commit final y crea tu cuenta de Vercel conectada a GitHub.",
+      "hint": "Haz el commit desde tu editor y luego entra en vercel.com → Sign Up → Continue with GitHub."
+    },
+    {
+      "t": "Importa tu repo en Vercel y despliega. Copia la URL pública que te da y ábrela en el navegador.",
+      "hint": "Add New… → Project → Import el repo de tu app → Deploy. La URL termina en .vercel.app.",
+      "sol": "// No hay código: es el flujo en Vercel.\n// 1. Add New… → Project\n// 2. Import tu repositorio de GitHub\n// 3. (Añade variables de entorno)\n// 4. Deploy → copia tu URL tu-app.vercel.app"
+    },
+    {
+      "t": "Configura en Vercel las variables de entorno con tus claves de Supabase, y comprueba que tu app publicada lee y guarda datos de verdad.",
+      "hint": "En Environment Variables añade VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY con los mismos nombres que usas en app.js."
+    },
+    {
+      "t": "Reto: abre tu URL en el móvil, haz un cambio visible en tu app (por ejemplo el título), commit, y confirma que a los pocos segundos la web publicada se ha actualizado sola.",
+      "reto": true,
+      "hint": "Cambia el texto del <h1>, haz commit con un mensaje claro y recarga la URL de Vercel en el móvil. Sin volver a tocar nada más."
+    }
+  ],
+  "pitfalls": [
+    {
+      "t": "“Desplegué y la app no lee de Supabase.”",
+      "p": "Casi siempre son las variables de entorno: o no las añadiste en Vercel, o el nombre no coincide con el que usas en el código (mayúsculas incluidas). Revísalas en “Environment Variables” y vuelve a desplegar (“Redeploy”)."
+    },
+    {
+      "t": "“Hice un commit y la web sigue igual.”",
+      "p": "Dale unos segundos: el redeploy no es instantáneo. Comprueba en el panel de Vercel, pestaña “Deployments”, que aparece tu último commit construyéndose. Y refresca la página con el caché limpio (Ctrl+Shift+R)."
+    },
+    {
+      "t": "“Subí mi clave secreta al repositorio sin querer.”",
+      "p": "Pasa, no cunde el pánico. Cámbiala (regenera la clave en Supabase), muévela a variables de entorno y añádela al <code>.gitignore</code>. Que el error enseñe: los secretos, siempre fuera del código público."
+    },
+    {
+      "t": "“El deploy falla con un error rojo.”",
+      "p": "Lee el log del deploy en Vercel: te dice la línea y el motivo, igual que la consola del navegador. Un error de despliegue no rompe nada de lo anterior; corriges, haces commit y vuelve a intentarlo solo."
+    }
+  ],
+  "recap": [
+    "Publicar (desplegar) es poner tu app en un servidor siempre encendido, con una URL para cualquiera.",
+    "Vercel toma tu repositorio de GitHub y lo publica en un par de clics, gratis.",
+    "Las claves de Supabase van en variables de entorno, nunca escritas en el código público.",
+    "Cada commit hace que Vercel republique tu app sola en segundos: programar y publicar en un gesto.",
+    "Los fundamentos que dominas son los mismos de cualquier curso; los aprendiste con TU proyecto.",
+    "Tienes una app publicada, con base de datos, que se usa de verdad. Tu idea, hacia delante."
+  ],
+  "quiz": [
+    {
+      "q": "¿Qué hace Vercel en este nivel?",
+      "o": ["Guarda la base de datos", "Publica tu app y le da una URL pública", "Escribe el código por ti"],
+      "a": 1
+    },
+    {
+      "q": "¿Qué pasa cuando haces un commit tras conectar el repo a Vercel?",
+      "o": ["Se borra la app", "Vercel republica tu app sola con el cambio", "No pasa nada hasta que subes archivos a mano"],
+      "a": 1
+    },
+    {
+      "q": "¿Dónde deben ir las claves de Supabase al publicar?",
+      "o": ["Escritas en app.js", "En variables de entorno, fuera del código", "En un comentario del HTML"],
+      "a": 1
+    },
+    {
+      "q": "Tu app publicada no lee de Supabase. ¿Primera cosa a revisar?",
+      "o": ["Que las variables de entorno estén bien puestas en Vercel", "Reinstalar el navegador", "Cambiar de ordenador"],
+      "a": 0
+    }
+  ],
+  "faq": [
+    {
+      "q": "¿Publicar en Vercel cuesta dinero?",
+      "a": "Vercel tiene una capa gratuita más que suficiente para tu proyecto y para uso real de una app pequeña. Confirma los límites vigentes en su web, porque pueden cambiar."
+    },
+    {
+      "q": "¿Puedo ponerle mi propio dominio (miapp.com)?",
+      "a": "Sí, es opcional: Vercel deja conectar un dominio propio si compras uno. Pero con la URL .vercel.app que te da ya puedes usar y compartir tu app perfectamente."
+    },
+    {
+      "q": "He terminado el curso, ¿y ahora qué?",
+      "a": "Ahora tu app es tuya para crecer: añade funciones, pule el diseño con CSS, comparte la URL con quien la vaya a usar. Y si te pica el gusanillo, la familia vanto·code sigue con Datos, Móvil e IA, el mismo método con otro destino."
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+---
+import { MODULES } from '../../lib/course-data';
+
+// Subtítulos de la ruta (copy presentacional de la landing, alineado por índice).
+const SUBS = [
+  'Sin instalar nada. Tu proyecto en marcha en el navegador.',
+  'Representar la información de tu app.',
+  'Combinar datos para obtener resultados.',
+  'Que la app reaccione según lo que pasa.',
+  'Hacer algo con toda una lista de golpe.',
+  'Organizar el código y no repetirte.',
+  'Manejar muchos datos juntos.',
+  'Poner orden en el dominio de tu app.',
+  'Que se use tocando, no escribiendo código.',
+  'Que los datos no se pierdan al cerrar.',
+  'Sacar información útil de tus datos.',
+  'Todo junto y en internet, para usarla.',
+];
+---
+<section class="band" id="ruta" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">vanto·code · web</div>
+      <h2>12 niveles. Cada uno, un trozo de tu app.</h2>
+      <p>De encender el entorno a publicar la app con base de datos. Cada nivel tiene su propia página con la explicación al detalle, ejercicios y test. Empieza por el Nivel 0.</p>
+    </div>
+    <div class="ruta-wrap" id="rutaWrap">
+      <div class="ruta-line"><div class="ruta-fill" id="rutaFill"></div></div>
+      <div id="rutaList">
+        {MODULES.map((m) => (
+          <a class="mod reveal" href={`/nivel/${m.n}`}>
+            <div class="node">{m.label}</div>
+            <div class="mod-card">
+              <div>
+                <div class="mod-title">{m.title}</div>
+                <div class="mod-ra">{SUBS[m.n]}</div>
+              </div>
+              <div class="mod-open">{m.n === 0 ? 'Abrir nivel' : 'Ver'} <span class="ar">»</span></div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .band { padding: 78px 0; position: relative; }
+  .band-head { max-width: 60ch; margin-bottom: 38px; }
+  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  .band-head p { font-size: 18px; color: #41444d; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .ruta-wrap { position: relative; padding-left: 60px; }
+  @media (max-width: 600px) { .ruta-wrap { padding-left: 44px; } }
+  .ruta-line { position: absolute; left: 22px; top: 8px; bottom: 8px; width: 2px; background: var(--line-d); }
+  @media (max-width: 600px) { .ruta-line { left: 16px; } }
+  .ruta-fill { position: absolute; left: 0; top: 0; width: 100%; height: 0; background: var(--indigo); transition: height .12s linear; }
+  .mod { position: relative; margin-bottom: 12px; display: block; }
+  .mod .node {
+    position: absolute; left: -49px; top: 16px; width: 34px; height: 34px; border-radius: 11px;
+    background: var(--snow); border: 2px solid var(--line-d);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Sora"; font-weight: 800; font-size: 14px; color: var(--muted);
+    transition: all .2s var(--ease); z-index: 2;
+  }
+  @media (max-width: 600px) { .mod .node { left: -42px; width: 30px; height: 30px; font-size: 12px; } }
+  .mod.seen .node { border-color: var(--indigo); color: var(--indigo-d); }
+  .mod:hover .node { background: var(--indigo); border-color: var(--indigo); color: #fff; transform: scale(1.08); }
+  .mod-card {
+    background: var(--snow); border: 1px solid var(--line-d); border-radius: 14px; padding: 18px 22px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    transition: transform .16s var(--ease), box-shadow .16s var(--ease), border-color .16s;
+  }
+  .mod:hover .mod-card { transform: translateX(5px); box-shadow: var(--shadow); border-color: var(--indigo-l); }
+  .mod-title { font-family: "Sora"; font-weight: 700; font-size: 18px; }
+  .mod-ra { font-family: "JetBrains Mono"; font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .mod-open { font-family: "JetBrains Mono"; font-size: 12.5px; color: var(--indigo-d); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+  .mod-open .ar { transition: transform .18s var(--ease); }
+  .mod:hover .mod-open .ar { transform: translateX(4px); }
+  .mod .soon { color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .mod:hover .mod-card { transform: none !important; }
+  }
+</style>

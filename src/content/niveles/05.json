@@ -1,0 +1,96 @@
+{
+  "n": 5,
+  "title": "Acciones reutilizables: funciones",
+  "sub": "Meter una acción en una caja con nombre para usarla las veces que quieras sin repetir código.",
+  "intro": "Hasta ahora escribías cada cálculo o cada decisión donde hacía falta. Pero muchas acciones de tu app se repiten: calcular un total, dar un aviso, formatear una fecha. Una <strong>función</strong> es una acción guardada bajo un nombre: la escribes <strong>una vez</strong> y la llamas cuando quieras, con datos distintos cada vez. Es la herramienta que mantiene tu app ordenada y a ti sin repetirte.",
+  "blocks": [
+    {
+      "h": "Qué es una función",
+      "p": [
+        "Una <strong>función</strong> agrupa varios pasos bajo un nombre. Piensa en una receta guardada: la defines una vez (los pasos) y luego la usas cuando la necesitas, sin volver a escribirla.",
+        "Se declara con la palabra <strong>function</strong>, un nombre, unos paréntesis y el bloque de pasos entre llaves. Definirla <strong>no la ejecuta</strong>: solo la deja preparada."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "// Definir la función (aún no hace nada)\nfunction saludar() {\n  console.log(\"¡Bienvenida a tu app!\");\n}\n\n// Llamarla: ahora sí se ejecuta\nsaludar();   // ¡Bienvenida a tu app!"
+      },
+      "note": "Dos momentos distintos: <b>declarar</b> la función (escribir la receta) y <b>llamarla</b> (cocinarla). Si la declaras pero nunca la llamas, no pasa nada: por eso a veces “no hace nada”."
+    },
+    {
+      "h": "Parámetros: darle datos a la función",
+      "p": [
+        "Una función que siempre hace lo mismo sirve de poco. Lo potente es pasarle <strong>datos de entrada</strong>, llamados <strong>parámetros</strong>, para que trabaje con ellos.",
+        "Los parámetros van en los paréntesis al declararla y son como variables que solo existen dentro de la función. Al llamarla, les pasas los valores concretos (los <em>argumentos</em>)."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "function saludar(nombre) {\n  console.log(\"¡Hola, \" + nombre + \"!\");\n}\n\nsaludar(\"Lucía\");   // ¡Hola, Lucía!\nsaludar(\"Marta\");   // ¡Hola, Marta!  (misma función, otro dato)"
+      }
+    },
+    {
+      "h": "return: que la función te devuelva el resultado",
+      "p": [
+        "Muchas funciones no solo hacen algo: <strong>calculan un valor y te lo entregan</strong> para que lo uses. Eso es <strong>return</strong>: devuelve un resultado al sitio desde donde llamaste.",
+        "Ojo a la diferencia clave con console.log: <strong>log solo muestra</strong> en la consola, mientras que <strong>return entrega</strong> el valor para guardarlo en una variable y seguir trabajando con él. Además, en cuanto se ejecuta un return, la función termina ahí."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "function conIva(precio) {\n  return precio * 1.21;   // entrega el resultado\n}\n\nconst total = conIva(100);   // guarda 121 en total\nconsole.log(total);          // 121\nconsole.log(conIva(50));     // 60.5"
+      }
+    },
+    {
+      "h": "El gran motivo: no repetirte",
+      "p": [
+        "El verdadero valor de las funciones es dejar de copiar y pegar. Si el cálculo del IVA está en una sola función y mañana cambia al 10%, lo tocas <strong>en un único sitio</strong> y toda tu app se actualiza.",
+        "La regla práctica: cuando notes que estás escribiendo el mismo bloque de código por segunda o tercera vez, seguramente pide una función. Un buen nombre (conIva, avisoDeRiego, mediaDeNotas) hace que tu código se lea casi como una frase."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "function mediaDeNotas(a, b, c) {\n  return (a + b + c) / 3;\n}\n\nconsole.log(mediaDeNotas(4, 5, 3));   // 4\nconsole.log(mediaDeNotas(2, 2, 5));   // 3\n// Un solo sitio que arreglar si cambia la fórmula"
+      }
+    },
+    {
+      "h": "Funciones que deciden",
+      "p": [
+        "Las funciones se juntan de maravilla con las condiciones del nivel 3. Puedes meter un if/else dentro y devolver un valor distinto según el caso. Así tu decisión queda con nombre y reutilizable.",
+        "Fíjate cómo la lógica del aviso, que antes estaba suelta, ahora vive en una función que puedes llamar para cualquier planta."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "function avisoDeRiego(dias) {\n  if (dias > 3) return \"¡Riégala ya!\";\n  if (dias > 1) return \"Pronto tocará\";\n  return \"Todo bien\";\n}\n\nconsole.log(avisoDeRiego(5));   // ¡Riégala ya!\nconsole.log(avisoDeRiego(2));   // Pronto tocará\nconsole.log(avisoDeRiego(0));   // Todo bien"
+      }
+    }
+  ],
+  "ex": [
+    { "t": "Escribe una función que haga un <strong>cálculo</strong> de tu app (un total, un precio con IVA, una media) recibiendo los datos por parámetro y devolviéndolo con return.", "hint": "function total(precio, cantidad) { return precio * cantidad; }", "sol": "function total(precio, cantidad) {\n  return precio * cantidad;\n}\nconsole.log(total(8, 5));   // 40" },
+    { "t": "Llama a tu función <strong>tres veces</strong> con valores distintos y muestra cada resultado.", "hint": "Guarda cada resultado en una variable o pásalo directo a console.log." },
+    { "t": "Escribe una función que <strong>decida</strong> algo: reciba un dato y devuelva un texto distinto según una condición (un estado, un aviso).", "hint": "Usa if dentro de la función y varios return.", "sol": "function estadoPago(pagado) {\n  return pagado ? \"listo\" : \"pendiente\";\n}\nconsole.log(estadoPago(true));   // \"listo\"" },
+    { "t": "Reto: escribe una función que reciba una <strong>lista</strong> de números y devuelva su suma total (combina función + bucle).", "reto": true, "hint": "Recorre la lista con for...of acumulando en una variable y haz return al final.", "sol": "function sumar(numeros) {\n  let total = 0;\n  for (const n of numeros) {\n    total = total + n;\n  }\n  return total;\n}\nconsole.log(sumar([12, 8, 20, 5]));   // 45" }
+  ],
+  "pitfalls": [
+    { "t": "“Escribí la función pero no pasa nada.”", "p": "Declararla no la ejecuta. Falta <b>llamarla</b>: escribe su nombre con paréntesis, por ejemplo total(8, 5);" },
+    { "t": "“La función calcula pero no puedo usar el resultado.”", "p": "Seguramente usaste console.log dentro en vez de return. log solo muestra; para usar el valor fuera necesitas return." },
+    { "t": "“Uso una variable de dentro de la función y da error fuera.”", "p": "Lo que se crea dentro de una función solo existe ahí (es su ámbito). Para sacar un valor fuera, devuélvelo con return." },
+    { "t": "“Puse código después del return y no se ejecuta.”", "p": "Normal: return termina la función en el acto. Todo lo que pongas debajo se ignora. Coloca el return al final del camino que quieras." }
+  ],
+  "recap": [
+    "Una función agrupa pasos bajo un nombre para reutilizarlos.",
+    "Declararla no la ejecuta: hay que llamarla con su nombre y paréntesis.",
+    "Los parámetros son los datos de entrada; los pasas al llamarla.",
+    "return entrega un resultado para usarlo fuera; console.log solo lo muestra.",
+    "return termina la función: lo que va después no se ejecuta.",
+    "Si escribes el mismo bloque dos o tres veces, probablemente pide una función."
+  ],
+  "quiz": [
+    { "q": "¿Qué hace return dentro de una función?", "o": ["Imprime en pantalla", "Devuelve el resultado y termina la función", "Borra la variable"], "a": 1 },
+    { "q": "Los parámetros de una función son…", "o": ["Los datos de entrada que recibe", "Variables globales", "Archivos del proyecto"], "a": 0 },
+    { "q": "Escribo una función y no ocurre nada. ¿Por qué?", "o": ["JavaScript no tiene funciones", "No la he llamado", "Falta guardar el archivo"], "a": 1 },
+    { "q": "¿Cuál usas para poder GUARDAR el resultado en una variable?", "o": ["console.log", "return", "typeof"], "a": 1 }
+  ],
+  "faq": [
+    { "q": "¿Cuándo hago una función y cuándo una variable?", "a": "Una variable guarda un dato; una función guarda una acción reutilizable. Si es algo que se hace (calcular, decidir, avisar), es función." },
+    { "q": "¿return o console.log?", "a": "console.log solo muestra el valor en la consola. return te lo entrega para guardarlo y seguir usándolo. En una app real usarás return casi siempre." },
+    { "q": "¿Cuántos parámetros puede tener una función?", "a": "Los que necesites, separados por comas. Pero si son muchísimos, suele ser señal de que la función hace demasiado: pártela en varias más pequeñas." },
+    { "q": "He visto funciones escritas con => (flecha). ¿Son otra cosa?", "a": "Es otra forma de escribir lo mismo, más corta. Por ahora quédate con function: hace exactamente el mismo trabajo y se lee más claro." }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "n": 8,
+  "title": "Interfaz y botones",
+  "sub": "Hasta ahora tu app vivía en la consola. Aquí sale a la pantalla: botones que se pulsan, campos que se rellenan, cosas que aparecen.",
+  "intro": "Este es el nivel del “por fin se ve”. Hasta ahora toda tu app hablaba por la consola (F12), un sitio que solo ves tú como programador. A partir de aquí conectas tu lógica con la <strong>pantalla</strong>: el usuario escribe en un campo, pulsa un botón y ve aparecer el resultado, sin tocar ni una línea de código. Para eso hay que aprender tres gestos: <strong>encontrar</strong> un trozo de la página, <strong>escuchar</strong> cuando alguien hace clic, y <strong>cambiar</strong> lo que se ve. Con eso, tu proyecto pasa de ser un ejercicio de consola a una app que de verdad se puede usar con el dedo.",
+  "blocks": [
+    {
+      "h": "El DOM: la página vista como cosas que puedes tocar",
+      "p": [
+        "Cuando el navegador abre tu <code>index.html</code>, convierte cada etiqueta (el título, un botón, un párrafo) en un <strong>objeto</strong> que JavaScript puede leer y modificar. A ese conjunto de objetos se le llama <strong>DOM</strong>.",
+        "La idea clave: tu HTML no es un dibujo fijo. Es una lista de elementos vivos que tu código puede <strong>encontrar, cambiar, añadir o borrar</strong> sobre la marcha. Eso es lo que hace que una app reaccione."
+      ],
+      "note": "Recuerda los tres archivos del Nivel 0: <b>HTML</b> son los huesos, <b>CSS</b> la ropa y <b>JavaScript</b> el movimiento. Este nivel va de que el movimiento (tu JS) toque los huesos (el DOM) para que la página cambie."
+    },
+    {
+      "h": "Encontrar un elemento con querySelector",
+      "p": [
+        "Para tocar algo de la página primero tienes que <strong>encontrarlo</strong>. La forma más cómoda es dar a ese elemento un <strong>id</strong> en el HTML y buscarlo desde JavaScript con <strong>document.querySelector</strong>.",
+        "El id se busca poniendo una <strong>almohadilla</strong> delante: <code>\"#aviso\"</code> encuentra el elemento cuyo <code>id=\"aviso\"</code>. Una vez lo tienes en una variable, ya puedes cambiarlo."
+      ],
+      "code": {
+        "label": "index.html",
+        "text": "<body>\n  <h1>Mi huerto</h1>\n  <p id=\"aviso\">Sin avisos todavía</p>\n  <button id=\"btnRegar\">Regar la tomatera</button>\n\n  <script src=\"app.js\"></script>\n</body>"
+      }
+    },
+    {
+      "h": "Escuchar un clic con addEventListener",
+      "p": [
+        "Un <strong>evento</strong> es algo que pasa en la página: un clic, una tecla, enviar un formulario. Con <strong>addEventListener</strong> le dices a un elemento: “cuando ocurra <em>esto</em>, ejecuta <em>esta</em> función”.",
+        "El patrón es siempre el mismo: encuentras el botón, y le enganchas una función que corre cada vez que lo pulsan. Fíjate en que la función <strong>no</strong> se ejecuta al escribirla; se ejecuta cuando llega el clic."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "// 1. Encontrar los elementos\nconst boton = document.querySelector(\"#btnRegar\");\nconst aviso = document.querySelector(\"#aviso\");\n\n// 2. Escuchar el clic\nboton.addEventListener(\"click\", () => {\n  // 3. Cambiar lo que se ve\n  aviso.textContent = \"¡Tomatera regada!\";\n});"
+      },
+      "note": "Con <code>.textContent</code> cambias el texto que se ve dentro de un elemento. Cámbialo y la pantalla se actualiza al instante, sin recargar nada. Ese es el momento mágico del nivel: pulsas y algo cambia solo."
+    },
+    {
+      "h": "Leer lo que el usuario escribe (inputs y formularios)",
+      "p": [
+        "Los botones están bien, pero una app de verdad también deja <strong>escribir</strong>: el nombre de una planta, una nota, una matrícula. Para eso está el <code>&lt;input&gt;</code>. Lo que la persona teclea lo lees con <strong>.value</strong>.",
+        "El flujo típico: hay un campo y un botón; al pulsar, lees <code>.value</code> del campo, haces algo con ese dato (lo guardas en tu lista, lo muestras) y normalmente vuelves a dejar el campo vacío."
+      ],
+      "code": {
+        "label": "index.html + app.js",
+        "text": "<!-- en index.html -->\n<input id=\"campoNombre\" placeholder=\"Nombre de la planta\">\n<button id=\"btnAnadir\">Añadir</button>\n<ul id=\"lista\"></ul>\n\n// en app.js\nconst campo = document.querySelector(\"#campoNombre\");\nconst btn = document.querySelector(\"#btnAnadir\");\nconst lista = document.querySelector(\"#lista\");\nconst plantas = [];\n\nbtn.addEventListener(\"click\", () => {\n  const nombre = campo.value;   // leer lo escrito\n  if (nombre === \"\") return;    // si está vacío, no hacemos nada\n  plantas.push(nombre);\n  campo.value = \"\";             // vaciar el campo\n  pintarLista();\n});"
+      }
+    },
+    {
+      "h": "Pintar tu lista en la pantalla",
+      "p": [
+        "Aquí se juntan todos los niveles anteriores. Tienes una <strong>lista</strong> (nivel 6) puede que de <strong>objetos</strong> (nivel 7); ahora la <strong>recorres</strong> (nivel 5) y vas construyendo el HTML que se ve.",
+        "La técnica más sencilla: montar un texto con todo el HTML dentro de un bucle y meterlo de golpe con <strong>.innerHTML</strong>. Separas el “qué muestro” (una función que pinta) del “qué pasó” (el clic), y llamas a pintar cada vez que cambian los datos."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const lista = document.querySelector(\"#lista\");\nconst plantas = [\"Tomatera\", \"Albahaca\", \"Menta\"];\n\nfunction pintarLista() {\n  let html = \"\";\n  for (const planta of plantas) {\n    html += \"<li>\" + planta + \"</li>\";\n  }\n  lista.innerHTML = html;   // vuelca todo de golpe\n}\n\npintarLista(); // pintar al arrancar"
+      },
+      "note": "El patrón de oro de las apps: los <b>datos</b> mandan y la <b>pantalla</b> los refleja. Tú cambias la lista y luego llamas a <code>pintarLista()</code>. Nunca peleas con la pantalla a mano: cambias datos y repintas."
+    }
+  ],
+  "ex": [
+    {
+      "t": "Añade a tu index.html un botón con un id y un párrafo con otro id. Desde app.js, haz que al pulsar el botón cambie el texto del párrafo.",
+      "hint": "querySelector(\"#tuId\") para encontrarlos y .textContent = \"...\" para cambiar el texto dentro del addEventListener.",
+      "sol": "// index.html:  <p id=\"msg\">Hola</p>  <button id=\"btn\">Cambiar</button>\nconst btn = document.querySelector(\"#btn\");\nconst msg = document.querySelector(\"#msg\");\nbtn.addEventListener(\"click\", () => {\n  msg.textContent = \"¡Has pulsado el botón!\";\n});"
+    },
+    {
+      "t": "Pon un input y un botón. Al pulsar, lee lo que hay escrito con .value y muéstralo en pantalla.",
+      "hint": "const texto = campo.value; y luego salida.textContent = texto;",
+      "sol": "const campo = document.querySelector(\"#campo\");\nconst btn = document.querySelector(\"#btn\");\nconst salida = document.querySelector(\"#salida\");\nbtn.addEventListener(\"click\", () => {\n  salida.textContent = \"Escribiste: \" + campo.value;\n  campo.value = \"\";\n});"
+    },
+    {
+      "t": "Crea una lista vacía en JS. Cada vez que se pulse 'Añadir', mete lo del input en la lista con .push() y vuelve a pintarla en un <ul>.",
+      "hint": "Escribe una función pintarLista() que recorra el array con for...of y monte el HTML con <li>, y llámala tras cada push."
+    },
+    {
+      "t": "Reto: junta este nivel con el 7. Haz una clase para tu cosa, guarda las instancias en una lista, y pinta en pantalla una propiedad de cada una recorriendo la lista.",
+      "reto": true,
+      "hint": "En el bucle, dentro del <li>, usa las propiedades del objeto: html += \"<li>\" + coche.matricula + \" - \" + coche.averia + \"</li>\";"
+    }
+  ],
+  "pitfalls": [
+    {
+      "t": "“El botón no hace absolutamente nada.”",
+      "p": "El motivo nº1: tu <code>&lt;script&gt;</code> corre <b>antes</b> de que el botón exista en la página, así que <code>querySelector</code> no lo encuentra. Solución: pon <code>&lt;script src=\"app.js\"&gt;&lt;/script&gt;</code> al <b>final del body</b>, después de los elementos."
+    },
+    {
+      "t": "“querySelector me devuelve null.”",
+      "p": "No ha encontrado el elemento. Casi siempre es el id: revisa que en el HTML ponga <code>id=\"aviso\"</code> y en el JS busques <code>\"#aviso\"</code> con almohadilla y escrito <b>exactamente igual</b> (mayúsculas incluidas)."
+    },
+    {
+      "t": "“Leo el número del input y las sumas salen raras.”",
+      "p": "Todo lo que sale de un <code>.value</code> es <b>texto</b>, aunque parezca un número. <code>\"2\" + \"3\"</code> da <code>\"23\"</code>, no 5. Conviértelo con <code>Number(campo.value)</code> antes de calcular."
+    },
+    {
+      "t": "“Cambio los datos pero la pantalla no se entera.”",
+      "p": "Cambiar el array no repinta solo la pantalla. Tienes que <b>volver a llamar</b> a tu función de pintar después de cada cambio. Datos primero, repintar después: siempre en ese orden."
+    }
+  ],
+  "recap": [
+    "El DOM es tu página vista como objetos que JavaScript puede leer y cambiar.",
+    "querySelector(\"#id\") encuentra un elemento por su id (con almohadilla).",
+    "addEventListener(\"click\", fn) ejecuta tu función cada vez que se pulsa.",
+    ".value lee lo que el usuario escribe en un input; .textContent y .innerHTML cambian lo que se ve.",
+    "El patrón: cambias los datos y luego llamas a una función que los pinta en pantalla.",
+    "Tu app ya se usa con el dedo, sin abrir la consola: por fin se ve."
+  ],
+  "quiz": [
+    {
+      "q": "¿Qué hace document.querySelector(\"#btn\")?",
+      "o": ["Crea un botón nuevo", "Encuentra el elemento con id=\"btn\"", "Publica la app"],
+      "a": 1
+    },
+    {
+      "q": "¿Para qué sirve addEventListener?",
+      "o": ["Ejecutar una función cuando ocurre un evento (un clic)", "Guardar datos en la nube", "Declarar una variable"],
+      "a": 0
+    },
+    {
+      "q": "¿Cómo lees lo que el usuario ha escrito en un input?",
+      "o": ["input.texto", "input.value", "input.leer()"],
+      "a": 1
+    },
+    {
+      "q": "El botón no responde. ¿Cuál es la causa más probable?",
+      "o": ["El script está antes del botón en el HTML", "Falta instalar Node", "El navegador no soporta botones"],
+      "a": 0
+    }
+  ],
+  "faq": [
+    {
+      "q": "¿Diferencia entre id y class en el HTML?",
+      "a": "El id es único: identifica un solo elemento (por eso lo usamos con querySelector para lo concreto). La class puede repetirse y sirve para agrupar varios. Para empezar, id te vale casi siempre."
+    },
+    {
+      "q": "¿textContent o innerHTML?",
+      "a": "textContent pone texto tal cual (más seguro y sencillo). innerHTML interpreta etiquetas HTML, útil cuando montas una lista con <li>. Usa textContent salvo que necesites meter HTML."
+    },
+    {
+      "q": "¿Tengo que saber CSS para este nivel?",
+      "a": "No para que funcione. Con HTML y JavaScript tu app ya reacciona. El CSS es la 'ropa': lo puedes añadir después para que se vea bonita, sin bloquear tu avance."
+    }
+  ]
+}

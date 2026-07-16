@@ -1,0 +1,27 @@
+---
+/**
+ * Símbolo de Vanto Code: doble chevron ». El primer chevron es la "tinta",
+ * el segundo (siempre índigo salvo variante sobre índigo) es "el que avanza".
+ */
+interface Props {
+  variant?: 'ink' | 'paper' | 'onindigo';
+  class?: string;
+}
+const { variant = 'ink', class: className = '' } = Astro.props;
+const V: Record<string, [string, string]> = {
+  ink: ['#16181D', '#4B49F0'], // sobre claro (principal)
+  paper: ['#F2F3F6', '#4B49F0'], // negativo sobre tinta
+  onindigo: ['#16181D', '#FFFFFF'], // sobre índigo
+};
+const [c1, c2] = V[variant] ?? V.ink;
+---
+<span class={`mark ${className}`.trim()} aria-hidden="true">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
+    <g fill="none" stroke={c1} stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M26 26 L50 50 L26 74" />
+    </g>
+    <g fill="none" stroke={c2} stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 26 L74 50 L50 74" />
+    </g>
+  </svg>
+</span>

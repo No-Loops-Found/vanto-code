@@ -1,0 +1,131 @@
+---
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+---
+
+<Base title="Entrar · Vanto Code">
+  <main class="auth">
+    <a class="logo" href="/">
+      <Mark variant="ink" />
+      <span class="wm">vanto<span class="code">·code</span></span>
+    </a>
+
+    <div class="card">
+      <h1 id="titulo">Entra a tu cuenta</h1>
+      <p class="lead" id="sub">Guarda tu avance, tus tests y tus proyectos. Tu idea, hacia delante.</p>
+
+      <form id="form" novalidate>
+        <label>Correo
+          <input id="email" type="email" autocomplete="email" required placeholder="tu@correo.com" />
+        </label>
+        <label>Contraseña
+          <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="mínimo 6 caracteres" />
+        </label>
+        <button id="submit" type="submit">Entrar</button>
+        <p class="msg" id="msg" role="status"></p>
+      </form>
+
+      <p class="switch">
+        <span id="switchText">¿Aún no tienes cuenta?</span>
+        <button type="button" id="toggle" class="linklike">Crear cuenta</button>
+      </p>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .auth { max-width: 420px; margin: 0 auto; padding: 48px 24px 80px; }
+  .logo { display: inline-flex; align-items: baseline; gap: 9px; text-decoration: none; margin-bottom: 28px; }
+  .logo .mark { width: 24px; height: 24px; align-self: center; }
+  .wm { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -.02em; }
+  .code { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--indigo-d); font-size: 15px; }
+  .card { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 28px; box-shadow: var(--shadow); }
+  h1 { font-size: 26px; }
+  .lead { color: var(--muted); font-size: 15px; margin: 8px 0 22px; }
+  form { display: grid; gap: 14px; }
+  label { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink); }
+  input { font-family: 'Inter', sans-serif; font-size: 15px; padding: 11px 13px; border: 1px solid var(--line-d); border-radius: 10px; background: #fff; }
+  input:focus { outline: 2px solid var(--indigo); outline-offset: 1px; border-color: transparent; }
+  button[type='submit'] { background: var(--indigo); color: #fff; border: none; border-radius: 10px; padding: 12px 16px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 4px; }
+  button[type='submit']:disabled { opacity: .6; cursor: default; }
+  .msg { font-size: 13px; margin: 4px 0 0; min-height: 1em; }
+  .msg.err { color: var(--rojo); }
+  .msg.ok { color: var(--verde); }
+  .switch { font-size: 14px; color: var(--muted); margin-top: 20px; text-align: center; }
+  .linklike { background: none; border: none; color: var(--indigo-d); font: inherit; font-weight: 600; cursor: pointer; padding: 0; }
+</style>
+
+<script>
+  import { browserClient } from '../lib/supabase';
+
+  const supabase = browserClient();
+  const form = document.getElementById('form') as HTMLFormElement;
+  const emailEl = document.getElementById('email') as HTMLInputElement;
+  const passEl = document.getElementById('password') as HTMLInputElement;
+  const submit = document.getElementById('submit') as HTMLButtonElement;
+  const msg = document.getElementById('msg') as HTMLParagraphElement;
+  const toggle = document.getElementById('toggle') as HTMLButtonElement;
+  const titulo = document.getElementById('titulo')!;
+  const sub = document.getElementById('sub')!;
+  const switchText = document.getElementById('switchText')!;
+
+  let modo: 'entrar' | 'crear' = 'entrar';
+  const params = new URLSearchParams(location.search);
+  const next = params.get('next') || '/cuenta';
+
+  function setMsg(text: string, cls = '') {
+    msg.textContent = text;
+    msg.className = 'msg ' + cls;
+  }
+
+  toggle.addEventListener('click', () => {
+    modo = modo === 'entrar' ? 'crear' : 'entrar';
+    if (modo === 'crear') {
+      titulo.textContent = 'Crea tu cuenta';
+      sub.textContent = 'Es gratis. Empiezas el Nivel 0 y guardas tu progreso desde el minuto uno.';
+      submit.textContent = 'Crear cuenta';
+      switchText.textContent = '¿Ya tienes cuenta?';
+      toggle.textContent = 'Entrar';
+      passEl.setAttribute('autocomplete', 'new-password');
+    } else {
+      titulo.textContent = 'Entra a tu cuenta';
+      sub.textContent = 'Guarda tu avance, tus tests y tus proyectos. Tu idea, hacia delante.';
+      submit.textContent = 'Entrar';
+      switchText.textContent = '¿Aún no tienes cuenta?';
+      toggle.textContent = 'Crear cuenta';
+      passEl.setAttribute('autocomplete', 'current-password');
+    }
+    setMsg('');
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailEl.value.trim();
+    const password = passEl.value;
+    if (!email || password.length < 6) {
+      setMsg('Revisa el correo y una contraseña de al menos 6 caracteres.', 'err');
+      return;
+    }
+    submit.disabled = true;
+    setMsg('Un momento…');
+
+    try {
+      if (modo === 'crear') {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        if (data.session) {
+          location.assign(next);
+        } else {
+          setMsg('Cuenta creada. Revisa tu correo para confirmarla y luego entra.', 'ok');
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        location.assign(next);
+      }
+    } catch (err: any) {
+      setMsg(err?.message === 'Invalid login credentials' ? 'Correo o contraseña incorrectos.' : (err?.message || 'Algo ha ido mal. Inténtalo de nuevo.'), 'err');
+      submit.disabled = false;
+    }
+  });
+</script>

@@ -1,0 +1,95 @@
+{
+  "n": 2,
+  "title": "Hacer cálculos",
+  "sub": "Combinar los datos que guardaste para sacar totales, medias, porcentajes y precios con IVA.",
+  "intro": "Casi cualquier app útil <strong>calcula algo</strong>: un total de la compra, la media de las notas, el porcentaje de asistencia, el precio con IVA. Ya sabes guardar datos en variables; ahora aprendes a <strong>operar</strong> con ellos para obtener resultados nuevos. Es matemática de la de siempre, pero escrita para el ordenador.",
+  "blocks": [
+    {
+      "h": "Los operadores aritméticos",
+      "p": [
+        "Para calcular usas <strong>operadores</strong>, los mismos símbolos de la calculadora, con dos detalles: multiplicar es <strong>*</strong> y dividir es <strong>/</strong>.",
+        "El resultado de una operación puedes guardarlo en otra variable y seguir usándolo. Así encadenas cálculos: un dato lleva al siguiente."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const precio = 12;\nconst cantidad = 3;\n\nconst suma  = precio + cantidad;   // 15\nconst resta = precio - cantidad;   // 9\nconst total = precio * cantidad;   // 36  (multiplicar)\nconst mitad = precio / 2;          // 6   (dividir)"
+      }
+    },
+    {
+      "h": "El resto: el operador %",
+      "p": [
+        "Hay un operador menos conocido pero muy útil: <strong>%</strong>, el <em>resto</em> de una división (también llamado módulo). No es el porcentaje; es lo que sobra al dividir.",
+        "10 % 3 es 1, porque 3 cabe tres veces en 10 (9) y sobra 1. ¿Para qué sirve? Sobre todo para saber si un número es par (resto 0 al dividir entre 2) o para repartir cosas en grupos."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "console.log(10 % 3);   // 1  (sobra 1)\nconsole.log(10 % 2);   // 0  → 10 es par\nconsole.log(7 % 2);    // 1  → 7 es impar"
+      },
+      "note": "No confundas <b>%</b> (el resto de una división) con el <b>porcentaje</b>. Para un porcentaje se calcula a mano: parte / total * 100."
+    },
+    {
+      "h": "El orden importa: la precedencia",
+      "p": [
+        "Las operaciones no se resuelven de izquierda a derecha sin más: primero se hacen las multiplicaciones y divisiones, y después las sumas y restas. Es la misma regla que aprendiste en el colegio.",
+        "Si quieres cambiar ese orden, usa <strong>paréntesis</strong>: lo que va dentro se calcula primero. En caso de duda, sobran paréntesis: dejan la intención clara y evitan sorpresas."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "console.log(2 + 3 * 4);     // 14  (primero 3*4, luego +2)\nconsole.log((2 + 3) * 4);   // 20  (el paréntesis manda)"
+      }
+    },
+    {
+      "h": "Casos reales: total, IVA y media",
+      "p": [
+        "Con lo anterior ya montas los cálculos típicos de una app. Un <strong>total</strong> es precio por cantidad. Para añadir el <strong>IVA</strong> del 21% multiplicas por 1.21 (el 100% original más el 21%). Una <strong>media</strong> es la suma dividida entre cuántos son."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const precio = 20;\nconst cantidad = 3;\n\nconst total  = precio * cantidad;   // 60\nconst conIva = total * 1.21;        // 72.6  (añade el 21%)\n\n// Media de tres notas\nconst media = (4 + 5 + 3) / 3;      // 4"
+      }
+    },
+    {
+      "h": "Decimales limpios con toFixed",
+      "p": [
+        "A veces salen decimales largos o resultados con muchas cifras (72.60000000000001). Para <strong>mostrarlos</strong> con un número fijo de decimales usas <strong>.toFixed(2)</strong>: redondea a dos cifras y te da el resultado listo para enseñar.",
+        "Ojo a un detalle: toFixed devuelve <strong>texto</strong>, no número. Está pensado para mostrar el resultado al final, no para seguir calculando con él."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const conIva = 72.6;\nconsole.log(conIva.toFixed(2));   // \"72.60\"  (para mostrar)\n\nconst media = 4.6666;\nconsole.log(media.toFixed(1));    // \"4.7\""
+      }
+    }
+  ],
+  "ex": [
+    { "t": "Calcula el <strong>total</strong> de una compra de tu app a partir de un precio y una cantidad, y muéstralo.", "hint": "total = precio * cantidad;", "sol": "const precio = 8;\nconst cantidad = 5;\nconst total = precio * cantidad;\nconsole.log(total);   // 40" },
+    { "t": "Añade el IVA (21%) a ese total y muéstralo redondeado a dos decimales.", "hint": "Multiplica por 1.21 y luego usa .toFixed(2) para mostrar.", "sol": "const conIva = total * 1.21;\nconsole.log(conIva.toFixed(2));" },
+    { "t": "Calcula la <strong>media</strong> de tres valores de tu app (tres notas, tres precios, tres cantidades). Recuerda los paréntesis.", "hint": "media = (a + b + c) / 3;  El paréntesis suma primero." },
+    { "t": "Reto: calcula qué <strong>porcentaje</strong> representa una parte sobre un total (por ejemplo, cuántos de 20 partidos se ganaron, en %).", "reto": true, "hint": "porcentaje = parte / total * 100;", "sol": "const ganados = 13;\nconst jugados = 20;\nconst porcentaje = ganados / jugados * 100;\nconsole.log(porcentaje.toFixed(1) + \" %\");   // \"65.0 %\"" }
+  ],
+  "pitfalls": [
+    { "t": "“Sumo dos números y me sale 71 en vez de 8.”", "p": "Uno de los dos era texto (iba entre comillas). Con textos, + los pega en vez de sumarlos: \"7\" + 1 da \"71\". Quita las comillas para que sean números." },
+    { "t": "“El resultado tiene decimales imposibles: 0.30000000004.”", "p": "Es normal: los decimales se guardan aproximados. Para mostrarlos limpios usa .toFixed(2). No es un error tuyo." },
+    { "t": "“Mi cálculo da un orden raro.”", "p": "Primero se multiplica y divide, luego se suma y resta. Si quieres otro orden, pon paréntesis: (2 + 3) * 4." },
+    { "t": "“Divido y me sale NaN.”", "p": "NaN significa “no es un número”: estás operando con algo que no lo es (un texto o una variable vacía). Comprueba con typeof que ambos lados son números." }
+  ],
+  "recap": [
+    "Operas con + - * / y el resto con %. Multiplicar es * y dividir es /.",
+    "Primero se multiplica y divide, después se suma y resta. Los paréntesis cambian el orden.",
+    "Total = precio * cantidad. IVA del 21% = multiplicar por 1.21.",
+    "Media = suma dividida entre cuántos son. Porcentaje = parte / total * 100.",
+    ".toFixed(2) muestra un número con decimales limpios, pero devuelve texto.",
+    "Un número entre comillas es texto y no calcula: quítale las comillas."
+  ],
+  "quiz": [
+    { "q": "¿Cuánto vale (4 + 2) / 2?", "o": ["2", "3", "6"], "a": 1 },
+    { "q": "¿Cuánto vale 2 + 3 * 4?", "o": ["14", "20", "24"], "a": 0 },
+    { "q": "¿Qué hace el operador %?", "o": ["Calcula el porcentaje", "Da el resto de una división", "Multiplica por 100"], "a": 1 },
+    { "q": "¿Qué devuelve (72.6).toFixed(2)?", "o": ["El número 72.6", "El texto \"72.60\"", "Un error"], "a": 1 }
+  ],
+  "faq": [
+    { "q": "¿Por qué salen decimales tan raros al calcular?", "a": "El ordenador guarda los decimales de forma aproximada, así que a veces aparecen cifras de más. No es un fallo tuyo: usa .toFixed() para mostrarlos limpios." },
+    { "q": "¿% es el porcentaje?", "a": "No. % da el resto de una división (10 % 3 es 1). Un porcentaje se calcula a mano: parte / total * 100." },
+    { "q": "¿Puedo seguir calculando con el resultado de toFixed?", "a": "Mejor no: toFixed devuelve texto. Úsalo solo al final para mostrar. Para seguir calculando, trabaja con los números originales." },
+    { "q": "¿Cómo redondeo hacia arriba o hacia abajo?", "a": "Con Math.round (al más cercano), Math.ceil (arriba) y Math.floor (abajo). toFixed también redondea al mostrar." }
+  ]
+}

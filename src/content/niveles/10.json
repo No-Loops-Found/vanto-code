@@ -1,0 +1,149 @@
+{
+  "n": 10,
+  "title": "Consultas y estadística",
+  "sub": "Ya tienes los datos guardados. Ahora haces que respondan preguntas: cuántos, cuánto, cuál es el que más. Eso es el panel de tu app.",
+  "tool": "Supabase",
+  "intro": "Guardar datos está bien, pero el valor de verdad aparece cuando esos datos <strong>responden preguntas</strong>. ¿Cuántas plantas necesitan riego hoy? ¿Cuál es el equipo con más puntos? ¿Cuánto he facturado este mes? Ese resumen —el <strong>panel</strong>— es lo que convierte una lista de registros en una herramienta que se consulta cada día. En este nivel aprendes a <strong>preguntarle a la base de datos</strong>: filtrar (solo los que…), ordenar (de mayor a menor), contar, y a partir de los resultados calcular totales, medias y rankings con lo que ya sabes de JavaScript. Es el nivel que hace tu app útil, no solo funcional.",
+  "blocks": [
+    {
+      "h": "Filtrar: traer solo lo que te interesa",
+      "p": [
+        "Traer <strong>todo</strong> con <code>.select('*')</code> está bien para empezar, pero muchas veces quieres solo una parte: las plantas de una especie, los partidos de un equipo. Para eso encadenas un <strong>filtro</strong> a la consulta.",
+        "El más usado es <strong>.eq()</strong> (de <em>equal</em>, igual): “tráeme las filas donde esta columna sea igual a esto”. Hay más (<code>.gt()</code> mayor que, <code>.lt()</code> menor que, <code>.gte()</code> mayor o igual…), pero con <code>.eq()</code> ya resuelves muchísimo."
+      ],
+      "code": {
+        "label": "app.js — filtrar",
+        "text": "// Solo los riegos de la planta con id 1\nconst { data } = await supabase\n  .from('riegos')\n  .select('*')\n  .eq('planta_id', 1);\n\nconsole.log('Esta planta se ha regado ' + data.length + ' veces');\n\n// Solo las plantas que llevan más de 3 días sin agua\nconst { data: secas } = await supabase\n  .from('plantas')\n  .select('*')\n  .gt('dias_sin_agua', 3);"
+      },
+      "note": "Cada filtro que añades trae <b>menos datos</b> por la red, así que además de cómodo es eficiente. Piensa la pregunta en español (“solo los que…”) y tradúcela a un <code>.eq()</code> o un <code>.gt()</code>."
+    },
+    {
+      "h": "Ordenar y limitar: rankings",
+      "p": [
+        "Para un ranking necesitas <strong>ordenar</strong>. Con <strong>.order()</strong> ordenas por una columna; añadiendo <code>{ ascending: false }</code> lo pones de <strong>mayor a menor</strong>. Y con <strong>.limit()</strong> te quedas solo con los primeros.",
+        "Juntos son el clásico “top 3”: ordena de mayor a menor y limita a 3. Ideal para “los equipos con más puntos” o “los productos más vendidos”."
+      ],
+      "code": {
+        "label": "app.js — ranking",
+        "text": "// Los 3 equipos con más puntos\nconst { data } = await supabase\n  .from('equipos')\n  .select('*')\n  .order('puntos', { ascending: false })\n  .limit(3);\n\nfor (const equipo of data) {\n  console.log(equipo.nombre + ': ' + equipo.puntos + ' pts');\n}"
+      }
+    },
+    {
+      "h": "Contar cuántos hay",
+      "p": [
+        "Una de las preguntas más frecuentes es simplemente <strong>cuántos</strong>. La forma directa que ya conoces: traes las filas y miras <strong>.length</strong> del array, como en el nivel 6.",
+        "Si solo te interesa el número y no los datos, Supabase puede contar por ti sin traértelos todos, con la opción <code>count</code>. Para el curso, con <code>data.length</code> vas de sobra; te enseñamos la otra por si tu tabla crece mucho."
+      ],
+      "code": {
+        "label": "app.js — contar",
+        "text": "// Opción sencilla: traer y contar con .length\nconst { data } = await supabase.from('plantas').select('*');\nconsole.log('Tengo ' + data.length + ' plantas');\n\n// Opción eficiente: contar sin traer las filas\nconst { count } = await supabase\n  .from('plantas')\n  .select('*', { count: 'exact', head: true });\nconsole.log('Total: ' + count);"
+      }
+    },
+    {
+      "h": "Calcular el resumen: totales y medias",
+      "p": [
+        "Aquí vuelves a JavaScript puro. Una vez tienes los datos en un array (nivel 6), recorres y calculas: sumas para el <strong>total</strong>, divides entre <code>.length</code> para la <strong>media</strong>, cuentas los que cumplen algo para un <strong>porcentaje</strong>.",
+        "Es exactamente lo de los niveles 3, 4 y 5, pero ahora sobre datos <strong>reales y guardados</strong>. La misma media que calculabas con números inventados, ahora sobre las notas de verdad de tu app."
+      ],
+      "code": {
+        "label": "app.js — estadística",
+        "text": "const { data } = await supabase.from('notas').select('*');\n\n// Total\nlet suma = 0;\nfor (const fila of data) {\n  suma += fila.valor;\n}\n\n// Media (¡cuidado con dividir entre cero!)\nconst media = data.length > 0 ? suma / data.length : 0;\nconsole.log('Media: ' + media.toFixed(2));\n\n// Porcentaje de aprobados (>= 5)\nconst aprobados = data.filter(f => f.valor >= 5).length;\nconst porcentaje = data.length > 0\n  ? (aprobados / data.length) * 100\n  : 0;\nconsole.log('Aprobados: ' + porcentaje.toFixed(0) + '%');"
+      },
+      "note": "Con <code>filter</code> del nivel 6 cuentas condiciones en una línea: los que aprueban, los que están pendientes, los de hoy. <code>lista.filter(...).length</code> es tu navaja suiza para las estadísticas."
+    },
+    {
+      "h": "Montar el panel en pantalla",
+      "p": [
+        "El último paso junta todo el curso: consultas los datos, calculas los números y los <strong>pintas</strong> con el DOM del nivel 8. El resultado es un panel: unas cuantas cifras que resumen tu app de un vistazo.",
+        "Separa bien las tres partes: <strong>traer</strong> (Supabase), <strong>calcular</strong> (JavaScript) y <strong>mostrar</strong> (DOM). Cada una es algo que ya sabes hacer; el panel solo las encadena."
+      ],
+      "code": {
+        "label": "app.js — panel",
+        "text": "async function pintarPanel() {\n  const { data } = await supabase.from('plantas').select('*');\n\n  const total = data.length;\n  const secas = data.filter(p => p.dias_sin_agua > 3).length;\n\n  document.querySelector('#total').textContent = total;\n  document.querySelector('#secas').textContent = secas;\n}\n\npintarPanel();"
+      }
+    }
+  ],
+  "ex": [
+    {
+      "t": "Haz una consulta con .eq() que traiga solo las filas de un elemento concreto de tu app, y muestra cuántas son con .length.",
+      "hint": "await supabase.from('tabla').select('*').eq('columna', valor); y luego data.length.",
+      "sol": "const { data } = await supabase\n  .from('riegos')\n  .select('*')\n  .eq('planta_id', 1);\nconsole.log('Regada ' + data.length + ' veces');"
+    },
+    {
+      "t": "Trae todos los registros de una tabla y calcula un total o una media de una columna numérica, recorriéndola con for...of.",
+      "hint": "let suma = 0; for (const f of data) suma += f.valor; const media = suma / data.length;",
+      "sol": "const { data } = await supabase.from('notas').select('*');\nlet suma = 0;\nfor (const f of data) suma += f.valor;\nconst media = data.length > 0 ? suma / data.length : 0;\nconsole.log('Media: ' + media.toFixed(2));"
+    },
+    {
+      "t": "Usa .order() para traer los datos de mayor a menor por una columna y muestra el primero (el 'líder' de tu ranking).",
+      "hint": ".order('puntos', { ascending: false }) y luego data[0] es el primero."
+    },
+    {
+      "t": "Reto: monta un mini-panel en pantalla con al menos dos cifras (por ejemplo total de elementos y cuántos cumplen una condición con filter), pintadas en el DOM.",
+      "reto": true,
+      "hint": "Calcula data.length y data.filter(x => x.campo > N).length, y vuélcalos con querySelector('#id').textContent = valor."
+    }
+  ],
+  "pitfalls": [
+    {
+      "t": "“Divido para la media y me sale NaN.”",
+      "p": "NaN significa “Not a Number”: casi siempre has dividido entre 0 porque la lista está vacía. Protégete antes: <code>data.length &gt; 0 ? suma / data.length : 0</code>. Comprobar si hay datos antes de dividir es de buen programador."
+    },
+    {
+      "t": "“El filtro no devuelve nada aunque sé que hay filas.”",
+      "p": "Revisa que el valor del <code>.eq()</code> coincida <b>de verdad</b>: <code>.eq('planta_id', 1)</code> (número) no es lo mismo que <code>.eq('planta_id', '1')</code> (texto) si la columna es numérica. Tipos y mayúsculas cuentan."
+    },
+    {
+      "t": "“Ordeno pero sale de menor a mayor y yo quería un ranking.”",
+      "p": "Por defecto <code>.order()</code> va de menor a mayor (ascendente). Para un ranking (el mayor arriba) añade la opción: <code>.order('puntos', { ascending: false })</code>."
+    },
+    {
+      "t": "“Traigo miles de filas solo para contarlas.”",
+      "p": "Funciona, pero gasta de más. Si solo quieres el número, usa <code>{ count: 'exact', head: true }</code> y Supabase cuenta sin enviarte los datos. Para el curso no es crítico, pero es un buen hábito cuando la tabla crece."
+    }
+  ],
+  "recap": [
+    ".eq(), .gt(), .lt() filtran la consulta: traen solo las filas que cumplen la condición.",
+    ".order('col', { ascending: false }) ordena de mayor a menor; con .limit() haces un top.",
+    "Cuentas con data.length, o con { count: 'exact', head: true } si la tabla es grande.",
+    "Los totales, medias y porcentajes se calculan en JavaScript sobre los datos traídos (niveles 3-6).",
+    "Antes de dividir, comprueba que hay datos: evita el NaN de dividir entre cero.",
+    "El panel es traer (Supabase) + calcular (JS) + mostrar (DOM): tu app se vuelve útil de verdad."
+  ],
+  "quiz": [
+    {
+      "q": "¿Qué hace .eq('planta_id', 1) en una consulta?",
+      "o": ["Borra las filas de la planta 1", "Trae solo las filas donde planta_id vale 1", "Crea una columna nueva"],
+      "a": 1
+    },
+    {
+      "q": "¿Cómo ordenas de mayor a menor para un ranking?",
+      "o": [".order('puntos', { ascending: false })", ".order('puntos')", ".limit(false)"],
+      "a": 0
+    },
+    {
+      "q": "¿Cómo se calcula un porcentaje de aprobados?",
+      "o": ["aprobados − total", "(aprobados / total) × 100", "solo se puede en SQL"],
+      "a": 1
+    },
+    {
+      "q": "Al calcular una media te sale NaN. ¿Causa más probable?",
+      "o": ["Has dividido entre 0 (la lista está vacía)", "Supabase está caído", "Falta instalar Node"],
+      "a": 0
+    }
+  ],
+  "faq": [
+    {
+      "q": "¿Calculo en la base de datos o en JavaScript?",
+      "a": "Para el curso, lo más fácil es traer los datos con .select() y calcular en JavaScript, que ya lo dominas. Cuando tu app crezca mucho puedes mover parte del cálculo a la base de datos (SQL) para que sea más rápido."
+    },
+    {
+      "q": "¿Y si mi tabla no tiene datos todavía?",
+      "a": "Contrólalo siempre: si data.length es 0, muestra 'sin datos' en vez de dividir o pintar cifras raras. Una app que se comporta bien vacía da mucha confianza."
+    },
+    {
+      "q": "¿Puedo combinar varios filtros?",
+      "a": "Sí: se encadenan uno detrás de otro. Por ejemplo .eq('equipo', 'Tigres').gt('goles', 0) trae las filas de los Tigres con al menos un gol. Cada eslabón afina más la pregunta."
+    }
+  ]
+}

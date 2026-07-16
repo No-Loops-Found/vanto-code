@@ -1,0 +1,97 @@
+{
+  "n": 3,
+  "title": "Tomar decisiones",
+  "sub": "Que tu app reaccione: que avise, clasifique y cambie de estado según lo que pasa.",
+  "intro": "Una app que solo guarda y calcula está a medias. La que de verdad ayuda <strong>toma decisiones</strong>: avisa de que toca regar, marca un pago como pendiente o listo, clasifica una falta. Todo eso se hace con <strong>condiciones</strong>: le dices al ordenador “si pasa esto, haz aquello”. En este nivel tu app empieza a reaccionar sola.",
+  "blocks": [
+    {
+      "h": "El if: haz algo solo si se cumple",
+      "p": [
+        "Un <strong>if</strong> ejecuta un bloque de código <strong>solo si</strong> una condición es verdadera. La condición va entre paréntesis y el código a ejecutar va entre llaves { }.",
+        "Léelo tal cual suena: <em>si (esto es verdad) { haz esto }</em>. Si la condición no se cumple, el bloque se salta y el programa sigue."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const diasSinAgua = 4;\n\nif (diasSinAgua > 3) {\n  console.log(\"¡Riégala ya!\");\n}\n// Como 4 > 3 es verdad, se muestra el aviso"
+      }
+    },
+    {
+      "h": "Comparaciones: cómo se construye la condición",
+      "p": [
+        "Dentro del if pones una <strong>comparación</strong>, que siempre da <strong>true o false</strong>. Estos son los operadores que usarás:",
+        "<strong>&gt;</strong> mayor que · <strong>&lt;</strong> menor que · <strong>&gt;=</strong> mayor o igual · <strong>&lt;=</strong> menor o igual.",
+        "Para comparar si dos cosas son <strong>iguales</strong> usa <strong>===</strong> (tres iguales), y <strong>!==</strong> para “distinto de”. Cuidado: un solo <strong>=</strong> no compara, <em>asigna</em> un valor. Es el error más típico del nivel."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const estado = \"pendiente\";\n\nconsole.log(5 > 3);            // true\nconsole.log(estado === \"listo\");  // false\nconsole.log(estado !== \"listo\");  // true\n\n// = asigna, === compara. ¡No los mezcles!"
+      },
+      "note": "Usa siempre <b>===</b> para comparar, nunca <b>==</b>. El triple igual compara valor y tipo sin sorpresas; el doble tiene reglas raras que te la juegan."
+    },
+    {
+      "h": "else y else if: los otros casos",
+      "p": [
+        "Con <strong>else</strong> dices “y si no se cumple, haz esto otro”. Con <strong>else if</strong> encadenas varios casos en orden: se prueba el primero, si no, el segundo, y así hasta que uno encaje o llegues al else final.",
+        "Se evalúan de arriba abajo y solo entra <strong>uno</strong>: en cuanto un caso se cumple, los demás se ignoran. Por eso el orden importa: pon primero lo más exigente."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const diasSinAgua = 2;\nlet aviso;\n\nif (diasSinAgua > 3) {\n  aviso = \"¡Riégala ya!\";\n} else if (diasSinAgua > 1) {\n  aviso = \"Pronto tocará\";\n} else {\n  aviso = \"Todo bien\";\n}\n\nconsole.log(aviso);   // \"Pronto tocará\""
+      }
+    },
+    {
+      "h": "Combinar condiciones: && y ||",
+      "p": [
+        "A veces una decisión depende de <strong>dos cosas a la vez</strong>. Para eso combinas condiciones:",
+        "<strong>&&</strong> (y) es verdadero solo si <strong>las dos</strong> partes lo son. <strong>||</strong> (o) es verdadero si <strong>al menos una</strong> lo es. Y <strong>!</strong> (no) invierte: convierte true en false y al revés."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const diasSinAgua = 5;\nconst esVerano = true;\n\nif (diasSinAgua > 3 && esVerano) {\n  console.log(\"Riega más: sol y sed\");\n}\n\n// || : con que se cumpla una, basta\nif (diasSinAgua > 7 || !esVerano) {\n  console.log(\"Revisa esta planta\");\n}"
+      }
+    },
+    {
+      "h": "El atajo: el operador ternario",
+      "p": [
+        "Cuando la decisión es simple (una cosa u otra según una condición), hay una forma más corta de escribirla en una sola línea: el <strong>ternario</strong>.",
+        "Se lee: <em>condición ? valorSiEsVerdad : valorSiEsFalso</em>. Es ideal para asignar un estado. Para casos con muchas ramas, mejor un if/else if normal: se lee mejor."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const pagado = false;\n\n// if/else de toda la vida:\nlet estado;\nif (pagado) { estado = \"listo\"; } else { estado = \"pendiente\"; }\n\n// lo mismo, en una línea con ternario:\nconst estado2 = pagado ? \"listo\" : \"pendiente\";\nconsole.log(estado2);   // \"pendiente\""
+      }
+    }
+  ],
+  "ex": [
+    { "t": "Escribe un <strong>if</strong> que muestre un aviso en tu app según un dato (por ejemplo, avisar si quedan menos de 3 unidades en stock).", "hint": "if (stock < 3) { console.log(\"Repón stock\"); }", "sol": "const stock = 2;\nif (stock < 3) {\n  console.log(\"Repón stock\");\n}" },
+    { "t": "Amplíalo con <strong>else if</strong> y <strong>else</strong> para dar tres mensajes distintos según tres rangos.", "hint": "Ordena de mayor exigencia a menor: primero el caso más crítico." },
+    { "t": "Combina dos condiciones con <strong>&&</strong> o <strong>||</strong> para decidir algo de tu app (por ejemplo: avisar solo si está pendiente Y ha vencido la fecha).", "hint": "if (pendiente && vencido) { ... }" },
+    { "t": "Reto: usa el operador <strong>ternario</strong> para asignar el estado (“pendiente” / “listo”) de un elemento de tu app según un booleano, y muéstralo.", "reto": true, "hint": "const estado = pagado ? \"listo\" : \"pendiente\";", "sol": "const pagado = true;\nconst estado = pagado ? \"listo\" : \"pendiente\";\nconsole.log(estado);   // \"listo\"" }
+  ],
+  "pitfalls": [
+    { "t": "“Mi if siempre entra, aunque no debería.”", "p": "Casi seguro escribiste = en vez de ===. Un solo igual asigna un valor (y siempre da verdadero). Para comparar usa === (o !== para distinto)." },
+    { "t": "“Comparo textos y me falla por una mayúscula.”", "p": "\"Pendiente\" y \"pendiente\" son distintos para el ordenador. Decide un formato y sé consistente, o pasa todo a minúsculas antes de comparar." },
+    { "t": "“Puse dos if seguidos y entran los dos.”", "p": "Dos if separados se evalúan por su cuenta. Si quieres que solo entre uno, encadénalos con else if." },
+    { "t": "“Me lío con && y ||.”", "p": "&& exige que se cumplan las dos; || con una basta. Truco: & de “y ambas”, | de “o cualquiera”." }
+  ],
+  "recap": [
+    "if ejecuta un bloque solo si su condición es verdadera.",
+    "Las comparaciones (>, <, >=, <=, ===, !==) siempre dan true o false.",
+    "= asigna, === compara. Usa siempre === para comparar.",
+    "else if encadena casos y solo entra uno; el orden importa.",
+    "&& exige las dos condiciones; || con una basta; ! invierte.",
+    "El ternario condición ? a : b decide en una sola línea."
+  ],
+  "quiz": [
+    { "q": "¿Cuándo se ejecuta el bloque de else?", "o": ["Siempre", "Cuando ningún if/else if anterior se cumplió", "La primera vez"], "a": 1 },
+    { "q": "¿Cuál usas para comparar si dos cosas son iguales?", "o": ["=", "===", "=>"], "a": 1 },
+    { "q": "diasSinAgua > 3 && esVerano es verdadero cuando…", "o": ["Se cumple al menos una", "Se cumplen las dos", "No se cumple ninguna"], "a": 1 },
+    { "q": "¿Qué asigna: const s = ok ? \"si\" : \"no\"; cuando ok es false?", "o": ["\"si\"", "\"no\"", "true"], "a": 1 }
+  ],
+  "faq": [
+    { "q": "¿== o ===? ¿Por qué siempre el triple?", "a": "Usa siempre ===: compara valor y tipo sin conversiones raras. El == a veces dice que \"5\" y 5 son iguales, y eso da errores difíciles de encontrar." },
+    { "q": "Tengo muchísimos if anidados, ¿es normal?", "a": "Si comparas un mismo valor contra muchos casos, un switch queda más limpio. Y a menudo puedes mover la decisión a una función (lo verás en el nivel 5)." },
+    { "q": "¿Puedo comparar textos con > o <?", "a": "Sí, pero compara por orden alfabético, que rara vez es lo que quieres. Usa > y < para números, y === para textos." },
+    { "q": "¿Necesito siempre un else?", "a": "No. El else es opcional: úsalo solo si quieres hacer algo cuando la condición no se cumple. Un if suelto es perfectamente válido." }
+  ]
+}

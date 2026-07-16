@@ -1,0 +1,100 @@
+{
+  "n": 0,
+  "title": "Preparar el entorno y tu primer programa",
+  "sub": "Sin instalar nada. Vas a entender qué es programar y a dejar tu proyecto en marcha en el navegador.",
+  "tool": "GitHub · Codespaces",
+  "intro": "Este es el nivel más importante y, a la vez, el más tranquilo: aquí todavía no programas <strong>de verdad</strong>. Vas a entender qué es programar, a preparar el sitio donde vas a trabajar y a escribir tu primer programa. No necesitas saber nada de antes ni instalar nada. Si al terminar tu entorno funciona, el resto del curso es cuesta abajo.",
+  "blocks": [
+    {
+      "h": "¿Qué es programar, en realidad?",
+      "p": [
+        "Programar es darle a un ordenador una <strong>lista de instrucciones</strong>, muy exactas y en orden, para que haga algo por ti.",
+        "La clave es esa palabra: <strong>exactas</strong>. El ordenador no <em>entiende</em> lo que quieres decir; hace justo lo que le escribes, ni más ni menos. Por eso al principio parece quisquilloso: una coma fuera de sitio y protesta. No es que se te dé mal — es que hay que ser preciso, y eso se entrena.",
+        "Piénsalo como una receta para alguien que sigue los pasos al pie de la letra, sin improvisar nada. Si te saltas <em>precalienta el horno</em>, se queda crudo. El ordenador es igual de literal."
+      ]
+    },
+    {
+      "h": "¿En qué “idioma” le hablamos?",
+      "p": [
+        "Hay muchos lenguajes de programación. Nosotros usaremos <strong>JavaScript</strong>, y por una razón muy práctica: es el lenguaje que <strong>ya entienden todos los navegadores</strong> (Chrome, Firefox, Safari, Edge…).",
+        "Eso significa que no tienes que instalar nada especial para ejecutarlo: tu navegador ya sabe. Con JavaScript se hacen páginas, aplicaciones e incluso programas de servidor, así que lo que aprendas aquí te vale para mucho más adelante."
+      ]
+    },
+    {
+      "h": "Las tres piezas de una app web",
+      "p": ["Una aplicación web sencilla son <strong>tres archivos</strong>, cada uno con un papel distinto:"],
+      "code": {
+        "label": "los tres archivos",
+        "text": "index.html   // la estructura: qué hay en la página\nstyle.css    // el aspecto: colores, tamaños, espacios\napp.js       // la lógica: qué hace la app"
+      },
+      "note": "Una analogía que ayuda: <b>HTML</b> son los huesos, <b>CSS</b> es la ropa y <b>JavaScript</b> es el movimiento. En el Nivel 0 nos centramos en dejar el esqueleto puesto y darle vida con una línea de JavaScript."
+    },
+    {
+      "h": "Cómo se conectan",
+      "p": ["El HTML es el que manda: es la página que se abre. Dentro, una línea enlaza tu JavaScript para que se ejecute. Este es el <strong>index.html</strong> mínimo con el que vas a empezar:"],
+      "code": {
+        "label": "index.html",
+        "text": "<!DOCTYPE html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Mi app</title>\n  </head>\n  <body>\n    <h1>Mi app</h1>\n    <script src=\"app.js\"></script>\n  </body>\n</html>"
+      }
+    },
+    {
+      "h": "Dónde vas a escribir el código",
+      "p": [
+        "Necesitas dos cosas: un <strong>editor</strong> (una especie de “Word” para código) y un <strong>sitio donde guardar</strong> tu trabajo. Lo haremos todo <strong>online</strong>, así que te vale cualquier ordenador o incluso una tablet.",
+        "<strong>GitHub</strong> guarda tu código en la nube. <strong>Codespaces</strong> (dentro de GitHub) o <strong>StackBlitz</strong> te dan el editor directamente en el navegador. Cero instalaciones."
+      ]
+    },
+    {
+      "h": "Guardar de verdad: el commit",
+      "p": [
+        "Guardar en el editor (Ctrl+S) evita perder lo que escribes, pero hay un guardado más importante: el <strong>commit</strong>.",
+        "Un commit es una <strong>foto</strong> de todo tu proyecto en un momento dado, con una etiqueta que tú pones (“Primer programa”, “Añado el título”…). Si más adelante algo se rompe, puedes volver a cualquier foto anterior. Es tu red de seguridad — y además te deja ver cómo ha ido creciendo tu app."
+      ]
+    }
+  ],
+  "code2": {
+    "label": "app.js — tu primer programa",
+    "text": "// Esto se muestra en la consola del navegador\nconsole.log(\"¡Hola! Esta es mi primera app.\");"
+  },
+  "steps": [
+    { "t": "Crea tu cuenta en GitHub", "p": "Entra en github.com y pulsa “Sign up”. Te pedirá un correo, un nombre de usuario y una contraseña. Es gratis. Apunta bien el usuario y la contraseña." },
+    { "t": "Crea tu primer repositorio", "p": "Pulsa el “+” de arriba a la derecha → “New repository”. Ponle de nombre <b>mi-proyecto</b> (o el nombre de tu app). Marca la casilla “Add a README” y pulsa “Create repository”. Ya tienes tu carpeta en la nube." },
+    { "t": "Abre el editor en el navegador", "p": "Dentro del repo, pulsa el botón verde “Code” → pestaña “Codespaces” → “Create codespace”. Espera unos segundos y se abre un editor completo dentro del navegador. (Alternativa 100% gratis y sin esperas: entra en stackblitz.com y crea un proyecto en blanco de tipo “JavaScript”.)" },
+    { "t": "Crea los tres archivos", "p": "En el editor, crea <b>index.html</b>, <b>style.css</b> y <b>app.js</b>. Pega en index.html el código de más arriba." },
+    { "t": "Escribe tu primer programa", "p": "Abre app.js y escribe una sola línea (la tienes arriba). Con eso ya le estás dando una instrucción al ordenador." },
+    { "t": "Ejecútalo y compruébalo", "p": "Abre la vista previa de la página. Para ver el mensaje, abre la <b>consola</b>: pulsa F12 (o clic derecho → “Inspeccionar”) y ve a la pestaña “Console”. Ahí aparece lo que muestra tu programa." },
+    { "t": "Guárdalo con un commit", "p": "Ve al icono de control de versiones (las ramitas), escribe el mensaje “Primer programa” y pulsa “Commit”. Enhorabuena: tu primer avance queda guardado para siempre." }
+  ],
+  "ex": [
+    { "t": "Crea tu repositorio en GitHub y ábrelo en Codespaces o StackBlitz.", "hint": "En el repo: botón verde “Code” → “Codespaces” → “Create codespace”." },
+    { "t": "Haz que la consola muestre, en dos líneas, tu nombre y el nombre de tu proyecto.", "hint": "Puedes usar console.log dos veces, una debajo de otra.", "sol": "console.log(\"Soy Marta\");\nconsole.log(\"Mi proyecto: El huerto\");" },
+    { "t": "Muestra en la consola una tercera línea con el año en que empiezas tu proyecto.", "hint": "Un número va sin comillas: console.log(2026);" },
+    { "t": "Reto: cambia el título de la página (el &lt;h1&gt;) por el nombre de tu proyecto, guarda y haz un commit llamado “Pongo el título”.", "reto": true, "hint": "El título está entre &lt;h1&gt; y &lt;/h1&gt; en index.html." }
+  ],
+  "pitfalls": [
+    { "t": "“Ejecuto y no veo nada.”", "p": "Lo más habitual: estás mirando en el sitio equivocado. console.log no escribe en la página, escribe en la <b>consola</b> del navegador (F12 → pestaña “Console”)." },
+    { "t": "“Me sale un texto rojo de error.”", "p": "Respira: un error no rompe nada. El mensaje te dice en qué línea está y qué pasa. Léelo despacio — casi siempre es una pista clarísima." },
+    { "t": "“Creo que olvidé una comilla.”", "p": "Pasa constantemente, también a los expertos. El código es muy literal: revisa que cada comilla tenga su pareja y que no falte un paréntesis." },
+    { "t": "“Cerré la pestaña y pensé que lo había perdido todo.”", "p": "Si hiciste commit, está a salvo en GitHub. Vuelves a abrir el proyecto y sigues donde lo dejaste." }
+  ],
+  "recap": [
+    "Programar es dar instrucciones exactas y en orden.",
+    "Usamos JavaScript porque el navegador ya lo entiende: no instalas nada.",
+    "Una app web son tres archivos: HTML (estructura), CSS (aspecto), JS (lógica).",
+    "GitHub guarda tu código; un commit es una foto a la que siempre puedes volver.",
+    "console.log muestra cosas en la consola del navegador (F12).",
+    "Ya tienes el entorno listo y tu primer programa funcionando. Lo difícil (empezar) ya está hecho."
+  ],
+  "quiz": [
+    { "q": "¿Qué necesitas instalar para empezar el curso?", "o": ["Node y un editor de escritorio", "Nada: se trabaja en el navegador", "Un compilador"], "a": 1 },
+    { "q": "¿Dónde aparece lo que muestra console.log?", "o": ["En medio de la página", "En la consola del navegador (F12)", "En un correo"], "a": 1 },
+    { "q": "¿Qué es un commit?", "o": ["Publicar la app en internet", "Una foto guardada del proyecto a la que volver", "Borrar el historial"], "a": 1 },
+    { "q": "¿Qué archivo lleva la lógica (lo que hace la app)?", "o": ["index.html", "style.css", "app.js"], "a": 2 }
+  ],
+  "faq": [
+    { "q": "¿Necesito saber inglés?", "a": "Ayuda un poco, porque muchas palabras del código están en inglés (console, function…), pero se aprenden sobre la marcha. Nosotros te lo explicamos todo en español." },
+    { "q": "Nunca he programado, ¿voy bien aquí?", "a": "Exactamente para eso es este nivel. No damos por sabido absolutamente nada." },
+    { "q": "¿Da igual si tengo Windows, Mac o una tablet?", "a": "Da igual: todo ocurre en el navegador. Con un teclado se trabaja más cómodo, nada más." },
+    { "q": "¿Cuánto se tarda en este nivel?", "a": "La primera vez, un rato (crear las cuentas). A partir de ahí, abrir el proyecto y ponerse cuesta minutos." }
+  ]
+}

@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import CodeBlock from './CodeBlock.astro';
+
+interface Props {
+  ex: CollectionEntry<'niveles'>['data']['ex'];
+}
+const { ex } = Astro.props;
+---
+<div class="sec-label">Ejercicios</div>
+{
+  ex.map((e) => (
+    <div class:list={['ex', { reto: e.reto }]}>
+      <div class="tag">{e.reto ? 'reto' : 'ejercicio'}</div>
+      <div class="t" set:html={e.t} />
+      {(e.hint || e.sol) && (
+        <details>
+          <summary>» Ver pista{e.sol ? ' / solución' : ''}</summary>
+          {e.hint && <p set:html={e.hint} />}
+          {e.sol && <CodeBlock label="una solución posible" text={e.sol} />}
+        </details>
+      )}
+    </div>
+  ))
+}

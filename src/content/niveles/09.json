@@ -1,0 +1,172 @@
+{
+  "n": 9,
+  "title": "Guardar en base de datos",
+  "sub": "Hasta ahora, al recargar se perdía todo. Aquí tus datos se guardan de verdad, en una base de datos real y gratis.",
+  "tool": "Supabase",
+  "intro": "Prueba una cosa con tu app de los niveles anteriores: añade una planta y recarga la página. ¿Verdad que ha desaparecido? Todo lo que guardas en variables y listas vive solo en la memoria del navegador: al cerrar o recargar, adiós. Para que los datos <strong>se queden</strong> necesitas una <strong>base de datos</strong>: un almacén que vive fuera del navegador y conserva la información aunque apagues el ordenador. Vamos a usar <strong>Supabase</strong>, que te regala una base de datos real con un panel web comodísimo, gratis para lo que necesitas. En este nivel entenderás qué es una tabla, crearás tu proyecto Supabase, tu primera tabla, y aprenderás a guardar y leer datos desde tu JavaScript.",
+  "blocks": [
+    {
+      "h": "Qué es una base de datos (tablas, filas, columnas)",
+      "p": [
+        "Una base de datos es, en el fondo, algo que ya conoces: una <strong>tabla</strong>, como en una hoja de cálculo. Cada <strong>columna</strong> es un dato (nombre, especie, fecha); cada <strong>fila</strong> es una cosa concreta (una planta).",
+        "La diferencia con tu lista de objetos del nivel 6 es dónde vive: tu lista está en la memoria del navegador y se borra al recargar; la tabla vive en un servidor y <strong>permanece</strong>. De hecho, una fila de la tabla y un objeto de tu app son casi lo mismo: mismas columnas, mismas propiedades."
+      ],
+      "note": "Cada fila lleva un <b>id</b> único (una <b>clave primaria</b>) que la identifica sin confusión, aunque dos plantas se llamen igual. Supabase te lo crea y rellena solo: no tienes que pensar en él."
+    },
+    {
+      "h": "Crear tu proyecto y tu tabla en Supabase",
+      "p": [
+        "Supabase te da un panel web donde creas tablas <strong>con botones</strong>, sin escribir nada. Defines las columnas (nombre y tipo: texto, número, fecha…) y ya tienes dónde guardar.",
+        "Por debajo, ese panel escribe <strong>SQL</strong>, el idioma de las bases de datos. No necesitas dominarlo, pero verlo ayuda a entender qué está pasando. Así se ve la instrucción que crea una tabla de plantas:"
+      ],
+      "code": {
+        "label": "SQL — lo que el panel hace por ti",
+        "text": "create table plantas (\n  id bigint primary key generated always as identity,\n  nombre text not null,\n  especie text,\n  dias_sin_agua int default 0,\n  creado timestamp default now()\n);"
+      },
+      "note": "No memorices ese SQL. Con el panel de Supabase creas la misma tabla pulsando “New table” y añadiendo columnas. Lo mostramos solo para que veas que no hay magia negra: una tabla con sus columnas."
+    },
+    {
+      "h": "Conectar tu app con Supabase",
+      "p": [
+        "Para hablar con tu base de datos desde JavaScript, Supabase te da un <strong>cliente</strong>: una herramienta que traduce tus llamadas en operaciones sobre la tabla. Se arranca con <strong>createClient</strong> y dos datos que encuentras en tu panel: la <strong>URL</strong> del proyecto y una <strong>clave pública</strong> (la <em>anon key</em>).",
+        "A partir de ahí, todo pasa por <code>supabase.from('tabla')</code>: desde ahí insertas, lees, filtras. Fíjate en la palabra <strong>await</strong>: como hablar con un servidor tarda un pelín, le dices a JavaScript “espera a que responda antes de seguir”."
+      ],
+      "code": {
+        "label": "app.js — arrancar el cliente",
+        "text": "import { createClient } from '@supabase/supabase-js';\n\nconst URL = 'https://tuproyecto.supabase.co';\nconst CLAVE = 'tu-anon-key-publica';\n\nconst supabase = createClient(URL, CLAVE);"
+      }
+    },
+    {
+      "h": "Guardar una fila con .insert()",
+      "p": [
+        "Guardar un dato nuevo es <strong>.insert()</strong>, pasándole un objeto con las columnas y sus valores. Fíjate: es exactamente el objeto que ya sabías montar en el nivel 7. Aquí, en vez de hacer <code>push</code> a una lista que se borra, lo mandas a la tabla que <strong>permanece</strong>.",
+        "El cliente te responde con dos cosas: <code>data</code> (lo que se guardó) y <code>error</code> (si algo falló). Comprobar el error es buena costumbre: te dice exactamente qué pasó."
+      ],
+      "code": {
+        "label": "app.js — insertar",
+        "text": "async function anadirPlanta(nombre, especie) {\n  const { data, error } = await supabase\n    .from('plantas')\n    .insert({ nombre: nombre, especie: especie });\n\n  if (error) {\n    console.log('No se pudo guardar:', error.message);\n  } else {\n    console.log('Guardada:', data);\n  }\n}\n\nanadirPlanta('Tomatera', 'Solanum');"
+      },
+      "note": "El <code>{ data, error }</code> es JavaScript sacando dos valores de la respuesta a la vez. Quédate con la idea: o hay <b>data</b> (salió bien) o hay <b>error</b> (te dice qué revisar). Nunca es una sorpresa muda."
+    },
+    {
+      "h": "Leer las filas con .select()",
+      "p": [
+        "Para traer lo que hay guardado usas <strong>.select('*')</strong>, donde el asterisco significa “todas las columnas”. Te devuelve un <strong>array de objetos</strong>: justo la lista de objetos del nivel 6, pero venida de la base de datos.",
+        "Y aquí se cierra el círculo del curso: recibes esa lista y la pintas en pantalla con lo que aprendiste en el nivel 8. Los datos ahora sobreviven a la recarga."
+      ],
+      "code": {
+        "label": "app.js — leer y pintar",
+        "text": "async function cargarPlantas() {\n  const { data, error } = await supabase\n    .from('plantas')\n    .select('*');\n\n  if (error) return console.log(error.message);\n\n  // data es una lista de objetos, como en el nivel 6\n  const lista = document.querySelector('#lista');\n  let html = '';\n  for (const planta of data) {\n    html += '<li>' + planta.nombre + '</li>';\n  }\n  lista.innerHTML = html;\n}\n\ncargarPlantas();"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "t": "Crea tu cuenta y tu proyecto en Supabase",
+      "p": "Entra en <b>supabase.com</b> y regístrate (puedes usar tu cuenta de GitHub). Pulsa “New project”, ponle un nombre (por ejemplo <b>mi-app</b>), elige una contraseña para la base de datos y una región cercana. Espera un par de minutos a que se cree. Es gratis."
+    },
+    {
+      "t": "Crea tu primera tabla",
+      "p": "En el menú lateral entra en “Table Editor” → “New table”. Ponle nombre (por ejemplo <b>plantas</b>). Deja marcada la columna <b>id</b> que viene por defecto (esa es tu clave primaria). Añade tus columnas con “+ Add column”: por ejemplo <b>nombre</b> (tipo text) y <b>especie</b> (tipo text). Guarda."
+    },
+    {
+      "t": "Inserta filas a mano desde el panel",
+      "p": "Dentro de la tabla, pulsa “Insert” → “Insert row” y rellena 2 o 3 plantas a mano. Así compruebas que tu tabla funciona antes de tocar código. Verás cómo cada fila recibe su <b>id</b> automático."
+    },
+    {
+      "t": "Copia tus claves de conexión",
+      "p": "Ve a “Project Settings” → “API”. Ahí tienes la <b>Project URL</b> y la clave <b>anon public</b>. Cópialas: son las que van en <code>createClient(URL, CLAVE)</code> de tu app. La anon key es pública y segura para el navegador; la otra clave (service_role) NO se usa nunca en el navegador."
+    },
+    {
+      "t": "Conecta desde tu código",
+      "p": "En tu proyecto, arranca el cliente con <code>createClient</code> y tus dos claves. Llama a <code>.select('*')</code> sobre tu tabla y muestra el resultado con <code>console.log</code>. Si ves tus filas en la consola, ¡ya estás leyendo de una base de datos real!"
+    },
+    {
+      "t": "Guarda desde tu app",
+      "p": "Conecta el input y el botón del nivel 8 a una función que haga <code>.insert()</code> con lo que el usuario escribe. Recarga la página después: tu dato sigue ahí. Ese es el momento en que tu app se vuelve de verdad."
+    }
+  ],
+  "ex": [
+    {
+      "t": "Crea tu proyecto Supabase y una tabla para la cosa principal de tu app, con al menos dos columnas propias además del id.",
+      "hint": "Table Editor → New table. Deja el id por defecto y añade tus columnas de tipo text o int con '+ Add column'."
+    },
+    {
+      "t": "Desde el panel, inserta 3 filas a mano. Luego, desde tu app, léelas con .select('*') y muéstralas en la consola.",
+      "hint": "const { data } = await supabase.from('tu_tabla').select('*'); console.log(data);",
+      "sol": "async function cargar() {\n  const { data, error } = await supabase.from('plantas').select('*');\n  if (error) return console.log(error.message);\n  console.log(data); // array de objetos, uno por fila\n}\ncargar();"
+    },
+    {
+      "t": "Escribe una función que inserte una fila nueva con .insert() a partir de dos valores, y comprueba el error por si falla.",
+      "hint": "await supabase.from('tabla').insert({ columna1: valor1, columna2: valor2 }); y mira el { data, error }.",
+      "sol": "async function anadir(nombre, especie) {\n  const { data, error } = await supabase\n    .from('plantas')\n    .insert({ nombre, especie });\n  if (error) console.log('Error:', error.message);\n  else console.log('Guardada:', data);\n}\nanadir('Menta', 'Mentha');"
+    },
+    {
+      "t": "Reto: junta el nivel 8 y este. Conecta tu input + botón para que al pulsar se guarde una fila con .insert(), y después vuelve a leer con .select() y repinta la lista en pantalla.",
+      "reto": true,
+      "hint": "En el addEventListener: primero await ...insert({...}), luego llama a tu función cargar() que hace select y pinta. Así la pantalla refleja lo recién guardado."
+    }
+  ],
+  "pitfalls": [
+    {
+      "t": "“Olvidé el await y me sale una promesa rara en vez de mis datos.”",
+      "p": "Hablar con la base de datos <b>tarda</b>, así que hay que esperar la respuesta con <code>await</code>: <code>const { data } = await supabase.from(...)...</code>. Y <code>await</code> solo funciona dentro de una función marcada como <code>async</code>. Si te sale “Promise { pending }”, casi seguro falta un await."
+    },
+    {
+      "t": "“Insert falla y no sé por qué.”",
+      "p": "No lo adivines: mira el <code>error.message</code>, que te lo dice clarísimo. Los dos motivos más comunes: el nombre de una columna no coincide (mayúsculas/tildes cuentan) o falta una columna obligatoria (marcada <code>not null</code>)."
+    },
+    {
+      "t": "“Leo la tabla desde la app y me devuelve una lista vacía aunque hay filas.”",
+      "p": "Es la seguridad de Supabase (Row Level Security). Por defecto protege tus tablas. Para el curso, en Authentication/Policies añade una política que permita leer (o desactívala en pruebas). No es un fallo tuyo: es Supabase protegiéndote por defecto."
+    },
+    {
+      "t": "“He puesto mi clave secreta en el código.”",
+      "p": "En el navegador se usa <b>solo</b> la clave <b>anon public</b>, que está pensada para eso. La otra (service_role) da acceso total y no debe salir nunca del servidor. Y ni una ni otra se suben “a pelo”: en el nivel 11 las moverás a variables de entorno."
+    }
+  ],
+  "recap": [
+    "En variables y listas los datos se pierden al recargar; una base de datos los conserva de verdad.",
+    "Una base de datos son tablas: columnas (los datos) y filas (cada cosa), cada fila con un id único.",
+    "Supabase te da una base de datos real y gratis, con un panel para crear tablas con botones.",
+    "createClient(URL, anon key) conecta tu JavaScript con tu proyecto Supabase.",
+    ".insert({ ... }) guarda una fila (un objeto como los del nivel 7); .select('*') lee todas.",
+    "La respuesta trae { data, error }: o tus datos, o un mensaje que te dice qué revisar."
+  ],
+  "quiz": [
+    {
+      "q": "¿Por qué necesitas una base de datos y no te basta una lista en JavaScript?",
+      "o": ["Porque la lista se pierde al recargar y la base de datos conserva los datos", "Porque las listas no admiten objetos", "Porque JavaScript no tiene listas"],
+      "a": 0
+    },
+    {
+      "q": "¿Qué es una clave primaria (id) en una tabla?",
+      "o": ["La contraseña de la base de datos", "Un identificador único de cada fila", "El nombre de la tabla"],
+      "a": 1
+    },
+    {
+      "q": "¿Qué hace supabase.from('plantas').insert({ nombre: 'Menta' })?",
+      "o": ["Borra la tabla plantas", "Guarda una fila nueva en la tabla plantas", "Lee todas las plantas"],
+      "a": 1
+    },
+    {
+      "q": "¿Qué te devuelve .select('*')?",
+      "o": ["Un solo objeto", "Una lista (array) de objetos, una por fila", "El número de filas"],
+      "a": 1
+    }
+  ],
+  "faq": [
+    {
+      "q": "¿Tengo que aprender SQL para usar Supabase?",
+      "a": "No para este curso. Creas las tablas con el panel (botones) y guardas/lees desde JavaScript con .insert() y .select(). El SQL lo enseñamos solo para que entiendas qué pasa por debajo; puedes profundizar cuando quieras."
+    },
+    {
+      "q": "¿Es de verdad gratis?",
+      "a": "Supabase tiene una capa gratuita más que suficiente para el curso y para una app pequeña de uso real. Confirma sus límites vigentes en su web, porque pueden cambiar con el tiempo."
+    },
+    {
+      "q": "¿Qué es eso de async y await que aparece de repente?",
+      "a": "Cuando tu código habla con un servidor, la respuesta tarda un instante. await le dice a JavaScript 'espera a que llegue antes de seguir', y solo se puede usar dentro de una función marcada async. Con copiar el patrón es suficiente para arrancar."
+    }
+  ]
+}

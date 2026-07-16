@@ -1,0 +1,61 @@
+---
+import Mark from '../Mark.astro';
+---
+<div class="topbar" id="topbar">
+  <div class="wrap">
+    <div class="tb-logo">
+      <Mark variant="ink" />
+      <span class="lw">vanto</span><span class="code">code</span>
+    </div>
+    <nav class="tb-nav">
+      <a href="#por-que">Por qué</a>
+      <a href="#ruta">Ruta</a>
+      <a href="#tu-proyecto">Tu proyecto</a>
+      <a href="#empezar" class="btn indigo">Empezar <span class="ar">»</span></a>
+    </nav>
+  </div>
+</div>
+
+<style>
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(242, 243, 246, .82);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .3s, background .3s;
+  }
+  .topbar.scrolled {
+    border-bottom-color: var(--line);
+    background: rgba(242, 243, 246, .92);
+  }
+  .topbar .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .tb-logo { display: flex; align-items: center; gap: 9px; }
+  .tb-logo :global(.mark) { width: 24px; height: 24px; }
+  .tb-logo .lw { font-family: "Sora"; font-weight: 800; font-size: 19px; letter-spacing: -.03em; }
+  .tb-logo .code { font-family: "JetBrains Mono"; font-weight: 500; font-size: 12px; color: var(--indigo-d); }
+  .tb-nav { display: flex; gap: 24px; align-items: center; }
+  .tb-nav a { font-size: 14.5px; color: var(--muted); font-weight: 500; transition: color .15s; }
+  .tb-nav a:hover { color: var(--ink); }
+  @media (max-width: 720px) { .tb-nav a:not(.btn) { display: none; } }
+
+  .btn {
+    font-family: "Inter"; font-weight: 600; font-size: 14.5px;
+    padding: 11px 19px; border-radius: 10px;
+    border: 1px solid var(--ink); background: var(--ink); color: #fff;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .14s var(--ease), box-shadow .14s var(--ease);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(22, 24, 29, .5); }
+  .btn.indigo { background: var(--indigo); border-color: var(--indigo); }
+  .btn.indigo:hover { box-shadow: 0 12px 28px -10px rgba(75, 73, 240, .6); }
+  .btn .ar { transition: transform .18s var(--ease); }
+  .btn:hover .ar { transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) { .btn:hover { transform: none !important; } }
+</style>

@@ -1,0 +1,150 @@
+{
+  "n": 6,
+  "title": "Listas y colecciones",
+  "sub": "Tu app no tiene un dato: tiene muchos. Aprende a guardarlos juntos en una lista y a trabajar con todos de golpe.",
+  "intro": "Hasta ahora cada dato vivía en su propia variable: una planta, un cliente, un partido. Pero tu app real no gestiona <strong>una</strong> planta, gestiona <strong>todas</strong> tus plantas. Para eso están las listas (en programación se llaman <strong>arrays</strong>): una sola caja con nombre que guarda muchos datos en fila, en un orden. En este nivel aprendes a crear tu colección, a añadir y sacar elementos, a recorrerla entera y a hacerle preguntas: “dame solo los que…”, “busca el que…”, “conviértelos todos en…”. Es el nivel donde tu app deja de ser un ejemplo de un dato y empieza a parecer una app de verdad.",
+  "blocks": [
+    {
+      "h": "Qué es un array (una lista)",
+      "p": [
+        "Un <strong>array</strong> es una lista ordenada de datos guardada en una sola variable. Se escribe entre <strong>corchetes</strong> <code>[ ]</code> y separas cada elemento con una coma.",
+        "Los elementos pueden ser textos, números, lo que quieras. Y guardan su <strong>orden</strong>: el primero que pones es el primero de la lista, y así siempre. Eso es lo que diferencia una lista de un montón suelto: aquí hay un primero, un segundo, un tercero."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "// Una lista de textos\nconst plantas = [\"Tomatera\", \"Albahaca\", \"Menta\"];\n\n// Una lista de números\nconst notas = [4, 5, 3, 5];\n\n// Una lista puede empezar vacía\nconst pendientes = [];"
+      },
+      "note": "Da igual el tema de tu app: <b>huerto</b>, <b>taller</b> o <b>liga</b>, todas tienen una lista principal. Plantas, coches en reparación, equipos de la liga… Piensa cuál es la tuya: será tu array central durante todo el curso."
+    },
+    {
+      "h": "Acceder por posición (el índice)",
+      "p": [
+        "Cada elemento tiene una <strong>posición</strong>, que en programación se llama <strong>índice</strong>. Y aquí viene lo que más despista al principio: <strong>se empieza a contar en 0</strong>, no en 1.",
+        "Para sacar un elemento pones el nombre de la lista y su índice entre corchetes. Con <strong>.length</strong> preguntas cuántos elementos hay. Truco práctico: como se cuenta desde 0, el último elemento siempre está en la posición <code>length - 1</code>."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const plantas = [\"Tomatera\", \"Albahaca\", \"Menta\"];\n\nconsole.log(plantas[0]);   // \"Tomatera\"  (el primero)\nconsole.log(plantas[2]);   // \"Menta\"     (el tercero)\nconsole.log(plantas.length); // 3  (cuántos hay)\n\n// El último, sin saber cuántos hay:\nconsole.log(plantas[plantas.length - 1]); // \"Menta\""
+      },
+      "note": "Si pides una posición que no existe (por ejemplo <code>plantas[9]</code> cuando solo hay 3), no da error rojo: te devuelve <b>undefined</b>, que es JavaScript diciendo “ahí no hay nada”. Es una pista útil, no un fallo grave."
+    },
+    {
+      "h": "Añadir y quitar elementos",
+      "p": [
+        "Una lista viva crece y mengua. Con <strong>.push()</strong> añades un elemento <strong>al final</strong>. Con <strong>.pop()</strong> quitas el último. Fíjate en que <code>const</code> no impide esto: la caja sigue siendo la misma, solo cambia lo que hay dentro.",
+        "Estas dos son las que más vas a usar: cada vez que en tu app “se apunta una planta nueva” o “se registra un coche”, por debajo es un <code>.push()</code>."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const plantas = [\"Tomatera\", \"Albahaca\"];\n\nplantas.push(\"Menta\");   // la añade al final\nconsole.log(plantas);    // [\"Tomatera\", \"Albahaca\", \"Menta\"]\n\nplantas.pop();           // quita la última (\"Menta\")\nconsole.log(plantas);    // [\"Tomatera\", \"Albahaca\"]"
+      }
+    },
+    {
+      "h": "Recorrer la lista entera con for...of",
+      "p": [
+        "Ya viste los bucles en el nivel anterior. Aquí los usas para lo que mejor se les da: pasar por <strong>cada elemento</strong> de tu lista, uno detrás de otro, sin escribir el código a mano tantas veces como elementos haya.",
+        "El bucle <strong>for...of</strong> es el más claro para esto. Se lee casi como en español: “para cada planta dentro de plantas, haz esto”."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const plantas = [\"Tomatera\", \"Albahaca\", \"Menta\"];\n\nfor (const planta of plantas) {\n  console.log(\"Regar: \" + planta);\n}\n// Regar: Tomatera\n// Regar: Albahaca\n// Regar: Menta"
+      },
+      "note": "Añadas 3 plantas o 300, el código es <b>el mismo</b>. Ese es el superpoder de la lista más el bucle: escribes una vez, funciona para cualquier cantidad."
+    },
+    {
+      "h": "Preguntar a la lista: filter, find y map",
+      "p": [
+        "Recorrer está bien, pero muchas veces lo que quieres es más directo: “dame solo los que cumplen algo”, “búscame ese en concreto”, “transfórmalos todos”. Para eso hay tres herramientas que te ahorran escribir el bucle a mano.",
+        "<strong>filter</strong> te devuelve una <strong>lista nueva</strong> solo con los que cumplen una condición. <strong>find</strong> te devuelve <strong>el primer elemento</strong> que la cumple (uno solo). <strong>map</strong> te devuelve una lista nueva con cada elemento <strong>transformado</strong>. Los tres reciben una función que dice qué hacer con cada elemento."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const notas = [4, 5, 3, 5, 2];\n\n// filter: solo las que aprueban (>= 3)\nconst aprobadas = notas.filter(n => n >= 3);\nconsole.log(aprobadas);   // [4, 5, 3, 5]\n\n// find: la primera nota perfecta\nconst perfecta = notas.find(n => n === 5);\nconsole.log(perfecta);    // 5\n\n// map: subir todas medio punto\nconst subidas = notas.map(n => n + 0.5);\nconsole.log(subidas);     // [4.5, 5.5, 3.5, 5.5, 2.5]"
+      },
+      "note": "La flecha <code>n =&gt; ...</code> es una función corta: “para cada <b>n</b>, devuelve esto”. Es la misma idea de función del nivel 5, escrita en una línea. No te agobies con la sintaxis: copia el patrón y cambia la condición."
+    }
+  ],
+  "ex": [
+    {
+      "t": "Crea la lista principal de tu app con al menos tres elementos y muéstrala entera con console.log.",
+      "hint": "Usa corchetes y comas: const cosas = [\"...\", \"...\", \"...\"]; y luego console.log(cosas);",
+      "sol": "const equipos = [\"Los Tigres\", \"Racing Barrio\", \"Atlético Plaza\"];\nconsole.log(equipos);\nconsole.log(\"Hay \" + equipos.length + \" equipos\");"
+    },
+    {
+      "t": "Añade un elemento nuevo con .push() y luego muestra solo el primero y el último de la lista.",
+      "hint": "El primero es lista[0]. El último es lista[lista.length - 1].",
+      "sol": "const equipos = [\"Los Tigres\", \"Racing Barrio\"];\nequipos.push(\"Atlético Plaza\");\nconsole.log(\"Primero: \" + equipos[0]);\nconsole.log(\"Último: \" + equipos[equipos.length - 1]);"
+    },
+    {
+      "t": "Recorre una lista de números de tu app con for...of y ve sumándolos todos en una variable total.",
+      "hint": "Empieza con let total = 0; y dentro del bucle haz total += numero;"
+    },
+    {
+      "t": "Reto: a partir de una lista de números, usa filter para quedarte solo con los que superan un valor, y muestra cuántos son.",
+      "reto": true,
+      "hint": "const grandes = lista.filter(x => x > 10); y luego mira grandes.length."
+    }
+  ],
+  "pitfalls": [
+    {
+      "t": "“Pido el primero con lista[1] y me sale el segundo.”",
+      "p": "Clásico y normal: las listas empiezan en <b>0</b>. El primero es <code>lista[0]</code>, el segundo es <code>lista[1]</code>. Cuesta un par de días acostumbrarse y luego ya es automático."
+    },
+    {
+      "t": "“Me devuelve undefined.”",
+      "p": "Estás pidiendo una posición que no existe (por ejemplo el elemento 5 de una lista de 3). No es un error que rompa nada: es JavaScript diciendo “ahí no hay nada”. Revisa el índice o el <code>.length</code>."
+    },
+    {
+      "t": "“Usé map (o filter) y la lista original no cambió.”",
+      "p": "Correcto, y a propósito: <code>map</code> y <code>filter</code> <b>no tocan</b> la lista original, te devuelven una <b>nueva</b>. Tienes que guardarla: <code>const nueva = lista.filter(...)</code>. En cambio <code>push</code> sí modifica la original."
+    },
+    {
+      "t": "“El bucle no hace nada.”",
+      "p": "Probablemente tu lista está vacía (<code>[]</code>) o se llama distinto de lo que escribiste en el <code>for...of</code>. Un <code>console.log(lista.length)</code> antes del bucle te lo confirma en un segundo."
+    }
+  ],
+  "recap": [
+    "Un array es una lista ordenada de datos en una sola variable, entre corchetes [ ].",
+    "Se accede por índice y se cuenta desde 0: el primero es lista[0]; .length dice cuántos hay.",
+    ".push() añade al final y .pop() quita el último; funcionan aunque uses const.",
+    "for...of recorre toda la lista con el mismo código, tenga 3 o 300 elementos.",
+    "filter da los que cumplen algo, find da el primero que cumple, y map transforma todos en una lista nueva.",
+    "Tu app ya trabaja con colecciones: el paso de gestionar un dato a gestionar muchos."
+  ],
+  "quiz": [
+    {
+      "q": "¿En qué posición está el primer elemento de una lista?",
+      "o": ["En la 1", "En la 0", "Depende de la lista"],
+      "a": 1
+    },
+    {
+      "q": "¿Qué hace lista.push(\"x\")?",
+      "o": ["Borra el elemento x", "Añade \"x\" al final de la lista", "Ordena la lista"],
+      "a": 1
+    },
+    {
+      "q": "¿Qué te devuelve notas.filter(n => n >= 5)?",
+      "o": ["Una lista nueva solo con las notas >= 5", "El número de notas", "La primera nota >= 5"],
+      "a": 0
+    },
+    {
+      "q": "Si una lista tiene 4 elementos, ¿cuál es el índice del último?",
+      "o": ["4", "3", "5"],
+      "a": 1
+    }
+  ],
+  "faq": [
+    {
+      "q": "¿Un array puede guardar objetos y no solo textos o números?",
+      "a": "Sí, y es lo más habitual en apps reales: una lista de objetos, cada uno con sus datos (nombre, fecha, cantidad…). Lo verás de lleno en el próximo nivel, cuando modeles tus cosas con objetos."
+    },
+    {
+      "q": "¿for...of o filter/map/find? ¿Cuál uso?",
+      "a": "for...of cuando quieres “hacer algo” con cada elemento (mostrarlo, sumarlo). filter/find/map cuando quieres “obtener” otra cosa a partir de la lista (los que cumplen, el que buscas, todos transformados). Con la práctica sale solo."
+    },
+    {
+      "q": "¿Qué es esa flecha => que aparece en filter y map?",
+      "a": "Es una función corta escrita en una línea: n => n >= 5 significa “para cada n, devuelve si n es mayor o igual que 5”. Es la misma idea de función del nivel anterior, más compacta."
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "n": 4,
+  "title": "Repetir sobre muchos elementos",
+  "sub": "Hacer algo con toda una lista de golpe sin copiar y pegar el mismo código una y otra vez.",
+  "intro": "Tu app no maneja un dato, sino muchos: <strong>todas</strong> tus plantas, <strong>todos</strong> los partidos, <strong>todos</strong> los clientes. Repetir el mismo código a mano para cada uno sería absurdo (y se rompería en cuanto añadieras uno más). Para eso están los <strong>bucles</strong>: escribes la instrucción una vez y el ordenador la aplica a cada elemento. Es uno de los superpoderes de programar.",
+  "blocks": [
+    {
+      "h": "El problema que resuelve un bucle",
+      "p": [
+        "Imagina que quieres mostrar tres plantas. Podrías escribir tres console.log. ¿Y si son treinta? ¿Y si mañana son cincuenta? Copiar y pegar no escala y es fácil equivocarse.",
+        "Un <strong>bucle</strong> repite un bloque de código tantas veces como haga falta. Tú escribes la acción una sola vez; el bucle se encarga de aplicarla a cada elemento, sean tres o tres mil."
+      ],
+      "code": {
+        "label": "app.js — la forma pesada (evítala)",
+        "text": "// Repetir a mano no escala:\nconsole.log(\"Tomatera\");\nconsole.log(\"Albahaca\");\nconsole.log(\"Menta\");\n// ...y así para cada planta 😩"
+      }
+    },
+    {
+      "h": "for...of: recorrer una lista, elemento a elemento",
+      "p": [
+        "La forma más clara de recorrer una lista es <strong>for...of</strong>. Se lee casi como una frase: <em>por cada planta de la lista huerto, haz esto</em>.",
+        "En cada vuelta, la variable que pones (aquí <strong>planta</strong>) toma el valor de un elemento distinto, del primero al último. Dentro de las llaves haces lo que quieras con ese elemento."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const huerto = [\"Tomatera\", \"Albahaca\", \"Menta\"];\n\nfor (const planta of huerto) {\n  console.log(planta);\n}\n// Muestra las tres, una por vuelta"
+      },
+      "note": "for...of es el bucle que más vas a usar en tu app: recorrer <b>tu</b> lista de cosas y hacer algo con cada una. Empieza siempre por este."
+    },
+    {
+      "h": "Acumular mientras recorres: contar y sumar",
+      "p": [
+        "Los bucles brillan cuando además de recorrer vas <strong>acumulando</strong> un resultado. Creas una variable antes del bucle (un contador a 0, una suma a 0) y la vas actualizando en cada vuelta.",
+        "Con esto respondes preguntas de tu app: ¿cuántas plantas necesitan agua?, ¿cuánto suman todos los precios? Fíjate cómo se combina con el <strong>if</strong> del nivel anterior."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const dias = [2, 5, 1, 4];   // días sin agua de cada planta\nlet pendientes = 0;\n\nfor (const d of dias) {\n  if (d > 3) {\n    pendientes++;   // suma 1 al contador\n  }\n}\nconsole.log(pendientes);   // 2 (la de 5 y la de 4)"
+      }
+    },
+    {
+      "h": "El for clásico: cuando necesitas el número de vuelta",
+      "p": [
+        "Existe otra forma, el <strong>for</strong> de toda la vida, con tres partes: dónde empiezas, hasta cuándo sigues y cómo avanzas. Es más verboso, pero te da el <strong>índice</strong> (el número de posición), útil cuando quieres numerar o saltar elementos.",
+        "Recuerda: las posiciones empiezan en <strong>0</strong>. Por eso se va de 0 hasta menor que la longitud de la lista."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const equipos = [\"Rojos\", \"Azules\", \"Verdes\"];\n\nfor (let i = 0; i < equipos.length; i++) {\n  console.log((i + 1) + \". \" + equipos[i]);\n}\n// 1. Rojos\n// 2. Azules\n// 3. Verdes"
+      }
+    },
+    {
+      "h": "while: repetir mientras se cumpla algo",
+      "p": [
+        "El <strong>while</strong> repite <strong>mientras</strong> una condición sea verdadera, sin saber de antemano cuántas veces. Sirve cuando no recorres una lista fija, sino que repites hasta que pase algo.",
+        "Con while hay que tener cuidado: dentro del bucle algo tiene que <strong>acercar</strong> la condición a hacerse falsa. Si no, se repite para siempre (un <em>bucle infinito</em>) y el navegador se queda colgado."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "let cuenta = 3;\n\nwhile (cuenta > 0) {\n  console.log(cuenta);\n  cuenta--;   // ¡clave! acerca la condición al final\n}\nconsole.log(\"¡Ya!\");\n// 3, 2, 1, ¡Ya!"
+      }
+    }
+  ],
+  "ex": [
+    { "t": "Crea una lista con varios elementos de <strong>tu</strong> app y recórrela con <strong>for...of</strong> mostrando cada uno en la consola.", "hint": "for (const x of lista) { console.log(x); }", "sol": "const productos = [\"Aceite\", \"Filtro\", \"Bujía\"];\nfor (const p of productos) {\n  console.log(p);\n}" },
+    { "t": "Recorre una lista de números y <strong>cuenta</strong> cuántos cumplen una condición (por ejemplo, cuántos superan cierto valor).", "hint": "Crea un contador en 0 antes del bucle y hazlo ++ dentro de un if." },
+    { "t": "Recorre una lista de precios de tu app y <strong>suma</strong> el total.", "hint": "let total = 0; y dentro del bucle total = total + precio;", "sol": "const precios = [12, 8, 20, 5];\nlet total = 0;\nfor (const p of precios) {\n  total = total + p;\n}\nconsole.log(total);   // 45" },
+    { "t": "Reto: usa el <strong>for clásico</strong> para mostrar tu lista numerada (1., 2., 3.…) usando el índice.", "reto": true, "hint": "for (let i = 0; i < lista.length; i++) { console.log((i+1) + \". \" + lista[i]); }" }
+  ],
+  "pitfalls": [
+    { "t": "“Se me colgó el navegador.”", "p": "Un bucle infinito: la condición del while nunca se hace falsa. Asegúrate de que algo dentro del bucle la acerca al final (un cuenta-- o un i++)." },
+    { "t": "“Me falta el primer o el último elemento.”", "p": "Casi siempre es el famoso ‘error de uno’: las posiciones empiezan en 0. En el for clásico va de 0 hasta i < length (menor estricto), no <=." },
+    { "t": "“Mi total sale mal o da 0.”", "p": "Revisa que declaras la variable acumuladora (total, contador) <b>antes</b> del bucle, no dentro. Si la creas dentro, se reinicia en cada vuelta." },
+    { "t": "“Uso for...of con un número y da error.”", "p": "for...of recorre listas, no números sueltos. Si quieres repetir N veces contando, usa el for clásico con un índice." }
+  ],
+  "recap": [
+    "Un bucle repite un bloque de código sobre muchos elementos; escribes la acción una sola vez.",
+    "for...of es el más claro para recorrer tu lista elemento a elemento.",
+    "Puedes acumular mientras recorres: un contador o una suma que crece en cada vuelta.",
+    "El for clásico te da el índice (posición); las posiciones empiezan en 0.",
+    "while repite mientras se cumpla una condición: cuida que algo la acerque al final.",
+    "Un bucle infinito cuelga el navegador: siempre debe haber una salida."
+  ],
+  "quiz": [
+    { "q": "¿Qué hace for (const x of lista)?", "o": ["Recorre la lista, x toma cada valor", "Se ejecuta una sola vez", "Ordena la lista"], "a": 0 },
+    { "q": "Con una lista de 12 elementos, un for...of se repite…", "o": ["1 vez", "12 veces", "infinitas veces"], "a": 1 },
+    { "q": "¿En qué posición está el primer elemento de una lista?", "o": ["1", "0", "No tiene número"], "a": 1 },
+    { "q": "¿Qué provoca un bucle infinito con while?", "o": ["Que la condición nunca se haga falsa", "Usar for...of", "Contar hasta 10"], "a": 0 }
+  ],
+  "faq": [
+    { "q": "¿for, for...of o while? ¿Cuál uso?", "a": "Para recorrer tu lista, for...of (el más claro). Si necesitas el número de posición, el for clásico. Si repites hasta que pase algo sin lista fija, while." },
+    { "q": "¿Qué es .length?", "a": "Es cuántos elementos tiene una lista. lista.length de tres elementos da 3. Se usa mucho para saber hasta dónde recorrer." },
+    { "q": "¿Qué significa i++?", "a": "Es un atajo de i = i + 1: suma 1 a la variable. También existe i-- para restar 1. Se usa para avanzar el contador." },
+    { "q": "¿Puedo cortar un bucle antes de terminar?", "a": "Sí, con break sales del bucle en el acto, y con continue te saltas a la siguiente vuelta. Útiles cuando ya encontraste lo que buscabas." }
+  ]
+}

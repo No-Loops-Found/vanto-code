@@ -1,0 +1,302 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import NivelTopbar from '../../components/nivel/NivelTopbar.astro';
+import Leccion from '../../components/nivel/Leccion.astro';
+import Ejercicios from '../../components/nivel/Ejercicios.astro';
+import Quiz from '../../components/nivel/Quiz.astro';
+import Faq from '../../components/nivel/Faq.astro';
+import Pager from '../../components/nivel/Pager.astro';
+import { MODULES } from '../../lib/course-data';
+
+export async function getStaticPaths() {
+  const niveles = (await getCollection('niveles')).sort((a, b) => a.data.n - b.data.n);
+  return niveles.map((entry) => ({
+    params: { n: String(entry.data.n) },
+    props: { data: entry.data },
+  }));
+}
+
+const { data } = Astro.props;
+const { n, title, sub, tool } = data;
+
+const last = MODULES.length - 1; // 11
+const isFinal = n === last;
+const crumb = (isFinal ? 'PROYECTO FINAL' : 'NIVEL ' + String(n).padStart(2, '0')) + ' · vanto·code';
+const pageTitle = 'vanto·code — Nivel ' + (isFinal ? 'final' : n);
+---
+
+<Base title={pageTitle}>
+  <div class="progress" id="progress"></div>
+
+  <NivelTopbar />
+
+  <div class="lvl-head">
+    <div class="nv-wrap">
+      <div class="crumb">{crumb}</div>
+      <h1>{title}</h1>
+      <div class="sub">{sub}</div>
+      {tool && <div><span class="tool">» {tool}</span></div>}
+    </div>
+  </div>
+
+  <main>
+    <div class="nv-wrap">
+      <Leccion data={data} />
+
+      <Ejercicios ex={data.ex} />
+
+      <Quiz quiz={data.quiz} n={n} />
+
+      <Faq faq={data.faq} />
+
+      <div class="mark-done">
+        <button type="button" class="btn-done" id="btnDone" data-nivel={n}>
+          Marcar como superado
+        </button>
+        <a class="save-hint" id="saveHint" href="/entrar">
+          Inicia sesión para guardar tu progreso
+        </a>
+      </div>
+
+      <Pager n={n} />
+    </div>
+  </main>
+
+  <footer>
+    <div><span class="lw">vanto</span><span class="code">code</span></div>
+    <p>Tu idea, hacia delante.</p>
+  </footer>
+</Base>
+
+<style is:global>
+  a { color: var(--indigo-d); text-decoration: none; }
+
+  .nv-wrap { max-width: 760px; margin: 0 auto; padding: 0 28px; }
+
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0;
+    background: var(--indigo); z-index: 60;
+  }
+
+  /* topbar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(242, 243, 246, .9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar .in {
+    max-width: 900px; margin: 0 auto; padding: 0 28px;
+    display: flex; align-items: center; justify-content: space-between; height: 60px;
+  }
+  .tb-logo { display: flex; align-items: center; gap: 8px; }
+  .tb-logo .tb-mark { width: 22px; height: 22px; }
+  .tb-logo .lw { font-family: "Sora"; font-weight: 800; font-size: 18px; letter-spacing: -.03em; color: var(--ink); }
+  .tb-logo .code { font-family: "JetBrains Mono"; font-weight: 500; font-size: 11px; color: var(--indigo-d); }
+  .back { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .back:hover { color: var(--ink); }
+
+  /* header del nivel */
+  .lvl-head { background: var(--ink); color: #fff; padding: 48px 0 40px; }
+  .lvl-head .crumb { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-l); margin-bottom: 14px; }
+  .lvl-head h1 { color: #fff; font-size: clamp(30px, 5vw, 44px); margin-bottom: 12px; line-height: 1.1; }
+  .lvl-head .sub { color: #C0C2CB; font-size: 18px; max-width: 52ch; }
+  .lvl-head .tool {
+    display: inline-block; margin-top: 16px; font-family: "JetBrains Mono";
+    font-size: 11px; background: var(--indigo); color: #fff; border-radius: 6px; padding: 4px 10px;
+  }
+
+  main { padding: 44px 0 30px; }
+  .intro {
+    font-size: 19px; color: #33363d; border-left: 3px solid var(--indigo);
+    padding-left: 18px; margin-bottom: 38px;
+  }
+  .sec-label {
+    font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-d);
+    text-transform: uppercase; letter-spacing: .06em; margin: 40px 0 14px;
+  }
+  .block { margin-bottom: 26px; }
+  .block h3 { font-size: 22px; margin-bottom: 10px; line-height: 1.1; }
+  .block p { margin-bottom: 12px; color: #33363d; }
+  .block strong { color: var(--ink); }
+  pre {
+    background: var(--ink); color: #E7E8EE; border-radius: 12px; padding: 16px 18px;
+    overflow-x: auto; margin: 12px 0; font-family: "JetBrains Mono"; font-size: 13.5px; line-height: 1.7;
+  }
+  pre .cmt { color: #8b93a5; }
+  .code-label {
+    font-family: "JetBrains Mono"; font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .06em; margin: 16px 0 -4px;
+  }
+  .note {
+    background: #eeeefe; border: 1px solid #cdccf7; border-radius: 12px;
+    padding: 14px 16px; font-size: 15px; color: #33363d; margin: 14px 0;
+  }
+  .note b { color: var(--indigo-d); }
+
+  /* paso a paso */
+  .steps { counter-reset: st; list-style: none; margin-top: 8px; padding: 0; }
+  .steps li {
+    position: relative; padding: 0 0 22px 52px;
+    border-left: 2px solid var(--line-d); margin-left: 16px;
+  }
+  .steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .steps li::before {
+    counter-increment: st; content: counter(st); position: absolute; left: -17px; top: -2px;
+    width: 32px; height: 32px; border-radius: 10px; background: var(--indigo); color: #fff;
+    font-family: "Sora"; font-weight: 800; font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .steps li h4 { font-size: 17px; margin-bottom: 4px; }
+  .steps li p { color: #33363d; font-size: 15.5px; }
+
+  /* ejercicios */
+  .ex {
+    border: 1px solid var(--line-d); border-radius: 14px; padding: 18px 20px;
+    margin-bottom: 12px; background: var(--snow);
+  }
+  .ex.reto { border-color: var(--indigo); background: #f5f5fe; }
+  .ex .tag {
+    font-family: "JetBrains Mono"; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--muted); margin-bottom: 6px;
+  }
+  .ex.reto .tag { color: var(--indigo-d); }
+  .ex .t { font-size: 16px; color: #26282e; }
+  .ex details { margin-top: 10px; }
+  .ex summary { font-family: "JetBrains Mono"; font-size: 13px; color: var(--indigo-d); cursor: pointer; list-style: none; }
+  .ex summary::-webkit-details-marker { display: none; }
+  .ex details p { font-size: 14.5px; color: #33363d; margin-top: 8px; }
+  .ex details pre { margin-top: 8px; }
+
+  /* errores típicos */
+  .pit {
+    border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px;
+    margin-bottom: 10px; background: var(--snow);
+  }
+  .pit .t { font-weight: 600; font-size: 15.5px; display: flex; gap: 9px; align-items: baseline; }
+  .pit .t::before { content: "!"; font-family: "Sora"; font-weight: 800; color: var(--rojo); flex-shrink: 0; }
+  .pit p { font-size: 14.5px; color: #33363d; margin-top: 5px; padding-left: 18px; }
+
+  /* en resumen */
+  .recap { background: var(--ink); color: #E7E8EE; border-radius: 16px; padding: 24px 26px; margin-top: 10px; }
+  .recap h3 { color: #fff; font-size: 18px; margin-bottom: 12px; }
+  .recap ul { margin: 0; padding: 0; }
+  .recap li {
+    list-style: none; padding: 8px 0 8px 26px; position: relative;
+    font-size: 15px; border-bottom: 1px solid var(--ink-3);
+  }
+  .recap li:last-child { border-bottom: none; }
+  .recap li::before { content: "»"; position: absolute; left: 2px; color: var(--indigo-l); font-family: "JetBrains Mono"; }
+
+  /* quiz */
+  .quiz .q { margin-bottom: 20px; }
+  .quiz .q-text { font-weight: 600; margin-bottom: 10px; font-size: 16px; }
+  .q-opt {
+    display: block; width: 100%; text-align: left; font-family: "Inter"; font-size: 15px;
+    padding: 12px 14px; border: 1px solid var(--line-d); border-radius: 11px; background: var(--snow);
+    margin-bottom: 8px; cursor: pointer; color: var(--ink); transition: all .14s var(--ease);
+  }
+  .q-opt:hover { border-color: var(--ink); transform: translateX(2px); }
+  .q-opt.correct { border-color: var(--verde); background: #eaf7ef; color: #1c6d3f; }
+  .q-opt.wrong { border-color: var(--rojo); background: #fceceb; color: #9c3630; }
+  .q-feedback { font-family: "JetBrains Mono"; font-size: 13px; margin-top: 4px; min-height: 18px; }
+  .q-feedback.ok { color: var(--verde); }
+  .q-feedback.no { color: var(--rojo); }
+
+  /* faq */
+  .faq details { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 9px; background: var(--snow); overflow: hidden; }
+  .faq summary {
+    padding: 14px 16px; font-weight: 600; cursor: pointer; list-style: none;
+    font-size: 15.5px; display: flex; justify-content: space-between; gap: 12px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--indigo); font-family: "JetBrains Mono"; font-size: 18px; }
+  .faq details[open] summary::after { content: "−"; }
+  .faq details p { padding: 0 16px 15px; color: #33363d; font-size: 15px; }
+
+  /* marcar superado */
+  .mark-done { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 40px 0 4px; }
+  .btn-done {
+    font-family: "Inter"; font-weight: 600; font-size: 15px; cursor: pointer;
+    padding: 12px 20px; border-radius: 12px; border: 1px solid var(--indigo);
+    background: var(--indigo); color: #fff; transition: transform .15s var(--ease), opacity .15s;
+  }
+  .btn-done:hover { transform: translateY(-2px); }
+  .btn-done.done { background: var(--verde); border-color: var(--verde); cursor: default; }
+  .btn-done.done:hover { transform: none; }
+  .save-hint { font-size: 13.5px; color: var(--muted); }
+  .save-hint:hover { color: var(--indigo-d); }
+
+  /* pager */
+  .pager { display: flex; justify-content: space-between; gap: 14px; margin: 24px 0 10px; }
+  .pager a {
+    flex: 1; border: 1px solid var(--line-d); border-radius: 14px; padding: 16px 18px;
+    background: var(--snow); transition: border-color .15s, transform .15s var(--ease);
+  }
+  .pager a:hover { border-color: var(--indigo-l); transform: translateY(-2px); }
+  .pager .dir { font-family: "JetBrains Mono"; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .pager .ti { font-family: "Sora"; font-weight: 700; font-size: 15px; color: var(--ink); margin-top: 4px; }
+  .pager .next { text-align: right; }
+  .pager a.disabled { opacity: .4; pointer-events: none; }
+
+  /* footer */
+  footer { background: var(--ink); color: #B6B9C2; padding: 34px 0; margin-top: 20px; text-align: center; }
+  footer .lw { font-family: "Sora"; font-weight: 800; color: var(--paper); font-size: 16px; }
+  footer .code { font-family: "JetBrains Mono"; font-size: 11px; color: var(--indigo-l); }
+  footer p { font-size: 13px; margin-top: 8px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; }
+    .q-opt:hover, .pager a:hover, .btn-done:hover { transform: none !important; }
+  }
+</style>
+
+<script>
+  // Barra de progreso de scroll + arranque arriba (como el prototipo).
+  const progress = document.getElementById('progress');
+  if (progress) {
+    window.addEventListener(
+      'scroll',
+      () => {
+        const h = document.documentElement;
+        const st = h.scrollTop;
+        const sh = h.scrollHeight - h.clientHeight;
+        progress.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+      },
+      { passive: true }
+    );
+  }
+  window.scrollTo(0, 0);
+
+  // Marcar nivel como superado (persistencia en BD; no rompe sin sesión).
+  const btn = document.getElementById('btnDone') as HTMLButtonElement | null;
+  const hint = document.getElementById('saveHint');
+  if (btn) {
+    const nivel = Number(btn.dataset.nivel);
+    const marcarUI = () => {
+      btn.classList.add('done');
+      btn.textContent = '✓ Superado';
+      btn.disabled = true;
+      if (hint) hint.style.display = 'none';
+    };
+
+    // Estado inicial (fire-and-forget; 401 => sin sesión, no pasa nada).
+    fetch('/api/progreso')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d && d.niveles?.includes(nivel)) marcarUI();
+      })
+      .catch(() => {});
+
+    btn.addEventListener('click', () => {
+      fetch('/api/progreso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nivel, superado: true }),
+      })
+        .then((r) => r.ok && marcarUI())
+        .catch(() => {});
+    });
+  }
+</script>

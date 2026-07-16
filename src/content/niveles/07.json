@@ -1,0 +1,153 @@
+{
+  "n": 7,
+  "title": "Modelar cosas con objetos",
+  "sub": "Cada cosa de tu app tiene varios datos que van juntos. Aprende a agruparlos en objetos y a crear un molde para fabricarlos en serie.",
+  "intro": "Una planta no es solo un nombre: tiene una especie, unos días sin agua, si está en flor o no. Un coche del taller tiene matrícula, avería y estado. Meter cada uno de esos datos en su propia variable suelta se vuelve un caos en cuanto tienes más de dos cosas. La solución es el <strong>objeto</strong>: una caja que agrupa todos los datos de <strong>una misma cosa</strong> bajo un nombre. Y cuando tienes muchas cosas iguales (muchas plantas, muchos coches), creas un <strong>molde</strong> —una clase— para fabricarlas todas iguales, con sus datos y sus acciones. Este es el nivel en el que tu app deja de manejar datos sueltos y empieza a manejar <strong>cosas</strong>.",
+  "blocks": [
+    {
+      "h": "Qué es un objeto",
+      "p": [
+        "Un <strong>objeto</strong> agrupa varios datos relacionados dentro de <strong>llaves</strong> <code>{ }</code>. Cada dato tiene un <strong>nombre</strong> (se llama propiedad) y un <strong>valor</strong>, separados por dos puntos.",
+        "Frente a tener <code>nombre</code>, <code>especie</code> y <code>dias</code> en tres variables sueltas, el objeto los mantiene <strong>juntos y ordenados</strong>: todo lo de esa planta vive en un solo sitio. Para leer o cambiar un dato usas el <strong>punto</strong>: <code>planta.nombre</code>."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const planta = {\n  nombre: \"Tomatera\",\n  especie: \"Solanum\",\n  diasSinAgua: 2,\n  enFlor: false\n};\n\n// Leer una propiedad con el punto\nconsole.log(planta.nombre);      // \"Tomatera\"\n\n// Cambiar una propiedad\nplanta.diasSinAgua = 0;\nconsole.log(planta.diasSinAgua); // 0"
+      },
+      "note": "Junta esto con el nivel anterior y tienes lo más potente hasta ahora: una <b>lista de objetos</b>. Un array donde cada elemento es una planta completa. Esa es, literalmente, la forma de casi cualquier app."
+    },
+    {
+      "h": "Objetos dentro de una lista",
+      "p": [
+        "Aquí se unen las dos ideas. Tu colección principal deja de ser una lista de textos para ser una <strong>lista de objetos</strong>: cada elemento lleva todos sus datos.",
+        "Y la recorres igual que antes, con <code>for...of</code>, solo que ahora dentro accedes a cada propiedad con el punto."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const huerto = [\n  { nombre: \"Tomatera\", diasSinAgua: 2 },\n  { nombre: \"Albahaca\", diasSinAgua: 5 },\n  { nombre: \"Menta\",    diasSinAgua: 0 }\n];\n\nfor (const planta of huerto) {\n  console.log(planta.nombre + \": \" + planta.diasSinAgua + \" días\");\n}\n// Tomatera: 2 días\n// Albahaca: 5 días\n// Menta: 0 días"
+      }
+    },
+    {
+      "h": "Métodos: acciones que sabe hacer la cosa",
+      "p": [
+        "Un objeto no solo guarda datos: también puede guardar <strong>acciones</strong>. Una acción metida dentro de un objeto se llama <strong>método</strong>, y es una función que trabaja sobre ese mismo objeto.",
+        "Dentro del método, la palabra <strong>this</strong> significa “este objeto, el de aquí”. Así <code>regar()</code> pone a cero los días de <strong>esta</strong> planta, no de otra."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "const planta = {\n  nombre: \"Tomatera\",\n  diasSinAgua: 4,\n  regar() {\n    this.diasSinAgua = 0;   // this = esta planta\n  }\n};\n\nplanta.regar();\nconsole.log(planta.diasSinAgua); // 0"
+      },
+      "note": "Un dato responde a “¿cómo estás?” (una propiedad). Un método responde a “¿qué sabes hacer?” (una acción). Una planta <b>tiene</b> días sin agua y <b>sabe</b> regarse."
+    },
+    {
+      "h": "La clase: un molde para fabricar objetos iguales",
+      "p": [
+        "Escribir a mano un objeto por cada planta es repetitivo y fácil de equivocar. Una <strong>clase</strong> es el <strong>molde</strong>: describe una vez qué datos y qué acciones tiene <em>cualquier</em> planta, y luego fabricas todas las que quieras a partir de él.",
+        "El <strong>constructor</strong> es la parte que dice qué datos recibe cada planta al nacer. Con la palabra <strong>new</strong> creas un objeto concreto (una <strong>instancia</strong>) a partir del molde."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "class Planta {\n  constructor(nombre, especie) {\n    this.nombre = nombre;       // datos iniciales\n    this.especie = especie;\n    this.diasSinAgua = 0;\n  }\n  regar() {\n    this.diasSinAgua = 0;\n  }\n  necesitaAgua() {\n    return this.diasSinAgua > 3;\n  }\n}\n\n// Fabricar objetos concretos con new\nconst tomatera = new Planta(\"Tomatera\", \"Solanum\");\nconst menta = new Planta(\"Menta\", \"Mentha\");\n\nconsole.log(tomatera.nombre);       // \"Tomatera\"\nconsole.log(menta.necesitaAgua());  // false"
+      },
+      "note": "La <b>clase</b> es el molde de galletas; cada objeto hecho con <code>new</code> es una <b>galleta</b>. El molde se escribe una vez; galletas, todas las que necesites. Nombra tus clases en singular y con Mayúscula: <code>Planta</code>, <code>Coche</code>, <code>Equipo</code>."
+    },
+    {
+      "h": "Modelar TU proyecto",
+      "p": [
+        "Piensa cuál es la “cosa” central de tu app y qué datos y acciones tiene. No hay una respuesta única: es tu diseño. Aquí van dos ejemplos para que veas el patrón y lo copies con lo tuyo.",
+        "Fíjate en que cada clase es solo un molde con datos (constructor) y acciones (métodos). Cambia el tema y ya está."
+      ],
+      "code": {
+        "label": "app.js",
+        "text": "class Coche {\n  constructor(matricula, averia) {\n    this.matricula = matricula;\n    this.averia = averia;\n    this.reparado = false;\n  }\n  marcarReparado() {\n    this.reparado = true;\n  }\n}\n\nclass Equipo {\n  constructor(nombre) {\n    this.nombre = nombre;\n    this.puntos = 0;\n  }\n  ganar() { this.puntos += 3; }\n  empatar() { this.puntos += 1; }\n}\n\nconst tigres = new Equipo(\"Los Tigres\");\ntigres.ganar();\nconsole.log(tigres.puntos); // 3"
+      }
+    }
+  ],
+  "code2": {
+    "label": "app.js — una clase y una lista de objetos, juntas",
+    "text": "class Planta {\n  constructor(nombre) {\n    this.nombre = nombre;\n    this.diasSinAgua = 0;\n  }\n  necesitaAgua() { return this.diasSinAgua > 3; }\n}\n\nconst huerto = [\n  new Planta(\"Tomatera\"),\n  new Planta(\"Albahaca\"),\n  new Planta(\"Menta\")\n];\n\nhuerto[1].diasSinAgua = 5;\n\nfor (const planta of huerto) {\n  if (planta.necesitaAgua()) {\n    console.log(planta.nombre + \" necesita agua\");\n  }\n}\n// Albahaca necesita agua"
+  },
+  "ex": [
+    {
+      "t": "Crea un objeto que represente una cosa de tu app con al menos tres propiedades, y muestra dos de ellas por consola.",
+      "hint": "Usa llaves y dos puntos: const coche = { matricula: \"...\", averia: \"...\", reparado: false }; y luego coche.matricula.",
+      "sol": "const coche = {\n  matricula: \"1234-ABC\",\n  averia: \"frenos\",\n  reparado: false\n};\nconsole.log(coche.matricula);\nconsole.log(coche.averia);"
+    },
+    {
+      "t": "Escribe una clase para la cosa central de tu app, con constructor (al menos dos datos) y un método que haga algo.",
+      "hint": "class Coche { constructor(matricula) { this.matricula = matricula; this.reparado = false; } marcarReparado() { this.reparado = true; } }",
+      "sol": "class Coche {\n  constructor(matricula, averia) {\n    this.matricula = matricula;\n    this.averia = averia;\n    this.reparado = false;\n  }\n  marcarReparado() {\n    this.reparado = true;\n  }\n}\nconst c = new Coche(\"1234-ABC\", \"frenos\");\nc.marcarReparado();\nconsole.log(c.reparado); // true"
+    },
+    {
+      "t": "Crea dos objetos con new a partir de tu clase y guárdalos en una lista. Recórrela con for...of mostrando un dato de cada uno.",
+      "hint": "const flota = [new Coche(\"...\"), new Coche(\"...\")]; y luego for (const c of flota) { console.log(c.matricula); }"
+    },
+    {
+      "t": "Reto: añade a tu clase un segundo método que devuelva (con return) un texto de estado según sus datos, y llámalo desde el bucle.",
+      "reto": true,
+      "hint": "Dentro del método usa this y un if: estado() { return this.reparado ? \"Listo\" : \"En taller\"; }"
+    }
+  ],
+  "pitfalls": [
+    {
+      "t": "“Escribo planta[nombre] y no funciona.”",
+      "p": "Para leer una propiedad se usa el <b>punto</b>, no corchetes: <code>planta.nombre</code>. Los corchetes son para las <b>listas</b> (posición). Punto para propiedades de objeto, corchetes para índices de array."
+    },
+    {
+      "t": "“Olvidé el new y me da error.”",
+      "p": "Para fabricar un objeto de una clase hace falta <code>new</code>: <code>new Planta(\"Menta\")</code>, no <code>Planta(\"Menta\")</code>. El <code>new</code> es lo que enciende el constructor y crea el objeto."
+    },
+    {
+      "t": "“Dentro del método this me sale undefined o no cambia el dato.”",
+      "p": "Dentro de un método, para tocar los datos <b>del propio objeto</b> hay que poner <code>this.</code> delante: <code>this.diasSinAgua = 0</code>, no <code>diasSinAgua = 0</code>. Sin <code>this</code>, JavaScript no sabe que te refieres a la propiedad."
+    },
+    {
+      "t": "“¿Uso clase o me basta un objeto suelto?”",
+      "p": "Si es una cosa única y sencilla, un objeto <code>{ }</code> basta. Si vas a tener <b>muchas</b> cosas iguales o con acciones que se repiten, la clase te ahorra escribir lo mismo una y otra vez. No es un error empezar con objetos y pasar a clases cuando aprietan."
+    }
+  ],
+  "recap": [
+    "Un objeto agrupa los datos de UNA cosa entre llaves { }, con propiedades nombre: valor.",
+    "Se leen y cambian con el punto: planta.nombre, planta.diasSinAgua = 0.",
+    "Un método es una acción dentro del objeto; this significa 'este objeto'.",
+    "Una clase es el molde: describe una vez los datos (constructor) y acciones (métodos) de todas.",
+    "Con new fabricas objetos concretos (instancias) a partir de la clase.",
+    "Una lista de objetos es la forma real de casi cualquier app: tu colección con todos sus datos."
+  ],
+  "quiz": [
+    {
+      "q": "¿Cómo lees la propiedad 'nombre' de un objeto planta?",
+      "o": ["planta[nombre]", "planta.nombre", "planta(nombre)"],
+      "a": 1
+    },
+    {
+      "q": "¿Para qué sirve el constructor de una clase?",
+      "o": ["Para dar los datos iniciales al crear cada objeto", "Para borrar el objeto", "Para publicar la app"],
+      "a": 0
+    },
+    {
+      "q": "¿Qué significa this dentro de un método?",
+      "o": ["Una variable global", "Este objeto concreto", "El archivo app.js"],
+      "a": 1
+    },
+    {
+      "q": "¿Cómo creas un objeto a partir de la clase Planta?",
+      "o": ["new Planta(\"Menta\")", "Planta = \"Menta\"", "crear(Planta)"],
+      "a": 0
+    }
+  ],
+  "faq": [
+    {
+      "q": "¿Diferencia entre una clase y un objeto?",
+      "a": "La clase es el molde (se escribe una vez); el objeto es cada cosa concreta fabricada con ese molde usando new. Molde de galletas frente a galleta."
+    },
+    {
+      "q": "¿Un método es lo mismo que una función?",
+      "a": "Es una función, sí, pero que vive dentro de un objeto o clase y trabaja sobre él con this. Misma idea del nivel 5, ahora 'pegada' a la cosa que actúa."
+    },
+    {
+      "q": "¿Tengo que usar clases sí o sí en mi app?",
+      "a": "No. Para muchas apps sencillas basta con objetos { } dentro de una lista. Las clases brillan cuando repites la misma estructura muchas veces o cuando tus cosas 'saben hacer' varias acciones."
+    }
+  ]
+}

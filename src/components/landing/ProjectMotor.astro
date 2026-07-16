@@ -1,0 +1,134 @@
+---
+---
+<section class="band dark motor" id="tu-proyecto">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">tu proyecto</div>
+      <h2 style="color:#fff">El mismo temario, con la app que tú elijas.</h2>
+      <p>Elige un proyecto de ejemplo (o define el tuyo abajo). La columna de la izquierda —lo que aprendes— no se mueve. Solo cambia el ejemplo con el que lo practicas.</p>
+    </div>
+    <div class="picker reveal" id="picker"></div>
+    <div class="grid-wrap reveal">
+      <div class="grid-head"><div>Lo que aprendes</div><div id="projHead">Lo que construyes</div></div>
+      <div id="gridRows"></div>
+      <div class="grid-foot">Aprendes <b>lo mismo</b> que en cualquier curso — construyendo tu propia app.</div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .band { padding: 78px 0; position: relative; }
+  .band.dark { background: var(--ink); color: var(--paper); }
+  .band.dark .eyebrow { color: var(--indigo-l); }
+  .band-head { max-width: 60ch; margin-bottom: 38px; }
+  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  .band.dark .band-head p { font-size: 18px; color: #C0C2CB; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .picker { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 24px; }
+  .chip {
+    font-family: "JetBrains Mono"; font-size: 13px; font-weight: 500;
+    background: transparent; color: #C9CBD4; border: 1px solid var(--ink-3); border-radius: 999px;
+    padding: 9px 15px; cursor: pointer; transition: all .16s var(--ease);
+    display: flex; gap: 8px; align-items: center;
+  }
+  .chip:hover { border-color: var(--indigo); color: #fff; }
+  .chip.active { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+  .grid-wrap { border: 1px solid var(--ink-3); border-radius: 16px; overflow: hidden; background: var(--ink-2); }
+  .grid-head { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(240px, 1.5fr); border-bottom: 1px solid var(--ink-3); }
+  .grid-head div { padding: 13px 18px; font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #8B8E97; }
+  .grid-head div:first-child { border-right: 1px solid var(--ink-3); color: var(--indigo-l); }
+  .grow { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(240px, 1.5fr); border-bottom: 1px solid #23262e; }
+  .grow:last-child { border-bottom: none; }
+  .gcell { padding: 13px 18px; font-size: 14.5px; }
+  .gcell.ra { border-right: 1px solid var(--ink-3); display: flex; gap: 12px; align-items: flex-start; }
+  .ra-code { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-l); font-weight: 600; flex-shrink: 0; padding-top: 2px; width: 26px; }
+  .ra-name { color: #E7E8EE; font-weight: 500; }
+  .gcell.feat { color: #B6B9C2; }
+  .gcell.feat.soft { color: #767986; font-style: italic; }
+  .gcell.feat.mark { animation: remark .5s var(--ease); }
+  @keyframes remark { 0% { opacity: 0; transform: translateX(10px); } 100% { opacity: 1; transform: none; } }
+  .feat .stamp { display: inline-block; font-family: "JetBrains Mono"; font-size: 10px; color: var(--indigo-l); border: 1px solid var(--indigo); border-radius: 4px; padding: 1px 5px; margin-right: 8px; vertical-align: middle; }
+  .grid-foot { padding: 14px 18px; font-family: "JetBrains Mono"; font-size: 12px; color: #8B8E97; background: #191c22; border-top: 1px solid var(--ink-3); }
+  .grid-foot b { color: var(--indigo-l); }
+
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; } }
+</style>
+
+<script>
+  import { FUNDAMENTOS, PROJECTS } from '../../lib/course-data';
+  import type { AnalyzeResult } from '../../lib/classify';
+
+  const gridRows = document.getElementById('gridRows')!;
+  const projHead = document.getElementById('projHead')!;
+  const picker = document.getElementById('picker')!;
+
+  let current = 'huerto';
+  // Estado de "Tu app" alimentado por el AppDefiner vía evento del DOM.
+  let tuappData: AnalyzeResult | null = null;
+  let tuappHead = PROJECTS.tuapp.head;
+
+  function buildGrid(key: string, anim: boolean) {
+    const p = PROJECTS[key];
+    projHead.textContent = key === 'tuapp' ? tuappHead : p.head;
+    gridRows.innerHTML = '';
+    FUNDAMENTOS.forEach((f, idx) => {
+      let feat: string;
+      let soft = false;
+      if (p.feats) {
+        feat = p.feats[idx];
+      } else if (tuappData) {
+        const cls = tuappData.byFund[f.id];
+        if (cls && cls.length) {
+          feat = cls.join(' · ');
+        } else if (f.struct) {
+          feat = 'Se practica igual, forma parte de la base.';
+          soft = true;
+        } else {
+          feat = 'Aún no aparece en tus funciones — lo verás en el curso.';
+          soft = true;
+        }
+      } else {
+        feat = 'Define tu app abajo para rellenar esta columna.';
+        soft = true;
+      }
+      const stamp = key === 'tuapp' ? '<span class="stamp">TU APP</span>' : '';
+      const r = document.createElement('div');
+      r.className = 'grow';
+      r.innerHTML = `<div class="gcell ra"><span class="ra-code">${f.n}</span><span class="ra-name">${f.name}</span></div><div class="gcell feat ${soft ? 'soft' : ''} ${anim ? 'mark' : ''}">${stamp}${feat}</div>`;
+      gridRows.appendChild(r);
+    });
+  }
+
+  function activateChip(key: string) {
+    document.querySelectorAll('.chip').forEach((c) => c.classList.remove('active'));
+    const chip = document.querySelector(`.chip[data-key="${key}"]`);
+    chip?.classList.add('active');
+  }
+
+  Object.keys(PROJECTS).forEach((key) => {
+    const p = PROJECTS[key];
+    const b = document.createElement('button');
+    b.className = 'chip' + (key === current ? ' active' : '');
+    b.dataset.key = key;
+    b.innerHTML = `<span>${p.em}</span>${p.label}`;
+    b.addEventListener('click', () => {
+      current = key;
+      activateChip(key);
+      buildGrid(key, true);
+    });
+    picker.appendChild(b);
+  });
+  buildGrid('huerto', false);
+
+  // El AppDefiner emite este evento al desglosar la idea.
+  document.addEventListener('vanto:defined', (e) => {
+    const detail = (e as CustomEvent<{ name: string; data: AnalyzeResult }>).detail;
+    tuappData = detail.data;
+    tuappHead = detail.name;
+    current = 'tuapp';
+    activateChip('tuapp');
+    buildGrid('tuapp', true);
+  });
+</script>

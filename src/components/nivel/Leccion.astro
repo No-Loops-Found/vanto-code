@@ -1,0 +1,73 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import CodeBlock from './CodeBlock.astro';
+
+interface Props {
+  data: CollectionEntry<'niveles'>['data'];
+}
+const { data } = Astro.props;
+const { n, intro, blocks, code2, steps, pitfalls, recap } = data;
+---
+<p class="intro" set:html={intro} />
+
+<div class="sec-label">La lección</div>
+{
+  blocks.map((b) => (
+    <div class="block">
+      {b.h && <h3>{b.h}</h3>}
+      {(b.p ?? []).map((p) => (
+        <p set:html={p} />
+      ))}
+      {b.code && <CodeBlock label={b.code.label} text={b.code.text} />}
+      {b.note && <div class="note" set:html={b.note} />}
+    </div>
+  ))
+}
+
+{code2 && <CodeBlock label={code2.label} text={code2.text} />}
+
+{
+  steps && (
+    <>
+      <div class="sec-label">Paso a paso</div>
+      <ol class="steps">
+        {steps.map((s) => (
+          <li>
+            <h4 set:html={s.t} />
+            <p set:html={s.p} />
+          </li>
+        ))}
+      </ol>
+    </>
+  )
+}
+
+{
+  pitfalls && (
+    <>
+      <div class="sec-label">Errores típicos (y por qué no pasa nada)</div>
+      {pitfalls.map((p) => (
+        <div class="pit">
+          <div class="t" set:html={p.t} />
+          <p set:html={p.p} />
+        </div>
+      ))}
+    </>
+  )
+}
+
+{
+  recap && (
+    <>
+      <div class="sec-label">En resumen</div>
+      <div class="recap">
+        <h3>Lo que te llevas del Nivel {n}</h3>
+        <ul>
+          {recap.map((r) => (
+            <li set:html={r} />
+          ))}
+        </ul>
+      </div>
+    </>
+  )
+}

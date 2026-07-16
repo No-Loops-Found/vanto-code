@@ -1,0 +1,127 @@
+---
+---
+<section class="band" id="empezar">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">define tu proyecto</div>
+      <h2>Cuéntanos tu idea. La desglosamos en fundamentos.</h2>
+      <p>Escribe tu app y las funciones que quieres. Analizamos cada idea, la partimos en trozos y la repartimos entre los fundamentos que vas a aprender. Así ves tu ruta antes de empezar — y aparece arriba como <b>“Tu app”</b>.</p>
+    </div>
+    <div class="definir reveal">
+      <div class="form-card">
+        <div class="field">
+          <label for="appName">Nombre de tu app</label>
+          <input id="appName" type="text" placeholder="Mi huerto, El taller, La liga del barrio…" maxlength="44" />
+        </div>
+        <div class="field">
+          <label for="appFeats">Funciones que quieres (una por línea)</label>
+          <textarea id="appFeats" rows="7" placeholder={"Guardar cada planta con su fecha de riego\nAvisar cuando una planta lleve días sin regar\nCalcular cuánta agua toca esta semana\nVer el histórico de cada planta y su evolución"}></textarea>
+          <div class="hint">Escribe con naturalidad. Detectamos verbos como guardar, calcular, avisar, mostrar, ver…</div>
+        </div>
+        <button class="btn indigo" id="fitBtn">Desglosar mi idea <span class="ar">»</span></button>
+      </div>
+      <div class="result-card">
+        <div class="rk">» tu ruta · vista previa</div>
+        <h3 id="resultTitle">Tu app, por fundamentos</h3>
+        <div class="summary" id="resultSummary"></div>
+        <div id="resultSlots"><p style="color:#767986;font-style:italic;font-size:14px">Escribe tu idea y pulsa “Desglosar mi idea”. Verás cómo cada función se reparte entre los fundamentos que la enseñan.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .band { padding: 78px 0; position: relative; }
+  .band-head { max-width: 60ch; margin-bottom: 38px; }
+  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  .band-head p { font-size: 18px; color: #41444d; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .definir { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 760px) { .definir { grid-template-columns: 1fr; } }
+  .form-card { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 26px; box-shadow: var(--shadow); }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-family: "JetBrains Mono"; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 7px; }
+  .field input, .field textarea { width: 100%; font-family: "Inter"; font-size: 15px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; resize: vertical; transition: border-color .15s; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--indigo); }
+  .field .hint { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+  .result-card { background: var(--ink); color: #fff; border-radius: 16px; padding: 26px; min-height: 100%; }
+  .result-card .rk { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-l); margin-bottom: 6px; }
+  .result-card h3 { font-size: 20px; color: #fff; margin-bottom: 6px; }
+  .result-card .summary { font-size: 14px; color: #B6B9C2; margin-bottom: 16px; }
+  .slotline { padding: 11px 0; border-bottom: 1px solid var(--ink-3); }
+  .slotline:last-child { border-bottom: none; }
+  .slotline .st { color: #E7E8EE; font-size: 14.5px; font-weight: 500; display: flex; align-items: baseline; gap: 8px; }
+  .slotline .st .num { font-family: "JetBrains Mono"; font-size: 11px; color: var(--indigo-l); }
+  .slotline .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+  .slotline .chips .cc { font-size: 12.5px; background: #2b2e37; border: 1px solid #3a3d47; border-radius: 6px; padding: 3px 8px; color: #D7D8E0; }
+  .slotline .sf { color: #767986; font-size: 13px; font-style: italic; margin-top: 5px; }
+
+  .btn {
+    font-family: "Inter"; font-weight: 600; font-size: 14.5px;
+    padding: 11px 19px; border-radius: 10px;
+    border: 1px solid var(--ink); background: var(--ink); color: #fff;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .14s var(--ease), box-shadow .14s var(--ease);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(22, 24, 29, .5); }
+  .btn.indigo { background: var(--indigo); border-color: var(--indigo); }
+  .btn.indigo:hover { box-shadow: 0 12px 28px -10px rgba(75, 73, 240, .6); }
+  .btn .ar { transition: transform .18s var(--ease); }
+  .btn:hover .ar { transform: translateX(3px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .btn:hover { transform: none !important; }
+  }
+</style>
+
+<script>
+  import { analyze } from '../../lib/classify';
+  import { FUNDAMENTOS } from '../../lib/course-data';
+
+  const fitBtn = document.getElementById('fitBtn')!;
+  fitBtn.addEventListener('click', () => {
+    const nameInput = document.getElementById('appName') as HTMLInputElement;
+    const featsInput = document.getElementById('appFeats') as HTMLTextAreaElement;
+    const name = (nameInput.value || 'Tu app').trim();
+    const lines = featsInput.value.split('\n').map((s) => s.trim()).filter(Boolean);
+    if (!lines.length) return;
+
+    const data = analyze(lines);
+
+    document.getElementById('resultTitle')!.textContent = name + ' · por fundamentos';
+    const cubiertos = FUNDAMENTOS.filter((f) => data.byFund[f.id].length).length;
+    const summaryEl = document.getElementById('resultSummary')!;
+    summaryEl.textContent = `Desglosamos tu idea en ${data.ideas} trozos y tocan ${cubiertos} de los 11 fundamentos. El resto los verás igual en el curso.`;
+
+    const box = document.getElementById('resultSlots')!;
+    box.innerHTML = '';
+    FUNDAMENTOS.forEach((f) => {
+      const cls = data.byFund[f.id];
+      const l = document.createElement('div');
+      l.className = 'slotline';
+      if (cls.length) {
+        l.innerHTML = `<div class="st"><span class="num">${f.n}</span>${f.name}</div><div class="chips">${cls.map((c) => `<span class="cc">${c}</span>`).join('')}</div>`;
+      } else {
+        l.innerHTML = `<div class="st" style="opacity:.6"><span class="num">${f.n}</span>${f.name}</div><div class="sf">${f.struct ? 'Forma parte de la base del curso.' : 'No aparece en tus funciones — lo aprendes igual.'}</div>`;
+      }
+      box.appendChild(l);
+    });
+
+    if (data.sin.length) {
+      summaryEl.textContent += ` (${data.sin.length} idea/s no las supimos clasificar solas: las encajamos contigo.)`;
+    }
+
+    // Comparte el estado con el ProjectMotor (activa el chip "Tu app" y rellena su columna).
+    document.dispatchEvent(new CustomEvent('vanto:defined', { detail: { name, data } }));
+
+    // Persistencia opcional (fire-and-forget). Ignora errores y el caso no-logueado.
+    fetch('/api/definicion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: name, funciones: lines, resultado: data.byFund }),
+    }).catch(() => {});
+  });
+</script>

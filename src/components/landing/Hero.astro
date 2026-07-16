@@ -1,0 +1,115 @@
+---
+import Mark from '../Mark.astro';
+---
+<header class="hero">
+  <div class="hero-bg"><div class="grid"></div><div class="glow"></div></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">escuela de programación por proyectos</div>
+        <div class="hero-lockup">
+          <Mark variant="ink" />
+          <span class="lw">vanto</span><span class="code">code</span>
+        </div>
+        <h1>Aprende a programar construyendo algo que <span class="mk">te sirva</span>.</h1>
+        <p class="hero-sub">En otros cursos acabas haciendo <span id="rot" class="mono" style="color:var(--indigo-d)"></span>. Aquí eliges tú el proyecto — uno que te resuelva un problema real — y aprendes lo mismo, pero construyéndolo.</p>
+        <div class="hero-cta">
+          <a href="#ruta" class="btn indigo">Ver la ruta <span class="ar">»</span></a>
+          <a href="#tu-proyecto" class="btn ghost">Definir mi proyecto</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat"><div class="num"><span data-count="12">0</span></div><div class="lab">niveles</div></div>
+          <div class="hstat"><div class="num"><span data-count="0">0</span><span class="u">€</span></div><div class="lab">para empezar</div></div>
+          <div class="hstat"><div class="num"><span data-count="100">0</span><span class="u">%</span></div><div class="lab">en el navegador</div></div>
+        </div>
+      </div>
+      <div class="contrast reveal fromleft">
+        <div class="other">
+          <div class="lab">en otros cursos</div>
+          <div class="item"><span class="x">✕</span><s>La app del tiempo</s></div>
+          <div class="item"><span class="x">✕</span><s>Otro clon con la API de Pokémon</s></div>
+          <div class="item"><span class="x">✕</span><s>La lista de tareas nº 47</s></div>
+          <div class="item"><span class="x">✕</span><s>Un conversor de monedas más</s></div>
+        </div>
+        <div class="here">
+          <Mark variant="paper" />
+          <div><div class="lab">aquí</div><h4>Tu proyecto</h4><p>Algo que de verdad quieres tener y usar.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hero { position: relative; padding: 74px 0 66px; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .hero-bg .grid {
+    position: absolute; inset: -40px;
+    background-image: radial-gradient(var(--line-d) 1px, transparent 1px);
+    background-size: 26px 26px; opacity: .5;
+    animation: drift 34s linear infinite;
+    mask-image: radial-gradient(ellipse 80% 60% at 55% 30%, #000 30%, transparent 75%);
+  }
+  .hero-bg .glow {
+    position: absolute; top: -140px; right: -120px; width: 560px; height: 560px;
+    background: radial-gradient(circle, rgba(75, 73, 240, .16), transparent 62%);
+    filter: blur(10px); animation: breathe 9s ease-in-out infinite;
+  }
+  @keyframes drift { to { background-position: 26px 26px; } }
+  @keyframes breathe { 0%,100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.12); opacity: 1; } }
+  .hero .wrap { position: relative; z-index: 1; }
+  .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 44px; align-items: center; }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 38px; } }
+  .hero-lockup { display: flex; align-items: center; gap: 8px; margin: 14px 0 20px; }
+  .hero-lockup :global(.mark) { width: 34px; height: 34px; }
+  .hero-lockup .lw { font-family: "Sora"; font-weight: 800; font-size: 26px; letter-spacing: -.03em; }
+  .hero-lockup .code { font-family: "JetBrains Mono"; font-weight: 500; font-size: 14px; color: var(--indigo-d); }
+  .hero h1 { font-family: "Sora"; font-weight: 800; font-size: clamp(36px, 5.8vw, 62px); letter-spacing: -.035em; line-height: 1; margin-bottom: 22px; }
+  .hero h1 .mk { color: var(--indigo-d); }
+  .hero-sub { font-size: 19px; color: #41444d; max-width: 42ch; margin-bottom: 26px; }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
+  .hero-stats { display: flex; gap: 30px; }
+  .hstat .num { font-family: "Sora"; font-weight: 800; font-size: 28px; letter-spacing: -.02em; }
+  .hstat .num .u { color: var(--indigo-d); }
+  .hstat .lab { font-family: "JetBrains Mono"; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+  /* contrast card */
+  .contrast { background: var(--snow); border: 1px solid var(--line-d); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .contrast .other { padding: 22px 24px 20px; }
+  .contrast .lab { font-family: "JetBrains Mono"; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .contrast .item { display: flex; align-items: center; gap: 11px; font-size: 15.5px; color: var(--muted); padding: 7px 0; }
+  .contrast .item .x { color: var(--rojo); font-family: "JetBrains Mono"; flex-shrink: 0; }
+  .contrast .item s { text-decoration-color: var(--line-d); }
+  .contrast .here { background: var(--ink); color: #fff; padding: 22px 24px; display: flex; align-items: center; gap: 14px; }
+  .contrast .here :global(.mark) { width: 30px; height: 30px; flex-shrink: 0; }
+  .contrast .here .lab { color: var(--indigo-l); margin-bottom: 6px; }
+  .contrast .here h4 { font-size: 19px; color: #fff; }
+  .contrast .here p { font-size: 13.5px; color: #B6B9C2; margin-top: 3px; }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.fromleft { transform: translateX(-26px); }
+  .reveal.fromleft.in { transform: none; }
+
+  /* botones */
+  .btn {
+    font-family: "Inter"; font-weight: 600; font-size: 14.5px;
+    padding: 11px 19px; border-radius: 10px;
+    border: 1px solid var(--ink); background: var(--ink); color: #fff;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .14s var(--ease), box-shadow .14s var(--ease);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(22, 24, 29, .5); }
+  .btn.indigo { background: var(--indigo); border-color: var(--indigo); }
+  .btn.indigo:hover { box-shadow: 0 12px 28px -10px rgba(75, 73, 240, .6); }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line-d); }
+  .btn .ar { transition: transform .18s var(--ease); }
+  .btn:hover .ar { transform: translateX(3px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .hero-bg .grid, .hero-bg .glow { animation: none !important; }
+    .btn:hover { transform: none !important; }
+  }
+</style>

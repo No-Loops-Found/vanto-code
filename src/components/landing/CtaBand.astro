@@ -1,0 +1,33 @@
+---
+---
+<section class="cta-band">
+  <div class="wrap reveal">
+    <h2>Tu idea ya es un buen punto de partida.</h2>
+    <p>Empieza por el Nivel 0. Al terminar tendrás tu app publicada y sabrás repetir el proceso con cualquier cosa que se te ocurra.</p>
+    <a href="/nivel/0" class="btn">Empezar el Nivel 0 <span class="ar">»</span></a>
+  </div>
+</section>
+
+<style>
+  .cta-band { background: var(--indigo); color: #fff; text-align: center; padding: 70px 0; }
+  .cta-band h2 { font-size: clamp(30px, 4.6vw, 48px); color: #fff; margin-bottom: 14px; }
+  .cta-band p { max-width: 48ch; margin: 0 auto 26px; color: #E6E6FE; font-size: 18px; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .cta-band .btn {
+    font-family: "Inter"; font-weight: 600; font-size: 14.5px;
+    padding: 11px 19px; border-radius: 10px;
+    background: #fff; color: var(--indigo); border: 1px solid #fff;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .14s var(--ease), box-shadow .14s var(--ease);
+  }
+  .cta-band .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(0, 0, 0, .3); }
+  .cta-band .btn .ar { transition: transform .18s var(--ease); }
+  .cta-band .btn:hover .ar { transform: translateX(3px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .cta-band .btn:hover { transform: none !important; }
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  quiz: CollectionEntry<'niveles'>['data']['quiz'];
+  n: number;
+}
+const { quiz, n } = Astro.props;
+---
+<div class="sec-label">Test rápido</div>
+<div class="quiz" data-nivel={n} data-total={quiz.length}>
+  {
+    quiz.map((it, qi) => (
+      <div class="q">
+        <div class="q-text">
+          {qi + 1}. {it.q}
+        </div>
+        {it.o.map((o, oi) => (
+          <button class="q-opt" data-q={qi} data-o={oi} data-a={it.a}>
+            {o}
+          </button>
+        ))}
+        <div class="q-feedback" id={`fb-${n}-${qi}`} />
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.quiz').forEach((quiz) => {
+    const nivel = Number(quiz.dataset.nivel);
+    const total = Number(quiz.dataset.total);
+    // Resultado más reciente por pregunta (qi -> acertada?)
+    const result: Record<number, boolean> = {};
+
+    quiz.querySelectorAll<HTMLButtonElement>('.q-opt').forEach((b) => {
+      b.addEventListener('click', () => {
+        const qi = Number(b.dataset.q);
+        const ans = Number(b.dataset.a);
+        const ch = Number(b.dataset.o);
+        const group = quiz.querySelectorAll<HTMLButtonElement>(`.q-opt[data-q="${qi}"]`);
+        const fb = quiz.querySelector<HTMLElement>(`#fb-${nivel}-${qi}`);
+        group.forEach((x) => x.classList.remove('correct', 'wrong'));
+        const ok = ch === ans;
+        if (ok) {
+          b.classList.add('correct');
+          if (fb) {
+            fb.textContent = '✓ Correcto';
+            fb.className = 'q-feedback ok';
+          }
+        } else {
+          b.classList.add('wrong');
+          group[ans]?.classList.add('correct');
+          if (fb) {
+            fb.textContent = '✗ La correcta queda en verde.';
+            fb.className = 'q-feedback no';
+          }
+        }
+        result[qi] = ok;
+
+        // Cuando ya has respondido todas, guarda el intento (fire-and-forget).
+        if (Object.keys(result).length === total) {
+          const aciertos = Object.values(result).filter(Boolean).length;
+          fetch('/api/quiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nivel, aciertos, total }),
+          }).catch(() => {});
+        }
+      });
+    });
+  });
+</script>

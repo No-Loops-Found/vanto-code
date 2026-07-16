@@ -1,0 +1,34 @@
+---
+---
+<section class="band" id="por-que" style="padding-top:60px">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">por qué es distinto</div>
+      <h2>Los ejercicios de tutorial se olvidan. Tu proyecto, no.</h2>
+      <p>El problema de aprender con la app del tiempo o la API de Pokémon no es que sea difícil: es que en cuanto acabas, lo borras. No lo vas a usar jamás. Aquí trabajas desde el minuto uno sobre algo tuyo.</p>
+    </div>
+    <div class="why">
+      <div class="c reveal"><div class="n">01</div><h4>Eliges tu proyecto</h4><p>Piensa en algo que te resuelva un problema real: tuyo, de tu trabajo, de tu equipo, de tu familia. Ese es el proyecto que construyes durante todo el curso.</p></div>
+      <div class="c reveal"><div class="n">02</div><h4>Aprendes lo mismo que en cualquier curso</h4><p>Variables, decisiones, datos, base de datos… los mismos fundamentos de siempre. Solo cambia con qué los practicas: no con ejercicios de usar y tirar, sino con tu app.</p></div>
+      <div class="c reveal"><div class="n">03</div><h4>Terminas con algo que se usa</h4><p>Al acabar no tienes un certificado y un repo muerto: tienes una aplicación publicada, funcionando, que puedes seguir usando y ampliando.</p></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .band { padding: 78px 0; position: relative; }
+  .band-head { max-width: 60ch; margin-bottom: 38px; }
+  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  .band-head p { font-size: 18px; color: #41444d; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 760px) { .why { grid-template-columns: 1fr; } }
+  .why .c { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
+  .why .c .n { font-family: "JetBrains Mono"; font-size: 19px; color: var(--indigo-d); font-weight: 700; }
+  .why .c h4 { font-size: 19px; margin: 8px 0 7px; }
+  .why .c p { font-size: 15px; color: #41444d; }
+
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; } }
+</style>

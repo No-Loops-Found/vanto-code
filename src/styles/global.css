@@ -1,0 +1,67 @@
+/* ===== Vanto Code — tokens de marca + base ===== */
+:root {
+  --ink: #16181D;
+  --ink-2: #1E2027;
+  --ink-3: #2A2D36;
+  --indigo: #4B49F0;
+  --indigo-l: #7E7DF7;
+  --indigo-d: #3634C4;
+  --indigo-light: #9A9BF5; /* índigo sobre fondos oscuros */
+  --paper: #F2F3F6;
+  --paper-2: #E8E9EF;
+  --snow: #FCFCFE;
+  --line: #E0E1E8;
+  --line-d: #D0D2DC;
+  --muted: #6B6E7A;
+  --verde: #23A55A;
+  --rojo: #E5484D;
+  --shadow: 0 1px 0 rgba(22, 24, 29, .03), 0 20px 40px -24px rgba(22, 24, 29, .42);
+  --ease: cubic-bezier(.2, .7, .3, 1);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Sora", sans-serif;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  font-weight: 800;
+  margin: 0;
+}
+
+.mono { font-family: "JetBrains Mono", monospace; }
+
+a { color: inherit; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 30px; }
+
+/* símbolo » (Mark) — el contenedor fija el tamaño; el SVG lo rellena */
+.mark { display: inline-block; width: 26px; height: 26px; }
+
+/* eyebrow de sección con prefijo » */
+.eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px;
+  letter-spacing: .02em;
+  color: var(--indigo-d);
+  font-weight: 500;
+}
+.eyebrow::before { content: "» "; opacity: .7; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}

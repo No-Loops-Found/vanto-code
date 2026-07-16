@@ -1,0 +1,39 @@
+---
+import { MODULES } from '../../lib/course-data';
+
+interface Props {
+  n: number;
+}
+const { n } = Astro.props;
+const last = MODULES.length - 1; // 11
+const prev = n > 0 ? MODULES[n - 1] : null;
+const next = n < last ? MODULES[n + 1] : null;
+---
+<div class="pager">
+  {
+    prev ? (
+      <a href={`/nivel/${prev.n}`}>
+        <div class="dir">« Anterior</div>
+        <div class="ti">{prev.title}</div>
+      </a>
+    ) : (
+      <a class="disabled" aria-disabled="true">
+        <div class="dir">« Anterior</div>
+        <div class="ti">—</div>
+      </a>
+    )
+  }
+  {
+    next ? (
+      <a class="next" href={`/nivel/${next.n}`}>
+        <div class="dir">Siguiente »</div>
+        <div class="ti">{next.title}</div>
+      </a>
+    ) : (
+      <a class="next" href="/#ruta">
+        <div class="dir">Fin »</div>
+        <div class="ti">Volver al curso</div>
+      </a>
+    )
+  }
+</div>

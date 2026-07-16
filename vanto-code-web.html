@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vanto·code — Aprende a programar tu propia idea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16181D;--ink-2:#1E2027;--ink-3:#2A2D36;
+    --indigo:#4B49F0;--indigo-l:#7E7DF7;--indigo-d:#3634C4;
+    --paper:#F2F3F6;--paper-2:#E8E9EF;--snow:#FCFCFE;--line:#E0E1E8;--line-d:#D0D2DC;
+    --muted:#6B6E7A;--verde:#23A55A;--rojo:#E5484D;
+    --shadow:0 1px 0 rgba(22,24,29,.03),0 20px 40px -24px rgba(22,24,29,.42);
+    --ease:cubic-bezier(.2,.7,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:"Inter",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px}
+  .mono{font-family:"JetBrains Mono",monospace}
+  h1,h2,h3,h4{font-family:"Sora",sans-serif;line-height:1.05;letter-spacing:-.02em;font-weight:800}
+  a{color:inherit;text-decoration:none}
+  .eyebrow{font-family:"JetBrains Mono";font-size:12.5px;letter-spacing:.02em;color:var(--indigo-d);font-weight:500}
+  .eyebrow::before{content:"» ";opacity:.75}
+  .progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--indigo);z-index:60}
+  .btn{font-family:"Inter";font-weight:600;font-size:14.5px;padding:11px 19px;border-radius:10px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .14s var(--ease),box-shadow .14s var(--ease)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px -10px rgba(22,24,29,.5)}
+  .btn.indigo{background:var(--indigo);border-color:var(--indigo)}
+  .btn.indigo:hover{box-shadow:0 12px 28px -10px rgba(75,73,240,.6)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line-d)}
+  .btn .ar{transition:transform .18s var(--ease)}.btn:hover .ar{transform:translateX(3px)}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(242,243,246,.82);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}
+  .topbar.scrolled{border-bottom-color:var(--line);background:rgba(242,243,246,.92)}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .tb-logo{display:flex;align-items:center;gap:9px}
+  .tb-logo .mark{width:24px;height:24px}
+  .tb-logo .lw{font-family:"Sora";font-weight:800;font-size:19px;letter-spacing:-.03em}
+  .tb-logo .code{font-family:"JetBrains Mono";font-weight:500;font-size:12px;color:var(--indigo-d)}
+  .tb-nav{display:flex;gap:24px;align-items:center}
+  .tb-nav a{font-size:14.5px;color:var(--muted);font-weight:500;transition:color .15s}
+  .tb-nav a:hover{color:var(--ink)}
+  @media(max-width:720px){.tb-nav a:not(.btn){display:none}}
+
+  /* HERO */
+  .hero{position:relative;padding:74px 0 66px;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .hero-bg .grid{position:absolute;inset:-40px;background-image:radial-gradient(var(--line-d) 1px,transparent 1px);background-size:26px 26px;opacity:.5;animation:drift 34s linear infinite;mask-image:radial-gradient(ellipse 80% 60% at 55% 30%,#000 30%,transparent 75%)}
+  .hero-bg .glow{position:absolute;top:-140px;right:-120px;width:560px;height:560px;background:radial-gradient(circle,rgba(75,73,240,.16),transparent 62%);filter:blur(10px);animation:breathe 9s ease-in-out infinite}
+  @keyframes drift{to{background-position:26px 26px}}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.12);opacity:1}}
+  .hero .wrap{position:relative;z-index:1}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:44px;align-items:center}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:38px}}
+  .hero-lockup{display:flex;align-items:center;gap:8px;margin:14px 0 20px}
+  .hero-lockup .mark{width:34px;height:34px}
+  .hero-lockup .lw{font-family:"Sora";font-weight:800;font-size:26px;letter-spacing:-.03em}
+  .hero-lockup .code{font-family:"JetBrains Mono";font-weight:500;font-size:14px;color:var(--indigo-d)}
+  .hero h1{font-family:"Sora";font-weight:800;font-size:clamp(36px,5.8vw,62px);letter-spacing:-.035em;line-height:1;margin-bottom:22px}
+  .hero h1 .mk{color:var(--indigo-d)}
+  .hero-sub{font-size:19px;color:#41444d;max-width:42ch;margin-bottom:26px}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px}
+  .hero-stats{display:flex;gap:30px}
+  .hstat .num{font-family:"Sora";font-weight:800;font-size:28px;letter-spacing:-.02em}
+  .hstat .num .u{color:var(--indigo-d)}
+  .hstat .lab{font-family:"JetBrains Mono";font-size:11.5px;color:var(--muted);margin-top:2px}
+
+  /* contrast card */
+  .contrast{background:var(--snow);border:1px solid var(--line-d);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+  .contrast .other{padding:22px 24px 20px}
+  .contrast .lab{font-family:"JetBrains Mono";font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .contrast .item{display:flex;align-items:center;gap:11px;font-size:15.5px;color:var(--muted);padding:7px 0}
+  .contrast .item .x{color:var(--rojo);font-family:"JetBrains Mono";flex-shrink:0}
+  .contrast .item s{text-decoration-color:var(--line-d)}
+  .contrast .here{background:var(--ink);color:#fff;padding:22px 24px;display:flex;align-items:center;gap:14px}
+  .contrast .here .mark{width:30px;height:30px;flex-shrink:0}
+  .contrast .here .lab{color:var(--indigo-l);margin-bottom:6px}
+  .contrast .here h4{font-size:19px;color:#fff}
+  .contrast .here p{font-size:13.5px;color:#B6B9C2;margin-top:3px}
+
+  /* band */
+  .band{padding:78px 0;position:relative}
+  .band.dark{background:var(--ink);color:var(--paper)}
+  .band.dark .eyebrow{color:var(--indigo-l)}
+  .band-head{max-width:60ch;margin-bottom:38px}
+  .band h2{font-size:clamp(30px,4.4vw,46px);margin:12px 0 14px;max-width:22ch}
+  .band-head p{font-size:18px;color:#41444d}
+  .band.dark .band-head p{color:#C0C2CB}
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.fromleft{transform:translateX(-26px)}.reveal.fromleft.in{transform:none}
+
+  /* diferenciador */
+  .why{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.why{grid-template-columns:1fr}}
+  .why .c{background:var(--snow);border:1px solid var(--line-d);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+  .why .c .n{font-family:"JetBrains Mono";font-size:19px;color:var(--indigo-d);font-weight:700}
+  .why .c h4{font-size:19px;margin:8px 0 7px}
+  .why .c p{font-size:15px;color:#41444d}
+
+  /* método */
+  .method-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-d);border-radius:18px;overflow:hidden;background:var(--snow)}
+  @media(max-width:720px){.method-grid{grid-template-columns:1fr}}
+  .mcol{padding:32px 30px}
+  .mcol.fixed{background:var(--ink);color:#fff;border-right:1px solid var(--ink-3)}
+  .mcol .k{font-family:"JetBrains Mono";font-size:12px;color:var(--indigo-d);margin-bottom:12px}
+  .mcol.fixed .k{color:var(--indigo-l)}
+  .mcol h3{font-size:23px;margin-bottom:10px}
+  .mcol p{font-size:15.5px;color:#41444d}.mcol.fixed p{color:#C0C2CB}
+
+  /* herramientas */
+  .tools{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:820px){.tools{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:440px){.tools{grid-template-columns:1fr}}
+  .tool{background:var(--snow);border:1px solid var(--line-d);border-radius:16px;padding:22px;box-shadow:var(--shadow);transition:transform .18s var(--ease)}
+  .tool:hover{transform:translateY(-4px)}
+  .tool .em{font-size:24px}.tool h4{font-size:17px;margin:10px 0 4px}
+  .tool .role{font-family:"JetBrains Mono";font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px}
+  .tool p{font-size:13.5px;color:#41444d}
+  .tool .free{display:inline-block;margin-top:11px;font-family:"JetBrains Mono";font-size:10.5px;color:var(--indigo-d);border:1px solid #cdccf7;background:#eeeefe;border-radius:6px;padding:3px 8px}
+
+  /* ruta */
+  .ruta-wrap{position:relative;padding-left:60px}
+  @media(max-width:600px){.ruta-wrap{padding-left:44px}}
+  .ruta-line{position:absolute;left:22px;top:8px;bottom:8px;width:2px;background:var(--line-d)}
+  @media(max-width:600px){.ruta-line{left:16px}}
+  .ruta-fill{position:absolute;left:0;top:0;width:100%;height:0;background:var(--indigo);transition:height .12s linear}
+  .mod{position:relative;margin-bottom:12px;display:block}
+  .mod .node{position:absolute;left:-49px;top:16px;width:34px;height:34px;border-radius:11px;background:var(--snow);border:2px solid var(--line-d);display:flex;align-items:center;justify-content:center;font-family:"Sora";font-weight:800;font-size:14px;color:var(--muted);transition:all .2s var(--ease);z-index:2}
+  @media(max-width:600px){.mod .node{left:-42px;width:30px;height:30px;font-size:12px}}
+  .mod.seen .node{border-color:var(--indigo);color:var(--indigo-d)}
+  .mod:hover .node{background:var(--indigo);border-color:var(--indigo);color:#fff;transform:scale(1.08)}
+  .mod-card{background:var(--snow);border:1px solid var(--line-d);border-radius:14px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:transform .16s var(--ease),box-shadow .16s var(--ease),border-color .16s}
+  .mod:hover .mod-card{transform:translateX(5px);box-shadow:var(--shadow);border-color:var(--indigo-l)}
+  .mod-title{font-family:"Sora";font-weight:700;font-size:18px}
+  .mod-ra{font-family:"JetBrains Mono";font-size:12px;color:var(--muted);margin-top:3px}
+  .mod-open{font-family:"JetBrains Mono";font-size:12.5px;color:var(--indigo-d);white-space:nowrap;display:flex;align-items:center;gap:6px}
+  .mod-open .ar{transition:transform .18s var(--ease)}.mod:hover .mod-open .ar{transform:translateX(4px)}
+  .mod .soon{color:var(--muted)}
+
+  /* motor */
+  .motor .eyebrow{color:var(--indigo-l)}
+  .picker{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px}
+  .chip{font-family:"JetBrains Mono";font-size:13px;font-weight:500;background:transparent;color:#C9CBD4;border:1px solid var(--ink-3);border-radius:999px;padding:9px 15px;cursor:pointer;transition:all .16s var(--ease);display:flex;gap:8px;align-items:center}
+  .chip:hover{border-color:var(--indigo);color:#fff}.chip.active{background:var(--indigo);border-color:var(--indigo);color:#fff}
+  .grid-wrap{border:1px solid var(--ink-3);border-radius:16px;overflow:hidden;background:var(--ink-2)}
+  .grid-head{display:grid;grid-template-columns:minmax(190px,1fr) minmax(240px,1.5fr);border-bottom:1px solid var(--ink-3)}
+  .grid-head div{padding:13px 18px;font-family:"JetBrains Mono";font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8B8E97}
+  .grid-head div:first-child{border-right:1px solid var(--ink-3);color:var(--indigo-l)}
+  .grow{display:grid;grid-template-columns:minmax(190px,1fr) minmax(240px,1.5fr);border-bottom:1px solid #23262e}
+  .grow:last-child{border-bottom:none}
+  .gcell{padding:13px 18px;font-size:14.5px}
+  .gcell.ra{border-right:1px solid var(--ink-3);display:flex;gap:12px;align-items:flex-start}
+  .ra-code{font-family:"JetBrains Mono";font-size:12px;color:var(--indigo-l);font-weight:600;flex-shrink:0;padding-top:2px;width:26px}
+  .ra-name{color:#E7E8EE;font-weight:500}
+  .gcell.feat{color:#B6B9C2}
+  .gcell.feat.soft{color:#767986;font-style:italic}
+  .gcell.feat.mark{animation:remark .5s var(--ease)}
+  @keyframes remark{0%{opacity:0;transform:translateX(10px)}100%{opacity:1;transform:none}}
+  .feat .stamp{display:inline-block;font-family:"JetBrains Mono";font-size:10px;color:var(--indigo-l);border:1px solid var(--indigo);border-radius:4px;padding:1px 5px;margin-right:8px;vertical-align:middle}
+  .grid-foot{padding:14px 18px;font-family:"JetBrains Mono";font-size:12px;color:#8B8E97;background:#191c22;border-top:1px solid var(--ink-3)}
+  .grid-foot b{color:var(--indigo-l)}
+
+  /* definir */
+  .definir{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+  @media(max-width:760px){.definir{grid-template-columns:1fr}}
+  .form-card{background:var(--snow);border:1px solid var(--line-d);border-radius:16px;padding:26px;box-shadow:var(--shadow)}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-family:"JetBrains Mono";font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+  .field input,.field textarea{width:100%;font-family:"Inter";font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:11px 13px;resize:vertical;transition:border-color .15s}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--indigo)}
+  .field .hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .result-card{background:var(--ink);color:#fff;border-radius:16px;padding:26px;min-height:100%}
+  .result-card .rk{font-family:"JetBrains Mono";font-size:12px;color:var(--indigo-l);margin-bottom:6px}
+  .result-card h3{font-size:20px;color:#fff;margin-bottom:6px}
+  .result-card .summary{font-size:14px;color:#B6B9C2;margin-bottom:16px}
+  .slotline{padding:11px 0;border-bottom:1px solid var(--ink-3)}
+  .slotline:last-child{border-bottom:none}
+  .slotline .st{color:#E7E8EE;font-size:14.5px;font-weight:500;display:flex;align-items:baseline;gap:8px}
+  .slotline .st .num{font-family:"JetBrains Mono";font-size:11px;color:var(--indigo-l)}
+  .slotline .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+  .slotline .chips .cc{font-size:12.5px;background:#2b2e37;border:1px solid #3a3d47;border-radius:6px;padding:3px 8px;color:#D7D8E0}
+  .slotline .sf{color:#767986;font-size:13px;font-style:italic;margin-top:5px}
+
+  .cta-band{background:var(--indigo);color:#fff;text-align:center;padding:70px 0}
+  .cta-band h2{font-size:clamp(30px,4.6vw,48px);color:#fff;margin-bottom:14px}
+  .cta-band p{max-width:48ch;margin:0 auto 26px;color:#E6E6FE;font-size:18px}
+  .cta-band .btn{background:#fff;color:var(--indigo);border-color:#fff}
+
+  footer.site{background:var(--ink);color:#B6B9C2;padding:46px 0 54px}
+  footer.site .mark{width:32px;height:32px;margin-bottom:14px}
+  footer.site .lw{font-family:"Sora";font-weight:800;color:var(--paper);font-size:18px}
+  footer.site .code{font-family:"JetBrains Mono";font-size:12px;color:var(--indigo-l)}
+  footer.site p{max-width:50ch;margin:10px 0 0;font-size:14px}
+  .fnote{font-family:"JetBrains Mono";font-size:11.5px;color:#74777F;margin-top:24px;border-top:1px solid #2b2e36;padding-top:18px;line-height:1.7}
+
+  @media (prefers-reduced-motion: reduce){
+    *{scroll-behavior:auto!important}
+    .reveal{opacity:1!important;transform:none!important}
+    .hero-bg .grid,.hero-bg .glow{animation:none!important}
+    .btn:hover,.tool:hover,.mod:hover .mod-card{transform:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="topbar" id="topbar">
+  <div class="wrap">
+    <div class="tb-logo"><span class="mark" data-mark="ink"></span><span class="lw">vanto</span><span class="code">code</span></div>
+    <nav class="tb-nav">
+      <a href="#por-que">Por qué</a>
+      <a href="#ruta">Ruta</a>
+      <a href="#tu-proyecto">Tu proyecto</a>
+      <a href="#empezar" class="btn indigo">Empezar <span class="ar">»</span></a>
+    </nav>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-bg"><div class="grid"></div><div class="glow"></div></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">escuela de programación por proyectos</div>
+        <div class="hero-lockup"><span class="mark" data-mark="ink"></span><span class="lw">vanto</span><span class="code">code</span></div>
+        <h1>Aprende a programar construyendo algo que <span class="mk">te sirva</span>.</h1>
+        <p class="hero-sub">En otros cursos acabas haciendo <span id="rot" class="mono" style="color:var(--indigo-d)"></span>. Aquí eliges tú el proyecto — uno que te resuelva un problema real — y aprendes lo mismo, pero construyéndolo.</p>
+        <div class="hero-cta">
+          <a href="#ruta" class="btn indigo">Ver la ruta <span class="ar">»</span></a>
+          <a href="#tu-proyecto" class="btn ghost">Definir mi proyecto</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat"><div class="num"><span data-count="12">0</span></div><div class="lab">niveles</div></div>
+          <div class="hstat"><div class="num"><span data-count="0">0</span><span class="u">€</span></div><div class="lab">para empezar</div></div>
+          <div class="hstat"><div class="num"><span data-count="100">0</span><span class="u">%</span></div><div class="lab">en el navegador</div></div>
+        </div>
+      </div>
+      <div class="contrast reveal fromleft">
+        <div class="other">
+          <div class="lab">en otros cursos</div>
+          <div class="item"><span class="x">✕</span><s>La app del tiempo</s></div>
+          <div class="item"><span class="x">✕</span><s>Otro clon con la API de Pokémon</s></div>
+          <div class="item"><span class="x">✕</span><s>La lista de tareas nº 47</s></div>
+          <div class="item"><span class="x">✕</span><s>Un conversor de monedas más</s></div>
+        </div>
+        <div class="here">
+          <span class="mark" data-mark="paper"></span>
+          <div><div class="lab">aquí</div><h4>Tu proyecto</h4><p>Algo que de verdad quieres tener y usar.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- POR QUÉ -->
+<section class="band" id="por-que" style="padding-top:60px">
+  <div class="wrap">
+    <div class="band-head reveal"><div class="eyebrow">por qué es distinto</div><h2>Los ejercicios de tutorial se olvidan. Tu proyecto, no.</h2><p>El problema de aprender con la app del tiempo o la API de Pokémon no es que sea difícil: es que en cuanto acabas, lo borras. No lo vas a usar jamás. Aquí trabajas desde el minuto uno sobre algo tuyo.</p></div>
+    <div class="why">
+      <div class="c reveal"><div class="n">01</div><h4>Eliges tu proyecto</h4><p>Piensa en algo que te resuelva un problema real: tuyo, de tu trabajo, de tu equipo, de tu familia. Ese es el proyecto que construyes durante todo el curso.</p></div>
+      <div class="c reveal"><div class="n">02</div><h4>Aprendes lo mismo que en cualquier curso</h4><p>Variables, decisiones, datos, base de datos… los mismos fundamentos de siempre. Solo cambia con qué los practicas: no con ejercicios de usar y tirar, sino con tu app.</p></div>
+      <div class="c reveal"><div class="n">03</div><h4>Terminas con algo que se usa</h4><p>Al acabar no tienes un certificado y un repo muerto: tienes una aplicación publicada, funcionando, que puedes seguir usando y ampliando.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTODO -->
+<section class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal"><div class="eyebrow">cómo funciona</div><h2>Lo que aprendes no cambia. Lo que construyes, tú.</h2><p>Cualquier curso de programación enseña lo mismo por dentro. Nosotros mantenemos ese temario intacto y le cambiamos la excusa: en vez de ejercicios sueltos, cada pieza la practicas construyendo un trozo de tu proyecto.</p></div>
+    <div class="method-grid reveal">
+      <div class="mcol fixed"><div class="k">lo que no cambia</div><h3>Los fundamentos</h3><p>Los mismos que en cualquier escuela: variables, condiciones, bucles, funciones, estructuras de datos, objetos, interfaz y base de datos. En el mismo orden, sin saltarse nada.</p></div>
+      <div class="mcol"><div class="k">lo que sí cambia</div><h3>Tu proyecto</h3><p>Cada fundamento se aprende construyendo una función de tu app. Elige el proyecto que quieras: el curso se adapta a él y avanza contigo hasta publicarlo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HERRAMIENTAS -->
+<section class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal"><div class="eyebrow">herramientas · capa gratuita</div><h2>Sin instalar nada. Todo en el navegador.</h2><p>Editas, guardas la base de datos y publicas la app sin salir del navegador. Te vale una tablet, un portátil prestado o el ordenador del aula.</p></div>
+    <div class="tools">
+      <div class="tool reveal"><div class="em">🐙</div><h4>GitHub + Codespaces</h4><div class="role">editor y guardado</div><p>Tu código, su historial y un editor completo online.</p><span class="free">capa gratuita</span></div>
+      <div class="tool reveal"><div class="em">⚡</div><h4>StackBlitz</h4><div class="role">editor alternativo</div><p>Otro editor online, arranca al instante. Ideal en tablet.</p><span class="free">gratis</span></div>
+      <div class="tool reveal"><div class="em">🗄️</div><h4>Supabase</h4><div class="role">base de datos</div><p>Una base de datos Postgres real, con panel web.</p><span class="free">capa gratuita</span></div>
+      <div class="tool reveal"><div class="em">▲</div><h4>Vercel</h4><div class="role">publicación</div><p>Publica tu app con una URL en un clic. Se actualiza sola.</p><span class="free">capa gratuita</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- RUTA -->
+<section class="band" id="ruta" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal"><div class="eyebrow">vanto·code · web</div><h2>12 niveles. Cada uno, un trozo de tu app.</h2><p>De encender el entorno a publicar la app con base de datos. Cada nivel tiene su propia página con la explicación al detalle, ejercicios y test. Empieza por el Nivel 0.</p></div>
+    <div class="ruta-wrap" id="rutaWrap">
+      <div class="ruta-line"><div class="ruta-fill" id="rutaFill"></div></div>
+      <div id="rutaList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MOTOR -->
+<section class="band dark motor" id="tu-proyecto">
+  <div class="wrap">
+    <div class="band-head reveal"><div class="eyebrow">tu proyecto</div><h2 style="color:#fff">El mismo temario, con la app que tú elijas.</h2><p>Elige un proyecto de ejemplo (o define el tuyo abajo). La columna de la izquierda —lo que aprendes— no se mueve. Solo cambia el ejemplo con el que lo practicas.</p></div>
+    <div class="picker reveal" id="picker"></div>
+    <div class="grid-wrap reveal">
+      <div class="grid-head"><div>Lo que aprendes</div><div id="projHead">Lo que construyes</div></div>
+      <div id="gridRows"></div>
+      <div class="grid-foot">Aprendes <b>lo mismo</b> que en cualquier curso — construyendo tu propia app.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEFINIR -->
+<section class="band" id="empezar">
+  <div class="wrap">
+    <div class="band-head reveal"><div class="eyebrow">define tu proyecto</div><h2>Cuéntanos tu idea. La desglosamos en fundamentos.</h2><p>Escribe tu app y las funciones que quieres. Analizamos cada idea, la partimos en trozos y la repartimos entre los fundamentos que vas a aprender. Así ves tu ruta antes de empezar — y aparece arriba como <b>“Tu app”</b>.</p></div>
+    <div class="definir reveal">
+      <div class="form-card">
+        <div class="field"><label for="appName">Nombre de tu app</label><input id="appName" type="text" placeholder="Mi huerto, El taller, La liga del barrio…" maxlength="44"></div>
+        <div class="field"><label for="appFeats">Funciones que quieres (una por línea)</label><textarea id="appFeats" rows="7" placeholder="Guardar cada planta con su fecha de riego&#10;Avisar cuando una planta lleve días sin regar&#10;Calcular cuánta agua toca esta semana&#10;Ver el histórico de cada planta y su evolución"></textarea><div class="hint">Escribe con naturalidad. Detectamos verbos como guardar, calcular, avisar, mostrar, ver…</div></div>
+        <button class="btn indigo" id="fitBtn">Desglosar mi idea <span class="ar">»</span></button>
+      </div>
+      <div class="result-card">
+        <div class="rk">» tu ruta · vista previa</div>
+        <h3 id="resultTitle">Tu app, por fundamentos</h3>
+        <div class="summary" id="resultSummary"></div>
+        <div id="resultSlots"><p style="color:#767986;font-style:italic;font-size:14px">Escribe tu idea y pulsa “Desglosar mi idea”. Verás cómo cada función se reparte entre los fundamentos que la enseñan.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap reveal">
+    <h2>Tu idea ya es un buen punto de partida.</h2>
+    <p>Empieza por el Nivel 0. Al terminar tendrás tu app publicada y sabrás repetir el proceso con cualquier cosa que se te ocurra.</p>
+    <a href="vanto-nivel.html?n=0" class="btn">Empezar el Nivel 0 <span class="ar">»</span></a>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <span class="mark" data-mark="paper"></span>
+    <div><span class="lw">vanto</span><span class="code">code</span></div>
+    <p>Tu idea, hacia delante. Aprende a programar construyendo algo que quieras de verdad.</p>
+    <div class="fnote">Herramientas con capa gratuita a fecha de creación; confirma sus límites vigentes. "Vanto" es un nombre de trabajo: verifica dominio y marca (OEPM/EUIPO, clase 41) antes de publicarlo.</div>
+  </div>
+</footer>
+
+<script>
+/* marca */
+function mark(c1,c2){return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block"><g fill="none" stroke="${c1}" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M26 26 L50 50 L26 74"/></g><g fill="none" stroke="${c2}" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M50 26 L74 50 L50 74"/></g></svg>`;}
+const MV={ink:['#16181D','#4B49F0'],paper:['#F2F3F6','#4B49F0']};
+document.querySelectorAll('[data-mark]').forEach(el=>{const[a,b]=MV[el.getAttribute('data-mark')]||MV.ink;el.innerHTML=mark(a,b);});
+
+/* fundamentos (sin jerga de RAs) */
+const FUN=[
+ {id:"entorno",n:"01",name:"Entorno y primer programa",struct:true},
+ {id:"datos",n:"02",name:"Guardar datos (variables y tipos)"},
+ {id:"calculos",n:"03",name:"Hacer cálculos"},
+ {id:"decisiones",n:"04",name:"Tomar decisiones (condiciones)"},
+ {id:"repeticion",n:"05",name:"Repetir sobre muchos (bucles)"},
+ {id:"funciones",n:"06",name:"Acciones reutilizables (funciones)",struct:true},
+ {id:"colecciones",n:"07",name:"Listas y colecciones"},
+ {id:"objetos",n:"08",name:"Modelar cosas (objetos)",struct:true},
+ {id:"pantalla",n:"09",name:"Interfaz y botones"},
+ {id:"bd",n:"10",name:"Guardar en base de datos"},
+ {id:"consultas",n:"11",name:"Consultas y estadística"},
+];
+/* proyectos de ejemplo (alineados al orden de FUN) */
+const PROJECTS={
+ huerto:{label:"Mi huerto",em:"🌱",head:"App para cuidar tu huerto",feats:["Creas el repo y programas desde el navegador.","Cada planta con su nombre, especie y fecha de riego.","Cuántos días lleva sin regar cada planta.","Avisar si una planta necesita agua ya.","Repasar todas las plantas del huerto de una vez.","regar() y diasSinAgua() reutilizables.","El huerto como lista de plantas.","Clases Planta y Riego.","Marcar “regada hoy” con un toque.","Tablas plantas / riegos en Supabase.","Qué plantas necesitan atención y su histórico."]},
+ taller:{label:"El taller",em:"🔧",head:"App para un taller mecánico",feats:["Creas el repo y lo abres en el navegador.","Cada coche con matrícula, cliente y avería.","Coste total de una reparación con IVA.","¿La reparación está lista o pendiente?","Recorrer todos los trabajos del día.","presupuestar() y marcarEntregado() reutilizables.","Los trabajos como lista de reparaciones.","Clases Coche, Reparación y Cliente.","Cambiar el estado con un botón.","Tablas coches / reparaciones en Supabase.","Reparaciones del mes e ingresos, con consultas."]},
+ liga:{label:"La liga del barrio",em:"⚽",head:"App para una liga amateur",feats:["Creas el repo y programas desde el navegador.","Cada equipo con nombre, puntos y partidos.","Calcular la clasificación por puntos.","¿El partido está jugado o pendiente?","Recorrer todos los partidos de la jornada.","registrarResultado() y clasificacion() reutilizables.","La liga como lista de equipos.","Clases Equipo, Partido y Jornada.","Meter el resultado desde un formulario.","Tablas equipos / partidos en Supabase.","Tabla de clasificación y goleadores, con consultas."]},
+ tuapp:{label:"Tu app",em:"✳",head:"Tu proyecto",feats:null},
+};
+/* módulos (para la lista de la ruta) */
+const MODULES=[
+ {n:"00",title:"Preparar el entorno y tu primer programa",sub:"Sin instalar nada. Tu proyecto en marcha en el navegador."},
+ {n:"01",title:"Guardar datos: variables y tipos",sub:"Representar la información de tu app."},
+ {n:"02",title:"Hacer cálculos",sub:"Combinar datos para obtener resultados."},
+ {n:"03",title:"Tomar decisiones",sub:"Que la app reaccione según lo que pasa."},
+ {n:"04",title:"Repetir sobre muchos elementos",sub:"Hacer algo con toda una lista de golpe."},
+ {n:"05",title:"Acciones reutilizables: funciones",sub:"Organizar el código y no repetirte."},
+ {n:"06",title:"Listas y colecciones",sub:"Manejar muchos datos juntos."},
+ {n:"07",title:"Modelar cosas con objetos",sub:"Poner orden en el dominio de tu app."},
+ {n:"08",title:"Interfaz y botones",sub:"Que se use tocando, no escribiendo código."},
+ {n:"09",title:"Guardar en base de datos",sub:"Que los datos no se pierdan al cerrar."},
+ {n:"10",title:"Consultas y estadística",sub:"Sacar información útil de tus datos."},
+ {n:"★",title:"Proyecto final: publicar tu app",sub:"Todo junto y en internet, para usarla."},
+];
+
+/* ===== ruta ===== */
+const rutaList=document.getElementById('rutaList');
+MODULES.forEach((m,i)=>{
+  const a=document.createElement('a');
+  a.className='mod reveal';a.href='vanto-nivel.html?n='+i;
+  const ready=(i===0);
+  a.innerHTML=`<div class="node">${m.n}</div><div class="mod-card"><div><div class="mod-title">${m.title}</div><div class="mod-ra">${m.sub}</div></div><div class="mod-open">${ready?'Abrir nivel':'Ver'} <span class="ar">»</span></div></div>`;
+  rutaList.appendChild(a);
+});
+
+/* ===== CLASIFICADOR: desglosa funciones en fundamentos ===== */
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const KEY={
+ datos:['guardar','dato','nombre','fecha','precio','cantidad','numero','texto','registrar','ficha','campo','con su','apunta','anotar'],
+ calculos:['calcul','media','total','suma','sumar','porcentaje','%','iva','cuanto','cuanta','coste','importe','restar','multiplic','divid','promedio','contar','cuentas','presupuest'],
+ decisiones:['avis','comprob','cuando','segun','alerta','recordar','recordatorio','detectar','valido','permit','bloquear','clasificar','estado','pendiente','listo','si '],
+ repeticion:['cada','todos','todas','recorrer','repasar','revisar','uno por uno','jornada','del dia'],
+ colecciones:['lista','catalogo','coleccion','conjunto','varios','varias','muchos','inventario','equipos','plantas','trabajos','productos'],
+ pantalla:['boton','tocar','mostrar','pantalla','formulario','pulsar','seleccionar','interfaz','toque','clic','pinchar','anadir','marcar','meter'],
+ bd:['guardar','base de datos','historic','historial','no se pierda','conservar','almacenar','persist','quede guardado','se guarde','registro'],
+ consultas:['panel','estadistic','grafic','evolucion','resumen','informe','ranking','clasificacion','mas vendid','goleador','filtrar','buscar','ordenar','tendencia','comparar','ver el','ver la','ver cuant','ver que','ingresos'],
+};
+function splitClauses(line){
+  return norm(line).split(/[,;.]| y | e | ademas | tambien /).map(s=>s.trim()).filter(s=>s.length>3);
+}
+function match(clause){
+  const hits=[];
+  for(const f in KEY){
+    for(const k of KEY[f]){
+      const hit = k.endsWith(' ')? new RegExp('\\b'+k.trim()+'\\b').test(clause) : clause.includes(k);
+      if(hit){hits.push(f);break;}
+    }
+  }
+  return hits;
+}
+/* devuelve {byFund:{id:[clausesOriginales]}, ideas:n, sinClasificar:[...]} */
+function analyze(rawLines){
+  const byFund={}; FUN.forEach(f=>byFund[f.id]=[]);
+  let ideas=0; const sin=[];
+  rawLines.forEach(line=>{
+    const originalClauses=line.split(/[,;.]| y | e | además | también /i).map(s=>s.trim()).filter(s=>s.length>3);
+    const normClauses=splitClauses(line);
+    normClauses.forEach((nc,idx)=>{
+      ideas++;
+      const hits=match(nc);
+      const original=originalClauses[idx]||nc;
+      if(hits.length===0){sin.push(original);}
+      hits.forEach(f=>{ if(!byFund[f].some(x=>norm(x)===norm(original))) byFund[f].push(original); });
+    });
+  });
+  return {byFund,ideas,sin};
+}
+
+/* ===== motor grid ===== */
+const gridRows=document.getElementById('gridRows'),projHead=document.getElementById('projHead'),picker=document.getElementById('picker');
+let current='huerto';
+function buildGrid(key,anim){
+  const p=PROJECTS[key];projHead.textContent=p.head;gridRows.innerHTML='';
+  FUN.forEach((f,idx)=>{
+    let feat, soft=false;
+    if(p.feats){feat=p.feats[idx];}
+    else if(PROJECTS.tuapp.data){
+      const cls=PROJECTS.tuapp.data.byFund[f.id];
+      if(cls&&cls.length){feat=cls.join(' · ');}
+      else if(f.struct){feat='Se practica igual, forma parte de la base.';soft=true;}
+      else{feat='Aún no aparece en tus funciones — lo verás en el curso.';soft=true;}
+    } else {feat='Define tu app abajo para rellenar esta columna.';soft=true;}
+    const stamp=key==='tuapp'?'<span class="stamp">TU APP</span>':'';
+    const r=document.createElement('div');r.className='grow';
+    r.innerHTML=`<div class="gcell ra"><span class="ra-code">${f.n}</span><span class="ra-name">${f.name}</span></div><div class="gcell feat ${soft?'soft':''} ${anim?'mark':''}">${stamp}${feat}</div>`;
+    gridRows.appendChild(r);
+  });
+}
+Object.keys(PROJECTS).forEach(key=>{
+  const p=PROJECTS[key],b=document.createElement('button');
+  b.className='chip'+(key===current?' active':'');b.innerHTML=`<span>${p.em}</span>${p.label}`;
+  b.addEventListener('click',()=>{current=key;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));b.classList.add('active');buildGrid(key,true);});
+  picker.appendChild(b);
+});
+buildGrid('huerto',false);
+
+/* ===== definir tu app ===== */
+document.getElementById('fitBtn').addEventListener('click',()=>{
+  const name=(document.getElementById('appName').value||'Tu app').trim();
+  const lines=document.getElementById('appFeats').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!lines.length){return;}
+  const data=analyze(lines);
+  PROJECTS.tuapp.data=data; PROJECTS.tuapp.head=name;
+  document.getElementById('resultTitle').textContent=name+' · por fundamentos';
+  const cubiertos=FUN.filter(f=>data.byFund[f.id].length).length;
+  document.getElementById('resultSummary').textContent=`Desglosamos tu idea en ${data.ideas} trozos y tocan ${cubiertos} de los 11 fundamentos. El resto los verás igual en el curso.`;
+  const box=document.getElementById('resultSlots');box.innerHTML='';
+  FUN.forEach(f=>{
+    const cls=data.byFund[f.id];
+    const l=document.createElement('div');l.className='slotline';
+    if(cls.length){
+      l.innerHTML=`<div class="st"><span class="num">${f.n}</span>${f.name}</div><div class="chips">${cls.map(c=>`<span class="cc">${c}</span>`).join('')}</div>`;
+    }else{
+      l.innerHTML=`<div class="st" style="opacity:.6"><span class="num">${f.n}</span>${f.name}</div><div class="sf">${f.struct?'Forma parte de la base del curso.':'No aparece en tus funciones — lo aprendes igual.'}</div>`;
+    }
+    box.appendChild(l);
+  });
+  // reflejar en el grid y activar el chip "Tu app"
+  current='tuapp';document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  [...document.querySelectorAll('.chip')].find(c=>c.textContent.includes('Tu app'))?.classList.add('active');
+  buildGrid('tuapp',true);
+  if(data.sin.length){document.getElementById('resultSummary').textContent+=` (${data.sin.length} idea/s no las supimos clasificar solas: las encajamos contigo.)`;}
+});
+
+/* ===== rotador hero ===== */
+(function(){
+  const el=document.getElementById('rot');if(!el)return;
+  const items=['la app del tiempo','otro clon de Pokémon','la lista de tareas nº 47','un conversor de monedas'];
+  let i=0;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.innerHTML='<s>'+items[0]+'</s>';
+  if(reduce)return;
+  setInterval(()=>{i=(i+1)%items.length;el.style.opacity=0;setTimeout(()=>{el.innerHTML='<s>'+items[i]+'</s>';el.style.opacity=1;},220);},2100);
+  el.style.transition='opacity .22s ease';
+})();
+
+/* ===== movimiento ===== */
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.14});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(Math.min(i%4,3)*0.06)+'s';io.observe(el);});
+function animCount(el){const target=+el.dataset.count;const dur=1000,t0=performance.now();function tick(t){const p=Math.min((t-t0)/dur,1);el.textContent=Math.round((1-Math.pow(1-p,3))*target);if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);}
+const cio=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){animCount(e.target);cio.unobserve(e.target);}});},{threshold:.6});
+document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+const progress=document.getElementById('progress'),topbar=document.getElementById('topbar'),rutaWrap=document.getElementById('rutaWrap'),rutaFill=document.getElementById('rutaFill');
+const mods=[...document.querySelectorAll('.mod')];
+function onScroll(){
+  const h=document.documentElement,st=h.scrollTop,sh=h.scrollHeight-h.clientHeight;
+  progress.style.width=(sh>0?st/sh*100:0)+'%';topbar.classList.toggle('scrolled',st>10);
+  if(rutaWrap){const r=rutaWrap.getBoundingClientRect(),vh=window.innerHeight,total=r.height,passed=Math.min(Math.max(vh*0.5-r.top,0),total);
+    rutaFill.style.height=(total>0?passed/total*100:0)+'%';
+    mods.forEach(m=>{m.classList.toggle('seen',m.getBoundingClientRect().top<vh*0.55);});}
+}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+</script>
+</body>
+</html>
