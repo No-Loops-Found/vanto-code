@@ -53,8 +53,39 @@ const responseSchema = {
         required: ['id', 'aplica', 'como'],
       },
     },
+    // Modelo estructurado del proyecto: permite personalizar los niveles por
+    // plantilla (sin más IA). La IA solo extrae los datos; el código lo genera el curso.
+    modelo: {
+      type: 'object',
+      properties: {
+        entidad: { type: 'string' }, // singular, PascalCase (Planta)
+        plural: { type: 'string' }, // minúscula (plantas)
+        campos: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              nombre: { type: 'string' }, // camelCase (fechaRiego)
+              tipo: { type: 'string', enum: ['texto', 'numero', 'fecha', 'booleano'] },
+              ejemplo: { type: 'string' },
+            },
+            required: ['nombre', 'tipo'],
+          },
+        },
+        acciones: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: { nombre: { type: 'string' }, desc: { type: 'string' } },
+            required: ['nombre'],
+          },
+        },
+        entidades2: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['entidad', 'plural', 'campos'],
+    },
   },
-  required: ['resumen', 'fundamentos'],
+  required: ['resumen', 'fundamentos', 'modelo'],
 };
 
 export const POST: APIRoute = async ({ request, cookies }) => {
@@ -82,7 +113,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     'Para CADA uno de los 11 fundamentos, indica si aplica a esta app (aplica), explica en 1-2 frases ' +
     'cómo se usa EN ESTA app (como) y, cuando aplique, un ejemplo de código JavaScript muy corto adaptado ' +
     '(ejemplo). Los fundamentos entorno, funciones y objetos casi siempre aplican (son la base). ' +
-    'Escribe un resumen motivador de 1-2 frases.';
+    'Escribe un resumen motivador de 1-2 frases.\n\n' +
+    'Además, extrae un MODELO ESTRUCTURADO de la app (campo "modelo") para poder generar código luego:\n' +
+    '- entidad: la cosa principal que gestiona la app, en singular y PascalCase (Planta, Coche, Equipo).\n' +
+    '- plural: su plural en minúscula (plantas, coches, equipos).\n' +
+    '- campos: 3-5 propiedades de esa entidad. nombre en camelCase (nombre, especie, fechaRiego), tipo ' +
+    'entre texto/numero/fecha/booleano, y un valor de ejemplo realista.\n' +
+    '- acciones: 2-4 acciones principales como nombres de función en camelCase (regar, diasSinAgua).\n' +
+    '- entidades2: otras entidades secundarias en PascalCase si las hay (Riego), o lista vacía.';
 
   const payload = {
     systemInstruction: { parts: [{ text: systemInstruction }] },
@@ -117,11 +155,22 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     return json({ error: 'gemini-fail', detail: String(e).slice(0, 200) }, 502);
   }
 
-  // Persistir la definición (con el desglose de Gemini) para el alumno.
-  await supabase
-    .from('app_definitions')
-    .insert({ user_id: user.id, nombre: nombre || 'Tu app', funciones, resultado: result as object })
-    .then(() => {}, () => {}); // fire-and-forget: no bloquea la respuesta
+  // Persistir la definición (histórico) y fijar el PROYECTO ACTIVO del alumno
+  // (1 fila por usuario) — es lo que personaliza los niveles.
+  const modelo = (result as { modelo?: unknown }).modelo ?? {};
+  await Promise.all([
+    supabase
+      .from('app_definitions')
+      .insert({ user_id: user.id, nombre: nombre || 'Tu app', funciones, resultado: result as object })
+      .then(() => {}, () => {}),
+    supabase
+      .from('proyecto')
+      .upsert(
+        { user_id: user.id, app: nombre || 'Tu app', funciones, modelo, updated_at: new Date().toISOString() },
+        { onConflict: 'user_id' }
+      )
+      .then(() => {}, () => {}),
+  ]);
 
   return json(result);
 };

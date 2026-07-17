@@ -12,6 +12,7 @@ import Faq from '../../components/nivel/Faq.astro';
 import Pager from '../../components/nivel/Pager.astro';
 import { MODULES } from '../../lib/course-data';
 import { serverClient } from '../../lib/supabase';
+import { personalizarNivel, NIVELES_PERSONALIZABLES } from '../../lib/personalize';
 
 const nParam = Number(Astro.params.n);
 if (!Number.isInteger(nParam) || nParam < 0 || nParam > MODULES.length - 1) {
@@ -20,16 +21,35 @@ if (!Number.isInteger(nParam) || nParam < 0 || nParam > MODULES.length - 1) {
 
 const entry = (await getCollection('niveles')).find((e) => e.data.n === nParam);
 if (!entry) return new Response(null, { status: 404 });
-const data = entry.data;
+
+// Sesión + proyecto activo (para el gate y la personalización).
+const supabase = serverClient(Astro.request, Astro.cookies);
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
 // Gate de contenido: del Nivel 1 en adelante hace falta iniciar sesión.
-if (nParam > 0) {
-  const supabase = serverClient(Astro.request, Astro.cookies);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return Astro.redirect(`/entrar?next=/nivel/${nParam}`);
+if (nParam > 0 && !user) return Astro.redirect(`/entrar?next=/nivel/${nParam}`);
+
+let data = entry.data;
+let proyectoApp: string | null = null;
+if (user) {
+  const { data: proy } = await supabase
+    .from('proyecto')
+    .select('app, modelo')
+    .eq('user_id', user.id)
+    .maybeSingle();
+  if (proy) {
+    const perso = personalizarNivel(nParam, { app: proy.app, modelo: proy.modelo as any });
+    if (perso) {
+      data = { ...entry.data, ...perso };
+      proyectoApp = proy.app;
+    }
+  }
 }
+
+// ¿Este nivel puede personalizarse pero el alumno aún no tiene proyecto?
+const invitarDefinir = !proyectoApp && !!user && NIVELES_PERSONALIZABLES.includes(nParam);
 
 const { n, title, sub, tool } = data;
 
@@ -55,6 +75,19 @@ const pageTitle = 'vanto·code — Nivel ' + (isFinal ? 'final' : n);
 
   <main>
     <div class="nv-wrap">
+      {proyectoApp && (
+        <div class="perso-banner">
+          <span class="pb-ico" aria-hidden="true">»</span>
+          <span>Adaptado a tu proyecto: <strong>{proyectoApp}</strong></span>
+          <a href="/curso/web#empezar">cambiar</a>
+        </div>
+      )}
+      {invitarDefinir && (
+        <div class="perso-banner invite">
+          <span>Este nivel se adapta a tu app. <a href="/curso/web#empezar">Define tu proyecto</a> y verás los ejemplos y ejercicios con tus datos.</span>
+        </div>
+      )}
+
       <Leccion data={data} />
 
       <Ejercicios ex={data.ex} />
@@ -86,6 +119,13 @@ const pageTitle = 'vanto·code — Nivel ' + (isFinal ? 'final' : n);
   a { color: var(--indigo-d); text-decoration: none; }
 
   .nv-wrap { max-width: 760px; margin: 0 auto; padding: 0 28px; }
+
+  /* banner de personalización */
+  .perso-banner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: #eeeefe; border: 1px solid #cdccf7; border-radius: 12px; padding: 12px 16px; margin-bottom: 26px; font-size: 14.5px; color: #33363d; }
+  .perso-banner .pb-ico { color: var(--indigo); font-weight: 800; font-family: "JetBrains Mono"; }
+  .perso-banner strong { color: var(--indigo-d); }
+  .perso-banner a { color: var(--indigo-d); font-weight: 600; text-decoration: underline; }
+  .perso-banner.invite { background: var(--snow); border-color: var(--line-d); color: var(--muted); }
 
   .progress {
     position: fixed; top: 0; left: 0; height: 3px; width: 0;
