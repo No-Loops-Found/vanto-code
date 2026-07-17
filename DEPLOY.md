@@ -43,3 +43,8 @@ Opción B — Dashboard: importa el repo de GitHub, framework detectado = Astro,
 |---|---|---|
 | `PUBLIC_SUPABASE_URL` | Supabase → Settings → API | `https://xxxx.supabase.co` |
 | `PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API | `eyJhbGciOi...` |
+| `GEMINI_API_KEY` | Google AI Studio → API keys (secreto de servidor) | `AQ.Ab8...` |
+
+> `GEMINI_API_KEY` potencia el "define tu app" con IA (endpoint `/api/desglose`). Si falta,
+> la sección sigue funcionando con el clasificador heurístico local (degradación limpia).
+> El modelo usado es `gemini-flash-latest` (capa gratuita).

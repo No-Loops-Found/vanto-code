@@ -7,6 +7,30 @@ import Mark from '../Mark.astro';
       <Mark variant="ink" class="tb-mark" />
       <span class="lw">vanto</span><span class="code">code</span>
     </a>
-    <a href="/#ruta" class="back">« Volver al curso</a>
+    <div class="tb-right">
+      <a href="/#ruta" class="back">« Volver al curso</a>
+      <a href="/entrar" class="back tb-auth" id="tbAuth">Entrar</a>
+    </div>
   </div>
 </div>
+
+<style>
+  .tb-right { display: flex; align-items: center; gap: 18px; }
+  .tb-auth { font-weight: 600; color: var(--indigo-d); }
+</style>
+
+<script>
+  import { browserClient } from '../../lib/supabase';
+  const a = document.getElementById('tbAuth');
+  if (a) {
+    browserClient()
+      .auth.getSession()
+      .then(({ data }) => {
+        if (data.session) {
+          a.textContent = 'Mi cuenta';
+          a.setAttribute('href', '/cuenta');
+        }
+      })
+      .catch(() => {});
+  }
+</script>

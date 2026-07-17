@@ -1,5 +1,7 @@
 ---
-import '../styles/global.css';
+// Tokens + base globales inline en el <head>: garantizado en todas las páginas
+// (el import por JS de CSS global no llegaba a las páginas estáticas con este bundling).
+import globalCss from '../styles/global.css?raw';
 
 interface Props {
   title: string;
@@ -19,6 +21,7 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light" />
+    <style is:inline set:html={globalCss}></style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

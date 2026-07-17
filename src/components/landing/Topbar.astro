@@ -11,10 +11,27 @@ import Mark from '../Mark.astro';
       <a href="#por-que">Por qué</a>
       <a href="#ruta">Ruta</a>
       <a href="#tu-proyecto">Tu proyecto</a>
+      <a href="/entrar" class="tb-auth" id="tbAuth">Entrar</a>
       <a href="#empezar" class="btn indigo">Empezar <span class="ar">»</span></a>
     </nav>
   </div>
 </div>
+
+<script>
+  import { browserClient } from '../../lib/supabase';
+  const a = document.getElementById('tbAuth');
+  if (a) {
+    browserClient()
+      .auth.getSession()
+      .then(({ data }) => {
+        if (data.session) {
+          a.textContent = 'Mi cuenta';
+          a.setAttribute('href', '/cuenta');
+        }
+      })
+      .catch(() => {});
+  }
+</script>
 
 <style>
   .topbar {

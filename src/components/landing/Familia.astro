@@ -1,0 +1,105 @@
+---
+// Los cursos de la familia Vanto Code. Mismo método, distinto destino.
+const CURSOS = [
+  {
+    name: 'Web',
+    sub: 'De la idea a tu app con base de datos, publicada. El curso base.',
+    state: 'Disponible',
+    live: true,
+    href: '#ruta',
+  },
+  {
+    name: 'Datos',
+    sub: 'De la idea a tu panel: consultas, gráficas y decisiones con tus datos.',
+    state: 'Próximamente',
+    live: false,
+    href: null,
+  },
+  {
+    name: 'Móvil',
+    sub: 'De la idea a tu app en el bolsillo, instalable en el teléfono.',
+    state: 'Próximamente',
+    live: false,
+    href: null,
+  },
+  {
+    name: 'IA',
+    sub: 'De la idea a tu app inteligente, conectada a un modelo.',
+    state: 'Próximamente',
+    live: false,
+    href: null,
+  },
+];
+---
+<section class="band" id="familia" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">la familia</div>
+      <h2>Una academia. Un curso por cada tipo de idea.</h2>
+      <p>Vanto Code es el método; cada curso avanza hacia un destino distinto. Mismos fundamentos —tu idea, hacia delante—, distinto tipo de app. Empiezas por el Web, que ya está disponible.</p>
+    </div>
+    <div class="fam-grid">
+      {CURSOS.map((c) => {
+        const inner = (
+          <>
+            <span class={`state ${c.live ? 'live' : 'soon'}`}>{c.state}</span>
+            <div class="track">
+              <span class="brand">vanto</span><span class="code">code</span><span class="dotsep">·</span><span class="name">{c.name}</span>
+            </div>
+            <p class="sub">{c.sub}</p>
+            {c.live && <div class="go">Ver la ruta <span class="ar">»</span></div>}
+          </>
+        );
+        return c.href
+          ? <a class="fam-card reveal live" href={c.href}>{inner}</a>
+          : <div class="fam-card reveal soon">{inner}</div>;
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .band { padding: 78px 0; position: relative; }
+  .band-head { max-width: 60ch; margin-bottom: 38px; }
+  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  .band-head p { font-size: 18px; color: #41444d; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .fam-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 680px) { .fam-grid { grid-template-columns: 1fr; } }
+
+  .fam-card {
+    position: relative; display: block;
+    background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px;
+    padding: 24px; box-shadow: var(--shadow);
+    transition: transform .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  .fam-card.live { cursor: pointer; }
+  .fam-card.live:hover { transform: translateY(-4px); border-color: var(--indigo-l); }
+  .fam-card.soon { opacity: .82; }
+
+  .fam-card .track { font-family: "Sora"; font-weight: 800; font-size: 21px; letter-spacing: -.03em; display: flex; align-items: baseline; }
+  .fam-card .brand { color: var(--ink); }
+  .fam-card .code { font-family: "JetBrains Mono"; font-weight: 500; font-size: 12px; color: var(--indigo-d); margin: 0 6px 0 3px; }
+  .fam-card .dotsep { color: var(--indigo); margin: 0 5px; }
+  .fam-card .name { color: var(--indigo-d); }
+  .fam-card .sub { color: #41444d; font-size: 14.5px; margin-top: 10px; max-width: 42ch; }
+
+  .fam-card .state {
+    position: absolute; top: 20px; right: 20px;
+    font-family: "JetBrains Mono"; font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
+    padding: 4px 8px; border-radius: 6px;
+  }
+  .fam-card .state.live { background: #eeeefe; color: var(--indigo-d); border: 1px solid #cdccf7; }
+  .fam-card .state.soon { background: transparent; color: var(--muted); border: 1px solid var(--line-d); }
+
+  .fam-card .go { margin-top: 16px; font-family: "JetBrains Mono"; font-size: 12.5px; color: var(--indigo-d); display: inline-flex; align-items: center; gap: 6px; }
+  .fam-card .go .ar { transition: transform .18s var(--ease); }
+  .fam-card.live:hover .go .ar { transform: translateX(4px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .fam-card.live:hover { transform: none !important; }
+  }
+</style>

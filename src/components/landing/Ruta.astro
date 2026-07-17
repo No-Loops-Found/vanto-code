@@ -22,7 +22,7 @@ const SUBS = [
     <div class="band-head reveal">
       <div class="eyebrow">vanto·code · web</div>
       <h2>12 niveles. Cada uno, un trozo de tu app.</h2>
-      <p>De encender el entorno a publicar la app con base de datos. Cada nivel tiene su propia página con la explicación al detalle, ejercicios y test. Empieza por el Nivel 0.</p>
+      <p>De encender el entorno a publicar la app con base de datos. Cada nivel tiene su propia página con la explicación al detalle, ejercicios y test. El Nivel 0 es gratis y abierto; para seguir con el resto creas tu cuenta.</p>
     </div>
     <div class="ruta-wrap" id="rutaWrap">
       <div class="ruta-line"><div class="ruta-fill" id="rutaFill"></div></div>
@@ -35,7 +35,9 @@ const SUBS = [
                 <div class="mod-title">{m.title}</div>
                 <div class="mod-ra">{SUBS[m.n]}</div>
               </div>
-              <div class="mod-open">{m.n === 0 ? 'Abrir nivel' : 'Ver'} <span class="ar">»</span></div>
+              {m.n === 0
+                ? <div class="mod-open">Abrir · gratis <span class="ar">»</span></div>
+                : <div class="mod-open locked"><span class="lock" aria-hidden="true">🔒</span> requiere cuenta <span class="ar">»</span></div>}
             </div>
           </a>
         ))}
@@ -77,6 +79,9 @@ const SUBS = [
   .mod-title { font-family: "Sora"; font-weight: 700; font-size: 18px; }
   .mod-ra { font-family: "JetBrains Mono"; font-size: 12px; color: var(--muted); margin-top: 3px; }
   .mod-open { font-family: "JetBrains Mono"; font-size: 12.5px; color: var(--indigo-d); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+  .mod-open.locked { color: var(--muted); }
+  .mod-open.locked .ar { color: var(--indigo-d); }
+  .mod-open .lock { font-size: 11px; }
   .mod-open .ar { transition: transform .18s var(--ease); }
   .mod:hover .mod-open .ar { transform: translateX(4px); }
   .mod .soon { color: var(--muted); }

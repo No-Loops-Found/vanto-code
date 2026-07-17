@@ -1,4 +1,7 @@
 ---
+// SSR: el Nivel 0 es preview abierto; los niveles 1-11 requieren sesión.
+export const prerender = false;
+
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import NivelTopbar from '../../components/nivel/NivelTopbar.astro';
@@ -8,16 +11,26 @@ import Quiz from '../../components/nivel/Quiz.astro';
 import Faq from '../../components/nivel/Faq.astro';
 import Pager from '../../components/nivel/Pager.astro';
 import { MODULES } from '../../lib/course-data';
+import { serverClient } from '../../lib/supabase';
 
-export async function getStaticPaths() {
-  const niveles = (await getCollection('niveles')).sort((a, b) => a.data.n - b.data.n);
-  return niveles.map((entry) => ({
-    params: { n: String(entry.data.n) },
-    props: { data: entry.data },
-  }));
+const nParam = Number(Astro.params.n);
+if (!Number.isInteger(nParam) || nParam < 0 || nParam > MODULES.length - 1) {
+  return new Response(null, { status: 404 });
 }
 
-const { data } = Astro.props;
+const entry = (await getCollection('niveles')).find((e) => e.data.n === nParam);
+if (!entry) return new Response(null, { status: 404 });
+const data = entry.data;
+
+// Gate de contenido: del Nivel 1 en adelante hace falta iniciar sesión.
+if (nParam > 0) {
+  const supabase = serverClient(Astro.request, Astro.cookies);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return Astro.redirect(`/entrar?next=/nivel/${nParam}`);
+}
+
 const { n, title, sub, tool } = data;
 
 const last = MODULES.length - 1; // 11

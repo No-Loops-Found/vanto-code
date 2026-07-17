@@ -4,8 +4,8 @@
   <div class="wrap">
     <div class="band-head reveal">
       <div class="eyebrow">define tu proyecto</div>
-      <h2>Cuéntanos tu idea. La desglosamos en fundamentos.</h2>
-      <p>Escribe tu app y las funciones que quieres. Analizamos cada idea, la partimos en trozos y la repartimos entre los fundamentos que vas a aprender. Así ves tu ruta antes de empezar — y aparece arriba como <b>“Tu app”</b>.</p>
+      <h2>Cuéntanos tu idea. La IA la desglosa en fundamentos.</h2>
+      <p>Escribe tu app y las funciones que quieres. La adaptamos a tu proyecto: te decimos qué fundamentos toca cada idea y te damos ejemplos hechos a tu medida. Necesitas <b>una cuenta</b> (gratis) para usarla — así guardamos tu desglose.</p>
     </div>
     <div class="definir reveal">
       <div class="form-card">
@@ -16,15 +16,16 @@
         <div class="field">
           <label for="appFeats">Funciones que quieres (una por línea)</label>
           <textarea id="appFeats" rows="7" placeholder={"Guardar cada planta con su fecha de riego\nAvisar cuando una planta lleve días sin regar\nCalcular cuánta agua toca esta semana\nVer el histórico de cada planta y su evolución"}></textarea>
-          <div class="hint">Escribe con naturalidad. Detectamos verbos como guardar, calcular, avisar, mostrar, ver…</div>
+          <div class="hint">Escribe con naturalidad. La IA entiende tu idea y la reparte entre los fundamentos.</div>
         </div>
         <button class="btn indigo" id="fitBtn">Desglosar mi idea <span class="ar">»</span></button>
+        <div class="gate-note" id="gateNote" hidden>Es gratis: <a href="/entrar?next=%2F%23empezar">crea tu cuenta</a> y desglosa tu idea con la IA.</div>
       </div>
       <div class="result-card">
         <div class="rk">» tu ruta · vista previa</div>
         <h3 id="resultTitle">Tu app, por fundamentos</h3>
         <div class="summary" id="resultSummary"></div>
-        <div id="resultSlots"><p style="color:#767986;font-style:italic;font-size:14px">Escribe tu idea y pulsa “Desglosar mi idea”. Verás cómo cada función se reparte entre los fundamentos que la enseñan.</p></div>
+        <div id="resultSlots"><p style="color:#767986;font-style:italic;font-size:14px">Escribe tu idea y pulsa “Desglosar mi idea”. La IA te dirá cómo cada función se reparte entre los fundamentos, con ejemplos adaptados a tu proyecto.</p></div>
       </div>
     </div>
   </div>
@@ -46,16 +47,19 @@
   .field input, .field textarea { width: 100%; font-family: "Inter"; font-size: 15px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; resize: vertical; transition: border-color .15s; }
   .field input:focus, .field textarea:focus { outline: none; border-color: var(--indigo); }
   .field .hint { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+  .gate-note { font-size: 13.5px; color: var(--muted); margin-top: 12px; }
+  .gate-note a { color: var(--indigo-d); font-weight: 600; }
+
   .result-card { background: var(--ink); color: #fff; border-radius: 16px; padding: 26px; min-height: 100%; }
   .result-card .rk { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-l); margin-bottom: 6px; }
   .result-card h3 { font-size: 20px; color: #fff; margin-bottom: 6px; }
   .result-card .summary { font-size: 14px; color: #B6B9C2; margin-bottom: 16px; }
-  .slotline { padding: 11px 0; border-bottom: 1px solid var(--ink-3); }
+  .slotline { padding: 12px 0; border-bottom: 1px solid var(--ink-3); }
   .slotline:last-child { border-bottom: none; }
   .slotline .st { color: #E7E8EE; font-size: 14.5px; font-weight: 500; display: flex; align-items: baseline; gap: 8px; }
   .slotline .st .num { font-family: "JetBrains Mono"; font-size: 11px; color: var(--indigo-l); }
-  .slotline .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
-  .slotline .chips .cc { font-size: 12.5px; background: #2b2e37; border: 1px solid #3a3d47; border-radius: 6px; padding: 3px 8px; color: #D7D8E0; }
+  .slotline .como { color: #C0C2CB; font-size: 13.5px; margin-top: 6px; line-height: 1.5; }
+  .slotline .ej { background: #2b2e37; border: 1px solid #3a3d47; border-radius: 8px; padding: 8px 10px; margin-top: 8px; overflow-x: auto; font-family: "JetBrains Mono"; font-size: 12px; line-height: 1.6; color: #D7D8E0; white-space: pre; }
   .slotline .sf { color: #767986; font-size: 13px; font-style: italic; margin-top: 5px; }
 
   .btn {
@@ -68,6 +72,8 @@
   .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(22, 24, 29, .5); }
   .btn.indigo { background: var(--indigo); border-color: var(--indigo); }
   .btn.indigo:hover { box-shadow: 0 12px 28px -10px rgba(75, 73, 240, .6); }
+  .btn:disabled { opacity: .7; cursor: default; }
+  .btn:disabled:hover { transform: none; box-shadow: none; }
   .btn .ar { transition: transform .18s var(--ease); }
   .btn:hover .ar { transform: translateX(3px); }
 
@@ -80,48 +86,121 @@
 <script>
   import { analyze } from '../../lib/classify';
   import { FUNDAMENTOS } from '../../lib/course-data';
+  import { browserClient } from '../../lib/supabase';
 
-  const fitBtn = document.getElementById('fitBtn')!;
-  fitBtn.addEventListener('click', () => {
-    const nameInput = document.getElementById('appName') as HTMLInputElement;
-    const featsInput = document.getElementById('appFeats') as HTMLTextAreaElement;
-    const name = (nameInput.value || 'Tu app').trim();
-    const lines = featsInput.value.split('\n').map((s) => s.trim()).filter(Boolean);
-    if (!lines.length) return;
+  const fitBtn = document.getElementById('fitBtn') as HTMLButtonElement;
+  const gateNote = document.getElementById('gateNote')!;
+  const titleEl = document.getElementById('resultTitle')!;
+  const summaryEl = document.getElementById('resultSummary')!;
+  const box = document.getElementById('resultSlots')!;
+  const NEXT = '/entrar?next=' + encodeURIComponent('/#empezar');
 
+  let logged = false;
+  browserClient()
+    .auth.getSession()
+    .then(({ data }) => {
+      logged = !!data.session;
+      if (!logged) {
+        fitBtn.innerHTML = 'Entra para desglosar tu idea <span class="ar">»</span>';
+        gateNote.hidden = false;
+      }
+    })
+    .catch(() => {});
+
+  const esc = (s: string) =>
+    String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  function readInputs() {
+    const name = ((document.getElementById('appName') as HTMLInputElement).value || 'Tu app').trim();
+    const lines = (document.getElementById('appFeats') as HTMLTextAreaElement).value
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return { name, lines };
+  }
+
+  // Render con el desglose de la IA (Gemini): cómo aplica + ejemplo adaptado.
+  function renderGemini(name: string, result: any) {
+    titleEl.textContent = name + ' · por fundamentos';
+    const byId: Record<string, any> = {};
+    (result.fundamentos || []).forEach((f: any) => (byId[f.id] = f));
+    const aplican = FUNDAMENTOS.filter((f) => byId[f.id]?.aplica).length;
+    summaryEl.textContent = result.resumen || `Tu idea toca ${aplican} de los 11 fundamentos.`;
+    box.innerHTML = '';
+    const byFund: Record<string, string[]> = {};
+    FUNDAMENTOS.forEach((f) => {
+      const g = byId[f.id];
+      const l = document.createElement('div');
+      l.className = 'slotline';
+      if (g && g.aplica) {
+        byFund[f.id] = [g.como];
+        l.innerHTML =
+          `<div class="st"><span class="num">${f.n}</span>${f.name}</div>` +
+          `<div class="como">${esc(g.como)}</div>` +
+          (g.ejemplo ? `<div class="ej">${esc(g.ejemplo)}</div>` : '');
+      } else {
+        byFund[f.id] = [];
+        l.innerHTML = `<div class="st" style="opacity:.6"><span class="num">${f.n}</span>${f.name}</div><div class="sf">${f.struct ? 'Forma parte de la base del curso.' : 'No aparece en tus funciones — lo aprendes igual.'}</div>`;
+      }
+      box.appendChild(l);
+    });
+    document.dispatchEvent(new CustomEvent('vanto:defined', { detail: { name, data: { byFund } } }));
+  }
+
+  // Fallback heurístico (módulo puro) si la IA no está disponible.
+  function renderHeuristico(name: string, lines: string[]) {
     const data = analyze(lines);
-
-    document.getElementById('resultTitle')!.textContent = name + ' · por fundamentos';
+    titleEl.textContent = name + ' · por fundamentos';
     const cubiertos = FUNDAMENTOS.filter((f) => data.byFund[f.id].length).length;
-    const summaryEl = document.getElementById('resultSummary')!;
     summaryEl.textContent = `Desglosamos tu idea en ${data.ideas} trozos y tocan ${cubiertos} de los 11 fundamentos. El resto los verás igual en el curso.`;
-
-    const box = document.getElementById('resultSlots')!;
     box.innerHTML = '';
     FUNDAMENTOS.forEach((f) => {
       const cls = data.byFund[f.id];
       const l = document.createElement('div');
       l.className = 'slotline';
       if (cls.length) {
-        l.innerHTML = `<div class="st"><span class="num">${f.n}</span>${f.name}</div><div class="chips">${cls.map((c) => `<span class="cc">${c}</span>`).join('')}</div>`;
+        l.innerHTML = `<div class="st"><span class="num">${f.n}</span>${f.name}</div><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:7px">${cls.map((c) => `<span class="ej" style="white-space:normal">${esc(c)}</span>`).join('')}</div>`;
       } else {
         l.innerHTML = `<div class="st" style="opacity:.6"><span class="num">${f.n}</span>${f.name}</div><div class="sf">${f.struct ? 'Forma parte de la base del curso.' : 'No aparece en tus funciones — lo aprendes igual.'}</div>`;
       }
       box.appendChild(l);
     });
-
-    if (data.sin.length) {
-      summaryEl.textContent += ` (${data.sin.length} idea/s no las supimos clasificar solas: las encajamos contigo.)`;
-    }
-
-    // Comparte el estado con el ProjectMotor (activa el chip "Tu app" y rellena su columna).
+    if (data.sin.length) summaryEl.textContent += ` (${data.sin.length} idea/s las encajamos contigo.)`;
     document.dispatchEvent(new CustomEvent('vanto:defined', { detail: { name, data } }));
+  }
 
-    // Persistencia opcional (fire-and-forget). Ignora errores y el caso no-logueado.
-    fetch('/api/definicion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre: name, funciones: lines, resultado: data.byFund }),
-    }).catch(() => {});
+  fitBtn.addEventListener('click', async () => {
+    if (!logged) {
+      location.assign(NEXT);
+      return;
+    }
+    const { name, lines } = readInputs();
+    if (!lines.length) return;
+
+    const original = fitBtn.innerHTML;
+    fitBtn.disabled = true;
+    fitBtn.textContent = 'Desglosando con IA…';
+    summaryEl.textContent = 'La IA está adaptando tu idea…';
+    try {
+      const res = await fetch('/api/desglose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: name, funciones: lines }),
+      });
+      if (res.status === 401) {
+        location.assign(NEXT);
+        return;
+      }
+      if (!res.ok) throw new Error('gemini-unavailable');
+      const result = await res.json();
+      renderGemini(name, result);
+    } catch {
+      // Fallback: el clasificador heurístico sigue funcionando sin IA.
+      renderHeuristico(name, lines);
+      summaryEl.textContent += ' (desglose rápido; la versión con IA no estaba disponible)';
+    } finally {
+      fitBtn.disabled = false;
+      fitBtn.innerHTML = original;
+    }
   });
 </script>

@@ -2,8 +2,7 @@
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
 
-// output: 'static' → páginas prerenderizadas por defecto (landing, niveles).
-// Las páginas con sesión (login, cuenta, endpoints) usan `export const prerender = false`.
+// output: 'static' → landing prerenderizada; niveles y páginas con sesión usan SSR.
 export default defineConfig({
   output: 'static',
   adapter: vercel(),

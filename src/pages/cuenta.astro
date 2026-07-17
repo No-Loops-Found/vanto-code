@@ -24,9 +24,28 @@ const { data: quizRows } = await supabase
   .order('created_at', { ascending: false })
   .limit(8);
 
-const total = MODULES.length;
-const hechos = superados.size;
-const pct = Math.round((hechos / total) * 100);
+// ── Cursos (hoy solo Web es real; el resto, próximamente) ──────────────
+const CURSOS = [
+  { id: 'web', nombre: 'vanto·code · Web', niveles: MODULES.length, disponible: true },
+  { id: 'datos', nombre: 'vanto·code · Datos', disponible: false },
+  { id: 'movil', nombre: 'vanto·code · Móvil', disponible: false },
+  { id: 'ia', nombre: 'vanto·code · IA', disponible: false },
+];
+const proximos = CURSOS.filter((c) => !c.disponible);
+
+// ── Estado del curso Web a partir del progreso ─────────────────────────
+const totalWeb = MODULES.length;
+const hechosWeb = superados.size;
+const pctWeb = Math.round((hechosWeb / totalWeb) * 100);
+
+type EstadoCurso = 'sin empezar' | 'en curso' | 'completado';
+const estadoWeb: EstadoCurso =
+  hechosWeb >= totalWeb ? 'completado' : hechosWeb > 0 ? 'en curso' : 'sin empezar';
+
+// CTA: continuar en el primer nivel no superado; si está completado, repasar.
+const siguiente = MODULES.find((m) => !superados.has(m.n)) ?? MODULES[0];
+const ctaHref = estadoWeb === 'completado' ? '/nivel/0' : `/nivel/${siguiente.n}`;
+const ctaLabel = estadoWeb === 'completado' ? 'Repasar' : estadoWeb === 'en curso' ? 'Continuar' : 'Empezar';
 ---
 
 <Base title="Mi cuenta · Vanto Code">
@@ -44,16 +63,54 @@ const pct = Math.round((hechos / total) * 100);
   <main class="wrap cuenta">
     <p class="eyebrow">Tu cuenta</p>
     <h1>Hola, {user.email}</h1>
-    <p class="lead">Este es tu avance en Vanto Code. Cada nivel superado se guarda aquí.</p>
-
-    <section class="card summary">
-      <div class="bignum">{hechos}<span>/ {total}</span></div>
-      <div class="bar"><span style={`width:${pct}%`}></span></div>
-      <p class="pct">{pct}% de la ruta completada</p>
-    </section>
+    <p class="lead">Estos son tus cursos en Vanto Code. Tu idea, hacia delante.</p>
 
     <section>
-      <h2 class="sec">Tu ruta</h2>
+      <h2 class="sec">Tus cursos</h2>
+
+      <!-- Curso Web: tarjeta destacada -->
+      <article class={`curso curso--web estado-${estadoWeb.replace(' ', '-')}`}>
+        <div class="curso-head">
+          <div>
+            <p class="curso-fam">Curso</p>
+            <h3 class="curso-nombre">vanto<span class="mono">·code · Web</span></h3>
+          </div>
+          <span class="chip">{estadoWeb}</span>
+        </div>
+
+        <div class="progreso">
+          <div class="bar"><span style={`width:${pctWeb}%`}></span></div>
+          <div class="progreso-meta">
+            <span class="frac">{hechosWeb}<em>/ {totalWeb}</em> niveles</span>
+            <span class="pct">{pctWeb}%</span>
+          </div>
+        </div>
+
+        <a class="cta" href={ctaHref}>{ctaLabel} <span aria-hidden="true">»</span></a>
+      </article>
+
+      <!-- Cursos próximamente -->
+      <div class="proximos">
+        {
+          proximos.map((c) => (
+            <article class="curso curso--soon" aria-disabled="true">
+              <div class="curso-head">
+                <div>
+                  <p class="curso-fam">Curso</p>
+                  <h3 class="curso-nombre">{c.nombre}</h3>
+                </div>
+                <span class="chip chip--soon">próximamente</span>
+              </div>
+              <p class="soon-note">Mismo método, distinto tipo de app.</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Detalle del curso Web -->
+    <section class="detalle">
+      <h2 class="sec">Detalle · vanto·code · Web</h2>
       <ol class="niveles">
         {
           MODULES.map((m) => (
@@ -69,7 +126,7 @@ const pct = Math.round((hechos / total) * 100);
 
     {
       quizRows && quizRows.length > 0 && (
-        <section>
+        <section class="detalle">
           <h2 class="sec">Tests recientes</h2>
           <ul class="quizzes">
             {quizRows.map((q) => (
@@ -96,26 +153,67 @@ const pct = Math.round((hechos / total) * 100);
   nav { display: flex; align-items: center; gap: 18px; font-size: 14px; }
   nav a { text-decoration: none; color: var(--muted); }
   .linklike { background: none; border: none; color: var(--indigo-d); font: inherit; font-weight: 600; cursor: pointer; }
+
   .cuenta { padding: 24px 30px 90px; max-width: 760px; }
   h1 { font-size: clamp(28px, 5vw, 40px); margin: 10px 0 6px; }
-  .lead { color: var(--muted); margin: 0 0 28px; }
-  .card { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
-  .summary { display: grid; gap: 12px; margin-bottom: 36px; }
-  .bignum { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 44px; line-height: 1; }
-  .bignum span { color: var(--muted); font-size: 20px; margin-left: 6px; }
-  .bar { height: 10px; background: var(--paper-2); border-radius: 999px; overflow: hidden; }
-  .bar span { display: block; height: 100%; background: var(--indigo); border-radius: 999px; }
-  .pct { color: var(--muted); font-size: 14px; margin: 0; }
+  .lead { color: var(--muted); margin: 0 0 32px; }
   .sec { font-size: 18px; margin: 0 0 14px; }
-  .niveles { list-style: none; padding: 0; margin: 0 0 36px; display: grid; gap: 8px; }
+
+  section { margin-bottom: 40px; }
+
+  /* Tarjeta de curso */
+  .curso { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
+  .curso-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+  .curso-fam { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+  .curso-nombre { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -.02em; }
+  .curso-nombre .mono { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 16px; }
+
+  /* Chips (JetBrains Mono) */
+  .chip { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: .02em; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line-d); background: var(--paper-2); color: var(--muted); white-space: nowrap; flex: none; }
+  .estado-en-curso .chip { border-color: var(--indigo); color: var(--indigo-d); background: color-mix(in srgb, var(--indigo) 8%, var(--snow)); }
+  .estado-completado .chip { border-color: var(--verde); color: var(--verde); background: color-mix(in srgb, var(--verde) 10%, var(--snow)); }
+  .chip--soon { background: transparent; }
+
+  /* Progreso del curso Web */
+  .progreso { margin: 20px 0 22px; display: grid; gap: 8px; }
+  .bar { height: 10px; background: var(--paper-2); border-radius: 999px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--indigo); border-radius: 999px; transition: width .6s var(--ease); }
+  .estado-completado .bar span { background: var(--verde); }
+  .progreso-meta { display: flex; align-items: baseline; justify-content: space-between; font-size: 14px; }
+  .frac { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 20px; }
+  .frac em { color: var(--muted); font-style: normal; font-weight: 400; font-size: 14px; margin: 0 4px; }
+  .pct { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+
+  /* CTA — índigo solo en la acción */
+  .cta { display: inline-flex; align-items: center; gap: 8px; background: var(--indigo); color: #fff; text-decoration: none; font-weight: 600; font-size: 15px; padding: 11px 20px; border-radius: 11px; transition: transform .2s var(--ease), background .2s var(--ease); }
+  .cta span { transition: transform .2s var(--ease); }
+  .cta:hover { background: var(--indigo-d); }
+  .cta:hover span { transform: translateX(3px); }
+
+  /* Cursos próximamente */
+  .proximos { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 12px; }
+  .curso--soon { padding: 18px; opacity: .62; }
+  .curso--soon .curso-nombre { font-size: 17px; }
+  .soon-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+
+  /* Detalle: niveles */
+  .detalle .sec { color: var(--muted); font-size: 15px; text-transform: none; }
+  .niveles { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
   .niveles li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--snow); }
-  .niveles li.done { border-color: var(--indigo); }
+  .niveles li.done { border-color: var(--verde); }
   .niveles .marca { font-family: 'JetBrains Mono', monospace; font-size: 12px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; background: var(--paper-2); color: var(--muted); flex: none; }
-  .niveles li.done .marca { background: var(--indigo); color: #fff; }
+  .niveles li.done .marca { background: var(--verde); color: #fff; }
   .niveles a { text-decoration: none; font-weight: 500; flex: 1; }
   .niveles .tool { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; }
+
+  /* Tests recientes */
   .quizzes { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
   .quizzes li { display: flex; justify-content: space-between; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; }
+
+  @media (max-width: 520px) {
+    .curso-head { flex-direction: column; }
+    .cta { width: 100%; justify-content: center; }
+  }
 </style>
 
 <script>
