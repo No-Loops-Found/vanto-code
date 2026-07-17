@@ -1,6 +1,6 @@
 ---
 // Sección "Para quién es" — contenido rico en keywords para SEO/GEO.
-// Autocontenida, tokens de marca, voz de tú. No se importa aún.
+import Icon from '../Icon.astro';
 ---
 <section class="band" id="para-quien">
   <div class="wrap">
@@ -12,30 +12,20 @@
 
     <div class="pq-grid">
       <div class="pq reveal">
+        <span class="pq-ico"><Icon name="spark" size={22} /></span>
         <h3>Si nunca has programado</h3>
         <p>Este es tu sitio. Empiezas por el principio de verdad: qué es programar, cómo se guarda un dato, cómo tomar una decisión en código. No necesitas saber nada antes, ni haber estudiado informática, ni un ordenador potente. Todo pasa en el navegador y lo primero que haces ya funciona.</p>
       </div>
       <div class="pq reveal">
+        <span class="pq-ico"><Icon name="redo" size={22} /></span>
         <h3>Si lo intentaste y lo dejaste</h3>
         <p>Puede que probaras un curso y acabaras haciendo la app del tiempo, otra lista de tareas o un conversor de monedas que borraste al terminar. Aquí no. Eliges tu propio proyecto desde el primer día y aprendes los mismos fundamentos, pero construyendo algo que de verdad vas a usar.</p>
       </div>
       <div class="pq reveal">
+        <span class="pq-ico"><Icon name="target" size={22} /></span>
         <h3>Si ya sabes algo y quieres construir</h3>
         <p>Traes una idea —para tu trabajo, tu equipo, tu negocio o tu casa— y la academia se adapta a ella. Avanzas a tu ritmo, sin repasar lo que ya sabes, y terminas con un proyecto real publicado. Y cuando salgan los cursos avanzados, seguirás con el mismo método.</p>
       </div>
-    </div>
-
-    <div class="pq-list reveal">
-      <div class="pql-head">Empiezas por el curso Web. Al terminarlo sabrás hacer esto por ti mismo:</div>
-      <ul>
-        <li>Escribir tus primeros programas en JavaScript, sin instalar nada en el ordenador.</li>
-        <li>Guardar y trabajar con datos: nombres, fechas, cantidades, cálculos y estadísticas.</li>
-        <li>Tomar decisiones en código, repetir tareas y organizar tu app con funciones y objetos.</li>
-        <li>Montar una interfaz con botones y formularios que la gente pueda usar de verdad.</li>
-        <li>Guardar la información en una base de datos para que no se pierda entre sesiones.</li>
-        <li>Publicar tu app en internet con una dirección propia, lista para compartir y seguir ampliando.</li>
-      </ul>
-      <p class="pq-free">Los fundamentos que aprendes aquí son la base de todos los cursos que vienen. Empieza gratis: el primer nivel está abierto, sin cuenta ni tarjeta.</p>
     </div>
   </div>
 </section>
@@ -51,15 +41,9 @@
   .pq-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 22px; }
   @media (max-width: 820px) { .pq-grid { grid-template-columns: 1fr; } }
   .pq { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
+  .pq-ico { display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 12px; background: #eeeefe; color: var(--indigo-d); margin-bottom: 14px; }
   .pq h3 { font-size: 19px; margin-bottom: 8px; }
   .pq p { font-size: 15px; color: #41444d; }
-
-  .pq-list { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 26px 28px; box-shadow: var(--shadow); }
-  .pql-head { font-family: "JetBrains Mono"; font-size: 13px; color: var(--indigo-d); margin-bottom: 14px; }
-  .pq-list ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
-  .pq-list li { position: relative; padding-left: 26px; font-size: 15.5px; color: #33363d; }
-  .pq-list li::before { content: "»"; position: absolute; left: 0; color: var(--indigo); font-family: "JetBrains Mono"; font-weight: 700; }
-  .pq-free { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 15px; color: #41444d; }
 
   @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; } }
 </style>
