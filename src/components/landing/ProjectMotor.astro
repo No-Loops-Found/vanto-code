@@ -65,12 +65,11 @@ const huerto = PROJECTS.huerto;
   .gcell.ra { border-right: 1px solid var(--ink-3); display: flex; gap: 12px; align-items: flex-start; }
   .ra-code { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-l); font-weight: 600; flex-shrink: 0; padding-top: 2px; width: 26px; }
   .ra-name { color: #E7E8EE; font-weight: 500; }
-  .gcell.feat { color: #B6B9C2; }
+  .gcell.feat { color: #B6B9C2; transition: color .2s var(--ease); }
   .gcell.feat.soft { color: #767986; font-style: italic; }
-  /* OJO: animar la celda (item de grid) con transform hace que Chrome la
-     dimensione al contenido y se encoja. Se anima el span interior. */
-  .gcell.feat.mark .feat-text { display: inline-block; animation: remark .45s var(--ease); }
-  @keyframes remark { 0% { opacity: 0; transform: translateX(10px); } 100% { opacity: 1; transform: none; } }
+  /* NOTA: cualquier animation/transform sobre .gcell.feat (item de grid) hace que
+     Chrome deje de estirarlo y lo encoja al contenido, rompiendo el layout. Por eso
+     el cambio de proyecto solo intercambia el texto (sin animación en la celda). */
   .stamp { display: inline-block; font-family: "JetBrains Mono"; font-size: 10px; color: var(--indigo-l); border: 1px solid var(--indigo); border-radius: 4px; padding: 1px 5px; margin-right: 8px; vertical-align: middle; }
   .stamp[hidden] { display: none; }
   .grid-foot { padding: 14px 18px; font-family: "JetBrains Mono"; font-size: 12px; color: #8B8E97; background: #191c22; border-top: 1px solid var(--ink-3); }
@@ -125,11 +124,6 @@ const huerto = PROJECTS.huerto;
       cell.classList.toggle('soft', soft);
       const stamp = cell.querySelector('.stamp') as HTMLElement | null;
       if (stamp) stamp.hidden = key !== 'tuapp';
-      if (anim) {
-        cell.classList.remove('mark');
-        void cell.offsetWidth; // reinicia la animación
-        cell.classList.add('mark');
-      }
     });
   }
 
