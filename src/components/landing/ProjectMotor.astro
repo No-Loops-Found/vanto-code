@@ -1,4 +1,6 @@
 ---
+import Icon from '../Icon.astro';
+import { PROJECTS } from '../../lib/course-data';
 ---
 <section class="band dark motor" id="tu-proyecto">
   <div class="wrap">
@@ -7,7 +9,13 @@
       <h2 style="color:#fff">El mismo temario, con la app que tú elijas.</h2>
       <p>Elige un proyecto de ejemplo (o define el tuyo abajo). La columna de la izquierda —lo que aprendes— no se mueve. Solo cambia el ejemplo con el que lo practicas.</p>
     </div>
-    <div class="picker reveal" id="picker"></div>
+    <div class="picker reveal" id="picker">
+      {Object.entries(PROJECTS).map(([key, p]) => (
+        <button class={`chip ${key === 'huerto' ? 'active' : ''}`} data-key={key} type="button">
+          <Icon name={key} size={15} strokeWidth={1.9} /> {p.label}
+        </button>
+      ))}
+    </div>
     <div class="grid-wrap reveal">
       <div class="grid-head"><div>Lo que aprendes</div><div id="projHead">Lo que construyes</div></div>
       <div id="gridRows"></div>
@@ -111,18 +119,14 @@
     chip?.classList.add('active');
   }
 
-  Object.keys(PROJECTS).forEach((key) => {
-    const p = PROJECTS[key];
-    const b = document.createElement('button');
-    b.className = 'chip' + (key === current ? ' active' : '');
-    b.dataset.key = key;
-    b.innerHTML = `<span>${p.em}</span>${p.label}`;
+  // Los chips se renderizan en servidor (con iconos); aquí solo se enlazan.
+  document.querySelectorAll<HTMLButtonElement>('#picker .chip').forEach((b) => {
     b.addEventListener('click', () => {
+      const key = b.dataset.key || 'huerto';
       current = key;
       activateChip(key);
       buildGrid(key, true);
     });
-    picker.appendChild(b);
   });
   buildGrid('huerto', false);
 

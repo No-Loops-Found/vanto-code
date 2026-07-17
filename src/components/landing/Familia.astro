@@ -3,6 +3,7 @@
 // Las tarjetas se renderizan en servidor (los <style> scoped no aplican a HTML
 // inyectado por JS); el estado de sesión del botón "Apuntarme" lo ajusta el script.
 import { CURSOS } from '../../lib/courses';
+import Icon from '../Icon.astro';
 ---
 <section class="band" id="cursos" style="padding-top:0">
   <div class="wrap">
@@ -16,7 +17,7 @@ import { CURSOS } from '../../lib/courses';
         <div class={`curso-card reveal ${c.disponible ? 'live' : 'soon'}`}>
           {c.disponible && <a class="card-link" href={`/curso/${c.id}`} aria-label={`Ver el curso ${c.destino}`} />}
           <div class="top">
-            <span class="em" aria-hidden="true">{c.emoji}</span>
+            <span class="em"><Icon name={c.id} size={26} strokeWidth={1.7} /></span>
             <span class={`chip ${c.disponible ? 'on' : 'off'}`}>{c.disponible ? 'disponible' : 'próximamente'}</span>
           </div>
           <div class="track">
@@ -63,7 +64,8 @@ import { CURSOS } from '../../lib/courses';
   .card-link { position: absolute; inset: 0; z-index: 1; border-radius: 16px; }
 
   .curso-card .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .curso-card .em { font-size: 26px; line-height: 1; }
+  .curso-card .em { color: var(--indigo-d); line-height: 0; }
+  .curso-card.soon .em { color: var(--muted); }
   .curso-card .chip {
     font-family: "JetBrains Mono"; font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
     padding: 4px 8px; border-radius: 6px;

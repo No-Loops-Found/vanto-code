@@ -1,5 +1,6 @@
 ---
 import { MODULES } from '../../lib/course-data';
+import Icon from '../Icon.astro';
 
 interface Props {
   // Si el visitante tiene sesión, ya puede acceder a todos los niveles.
@@ -45,7 +46,7 @@ const SUBS = [
                 ? <div class="mod-open">{m.n === 0 ? 'Abrir' : 'Ver'} <span class="ar">»</span></div>
                 : m.n === 0
                   ? <div class="mod-open">Abrir · gratis <span class="ar">»</span></div>
-                  : <div class="mod-open locked"><span class="lock" aria-hidden="true">🔒</span> requiere cuenta <span class="ar">»</span></div>}
+                  : <div class="mod-open locked"><Icon name="lock" size={13} class="lock" /> requiere cuenta <span class="ar">»</span></div>}
             </div>
           </a>
         ))}

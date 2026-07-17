@@ -1,4 +1,5 @@
 ---
+import Icon from '../Icon.astro';
 ---
 <section class="band" style="padding-top:0">
   <div class="wrap">
@@ -8,10 +9,10 @@
       <p>En el curso Web editas, guardas la base de datos y publicas tu app sin instalar nada. Te vale una tablet, un portátil prestado o el ordenador del aula. Todo con capa gratuita.</p>
     </div>
     <div class="tools">
-      <div class="tool reveal"><div class="em">🐙</div><h4>GitHub + Codespaces</h4><div class="role">editor y guardado</div><p>Tu código, su historial y un editor completo online.</p><span class="free">capa gratuita</span></div>
-      <div class="tool reveal"><div class="em">⚡</div><h4>StackBlitz</h4><div class="role">editor alternativo</div><p>Otro editor online, arranca al instante. Ideal en tablet.</p><span class="free">gratis</span></div>
-      <div class="tool reveal"><div class="em">🗄️</div><h4>Supabase</h4><div class="role">base de datos</div><p>Una base de datos Postgres real, con panel web.</p><span class="free">capa gratuita</span></div>
-      <div class="tool reveal"><div class="em">▲</div><h4>Vercel</h4><div class="role">publicación</div><p>Publica tu app con una URL en un clic. Se actualiza sola.</p><span class="free">capa gratuita</span></div>
+      <div class="tool reveal"><div class="em"><Icon name="github" /></div><h4>GitHub + Codespaces</h4><div class="role">editor y guardado</div><p>Tu código, su historial y un editor completo online.</p><span class="free">capa gratuita</span></div>
+      <div class="tool reveal"><div class="em"><Icon name="stackblitz" /></div><h4>StackBlitz</h4><div class="role">editor alternativo</div><p>Otro editor online, arranca al instante. Ideal en tablet.</p><span class="free">gratis</span></div>
+      <div class="tool reveal"><div class="em"><Icon name="supabase" /></div><h4>Supabase</h4><div class="role">base de datos</div><p>Una base de datos Postgres real, con panel web.</p><span class="free">capa gratuita</span></div>
+      <div class="tool reveal"><div class="em"><Icon name="vercel" /></div><h4>Vercel</h4><div class="role">publicación</div><p>Publica tu app con una URL en un clic. Se actualiza sola.</p><span class="free">capa gratuita</span></div>
     </div>
   </div>
 </section>
@@ -29,7 +30,7 @@
   @media (max-width: 440px) { .tools { grid-template-columns: 1fr; } }
   .tool { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 22px; box-shadow: var(--shadow); transition: transform .18s var(--ease); }
   .tool:hover { transform: translateY(-4px); }
-  .tool .em { font-size: 24px; }
+  .tool .em { color: var(--indigo-d); line-height: 0; }
   .tool h4 { font-size: 17px; margin: 10px 0 4px; }
   .tool .role { font-family: "JetBrains Mono"; font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 9px; }
   .tool p { font-size: 13.5px; color: #41444d; }
