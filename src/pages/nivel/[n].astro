@@ -42,7 +42,9 @@ if (user) {
   if (proy) {
     const perso = personalizarNivel(nParam, { app: proy.app, modelo: proy.modelo as any });
     if (perso) {
-      data = { ...entry.data, ...perso };
+      // Sobrescribe lo personalizado y quita los extras estáticos genéricos
+      // (code2/steps/pitfalls/recap) para que el nivel sea 100% del proyecto.
+      data = { ...entry.data, ...perso, code2: undefined, steps: undefined, pitfalls: undefined, recap: undefined };
       proyectoApp = proy.app;
     }
   }

@@ -145,7 +145,7 @@ function nivel7(proyecto: Proyecto): NivelPersonalizado {
         `El <strong>constructor</strong> recibe los datos y los guarda con <strong>this</strong>. Los <strong>métodos</strong> (${acciones.map((a) => `<code>${a.nombre}()</code>`).join(', ') || '<code>describir()</code>'}) son las acciones de cada ${e}.`,
       ],
       code: { label: `class ${E}`, text: clase },
-      note: `<b>this</b> es "este ${e} concreto". <code>this.${c0}</code> es el ${c0} del ${e} con el que estás trabajando.`,
+      note: `<b>this</b> es "este objeto ${E}, el de ahora mismo". <code>this.${c0}</code> es su ${c0}.`,
     },
   ];
 
