@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /cuenta
+Disallow: /api/
+
+Sitemap: https://vanto-code.vercel.app/sitemap-index.xml

@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import Base from '../../layouts/Base.astro';
 import Topbar from '../../components/landing/Topbar.astro';
 import Motion from '../../components/Motion.astro';
@@ -8,12 +10,40 @@ import ProjectMotor from '../../components/landing/ProjectMotor.astro';
 import AppDefiner from '../../components/landing/AppDefiner.astro';
 import CtaBand from '../../components/landing/CtaBand.astro';
 import Footer from '../../components/landing/Footer.astro';
-import { CURSOS } from '../../lib/courses';
+import { cursoById } from '../../lib/courses';
+import { MODULES } from '../../lib/course-data';
+import { serverClient } from '../../lib/supabase';
 
-export function getStaticPaths() {
-  return CURSOS.map((c) => ({ params: { slug: c.id }, props: { curso: c } }));
+const { slug } = Astro.params;
+const curso = slug ? cursoById(slug) : undefined;
+if (!curso) return new Response(null, { status: 404 });
+
+// Estado del alumno para personalizar los CTAs (evita textos de "apuntarme"
+// cuando ya está inscrito).
+let enrolled = false;
+let nextHref = '/nivel/0';
+let nextN = 0;
+if (curso.disponible) {
+  const supabase = serverClient(Astro.request, Astro.cookies);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const [{ data: ins }, { data: prog }] = await Promise.all([
+      supabase.from('inscripciones').select('curso').eq('curso', curso.id),
+      supabase.from('progreso').select('nivel').eq('superado', true),
+    ]);
+    const superados = new Set((prog ?? []).map((r) => r.nivel as number));
+    enrolled = (ins ?? []).length > 0 || superados.size > 0;
+    const next = MODULES.find((m) => !superados.has(m.n));
+    nextN = next ? next.n : 0;
+    nextHref = `/nivel/${nextN}`;
+  }
 }
-const { curso } = Astro.props;
+
+const primary = enrolled
+  ? { href: nextHref, label: 'Continuar' }
+  : { href: '/nivel/0', label: 'Empezar gratis por el Nivel 0' };
 
 const links = curso.disponible
   ? [
@@ -22,13 +52,29 @@ const links = curso.disponible
       { href: '#empezar', label: 'Define tu app' },
     ]
   : [{ href: '/#cursos', label: 'Todos los cursos' }];
-const cta = curso.disponible
-  ? { href: '/nivel/0', label: 'Empezar gratis' }
+const topCta = curso.disponible
+  ? enrolled
+    ? { href: nextHref, label: 'Continuar' }
+    : { href: '/nivel/0', label: 'Empezar gratis' }
   : { href: '/#cursos', label: 'Ver cursos' };
+
+const ctaBand = enrolled
+  ? {
+      title: 'Sigue donde lo dejaste.',
+      text: 'Continúa el curso Web nivel a nivel hasta publicar tu app. Tu progreso se guarda solo.',
+      ctaHref: nextHref,
+      ctaLabel: nextN === 0 ? 'Continuar' : `Ir al Nivel ${nextN}`,
+    }
+  : {
+      title: 'Tu idea ya es un buen punto de partida.',
+      text: 'Prueba el Nivel 0 gratis, sin cuenta ni tarjeta. Cuando quieras seguir, creas tu cuenta y avanzas nivel a nivel hasta publicar tu app.',
+      ctaHref: '/nivel/0',
+      ctaLabel: 'Probar gratis el Nivel 0',
+    };
 ---
 
 <Base title={`${curso.nombre} · Vanto Code`} description={curso.tagline}>
-  <Topbar links={links} cta={cta} />
+  <Topbar links={links} cta={topCta} />
   <Motion />
 
   <header class="curso-hero">
@@ -40,13 +86,15 @@ const cta = curso.disponible
       {
         curso.disponible ? (
           <div class="hero-cta">
-            <a class="btn primary" href="/nivel/0">
-              Empezar gratis por el Nivel 0 <span class="ar">»</span>
+            <a class="btn primary" href={primary.href}>
+              {primary.label} <span class="ar">»</span>
             </a>
             <a class="btn ghost" href="#ruta">
               Ver la ruta
             </a>
-            <span class="meta">{curso.niveles} niveles · Nivel 0 gratis, sin cuenta</span>
+            <span class="meta">
+              {enrolled ? 'Ya estás dentro · tu progreso se guarda' : `${curso.niveles} niveles · Nivel 0 gratis, sin cuenta`}
+            </span>
           </div>
         ) : (
           <div class="hero-cta">
@@ -67,7 +115,12 @@ const cta = curso.disponible
         <Ruta />
         <ProjectMotor />
         <AppDefiner />
-        <CtaBand />
+        <CtaBand
+          title={ctaBand.title}
+          text={ctaBand.text}
+          ctaHref={ctaBand.ctaHref}
+          ctaLabel={ctaBand.ctaLabel}
+        />
       </>
     ) : (
       <section class="proximamente">

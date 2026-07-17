@@ -14,6 +14,7 @@ import { CURSOS } from '../../lib/courses';
     <div class="cursos-grid">
       {CURSOS.map((c) => (
         <div class={`curso-card reveal ${c.disponible ? 'live' : 'soon'}`}>
+          {c.disponible && <a class="card-link" href={`/curso/${c.id}`} aria-label={`Ver el curso ${c.destino}`} />}
           <div class="top">
             <span class="em" aria-hidden="true">{c.emoji}</span>
             <span class={`chip ${c.disponible ? 'on' : 'off'}`}>{c.disponible ? 'disponible' : 'próximamente'}</span>
@@ -25,9 +26,9 @@ import { CURSOS } from '../../lib/courses';
           {c.disponible ? (
             <>
               <div class="meta">{c.niveles} niveles · Nivel 0 gratis</div>
-              <a id="webCta" class="cta-btn" href="/entrar?next=%2F%23cursos" data-curso={c.id}>
+              <button id="webCta" class="cta-btn" data-curso={c.id} type="button">
                 <span class="txt">Apuntarme</span> <span class="ar">»</span>
-              </a>
+              </button>
             </>
           ) : (
             <div class="meta muted">Avísame cuando esté</div>
@@ -58,6 +59,9 @@ import { CURSOS } from '../../lib/courses';
   .curso-card.live:hover { transform: translateY(-4px); border-color: var(--indigo-l); }
   .curso-card.soon { opacity: .78; }
 
+  /* toda la tarjeta es clicable (enlace superpuesto); solo el botón queda por encima */
+  .card-link { position: absolute; inset: 0; z-index: 1; border-radius: 16px; }
+
   .curso-card .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .curso-card .em { font-size: 26px; line-height: 1; }
   .curso-card .chip {
@@ -78,6 +82,7 @@ import { CURSOS } from '../../lib/courses';
   .curso-card .meta.muted { color: var(--muted); }
 
   .cta-btn {
+    position: relative; z-index: 2;
     align-self: flex-start; margin-top: 16px;
     font-family: "Inter"; font-weight: 600; font-size: 14px;
     padding: 10px 18px; border-radius: 10px;
@@ -99,56 +104,58 @@ import { CURSOS } from '../../lib/courses';
 <script>
   import { browserClient } from '../../lib/supabase';
 
-  const cta = document.getElementById('webCta') as HTMLAnchorElement | null;
+  // El botón "Apuntarme" es independiente del enlace de la tarjeta (que ya lleva
+  // a /curso/[id]). Estados: anónimo → login; con sesión sin inscribir → apunta;
+  // ya inscrito → continuar.
+  const cta = document.getElementById('webCta') as HTMLButtonElement | null;
   if (cta) {
-    const cursoUrl = `/curso/${cta.dataset.curso || 'web'}`;
+    const curso = cta.dataset.curso || 'web';
+    const cursoUrl = `/curso/${curso}`;
+    const loginUrl = '/entrar?next=' + encodeURIComponent('/#cursos');
+    let mode: 'anon' | 'enroll' | 'continue' = 'anon';
     const setLabel = (t: string) => {
       const txt = cta.querySelector('.txt');
       if (txt) txt.textContent = t;
     };
-    const setContinuar = (label: string) => {
-      setLabel(label);
-      cta.setAttribute('href', cursoUrl);
-      cta.removeAttribute('data-enroll');
-    };
 
     (async () => {
       try {
-        const supabase = browserClient();
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return; // sin sesión: se queda "Apuntarme" → /entrar
-
+        const { data: { session } } = await browserClient().auth.getSession();
+        if (!session) return; // anon: se queda "Apuntarme" → login
         const res = await fetch('/api/inscripcion');
         const inscrito =
-          res.ok && ((await res.json().catch(() => ({ cursos: [] }))).cursos || []).includes('web');
-
+          res.ok && ((await res.json().catch(() => ({ cursos: [] }))).cursos || []).includes(curso);
         if (inscrito) {
-          setContinuar('Continuar');
+          mode = 'continue';
+          setLabel('Continuar');
         } else {
-          // Con sesión pero sin inscribir: el botón se apunta al pulsar.
+          mode = 'enroll';
           setLabel('Apuntarme');
-          cta.setAttribute('href', cursoUrl);
-          cta.dataset.enroll = '1';
         }
       } catch {
-        /* silencioso: se mantiene el estado por defecto (Apuntarme → /entrar) */
+        /* silencioso: se mantiene "Apuntarme" → login */
       }
     })();
 
-    cta.addEventListener('click', async (e) => {
-      if (cta.dataset.enroll !== '1') return; // anon o ya inscrito: navegación normal
-      e.preventDefault();
+    cta.addEventListener('click', async () => {
+      if (mode === 'anon') {
+        window.location.href = loginUrl;
+        return;
+      }
+      if (mode === 'continue') {
+        window.location.href = cursoUrl;
+        return;
+      }
+      // enroll
       if (cta.getAttribute('aria-disabled') === 'true') return;
       cta.setAttribute('aria-disabled', 'true');
       try {
         const r = await fetch('/api/inscripcion', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ curso: 'web' }),
+          body: JSON.stringify({ curso }),
         });
         if (r.ok) {
-          delete cta.dataset.enroll;
-          setLabel('Ir al curso');
           window.location.href = cursoUrl;
         } else {
           cta.removeAttribute('aria-disabled');

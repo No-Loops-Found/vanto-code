@@ -1,10 +1,22 @@
 ---
+interface Props {
+  title?: string;
+  text?: string;
+  ctaHref?: string;
+  ctaLabel?: string;
+}
+const {
+  title = 'Tu idea ya es un buen punto de partida.',
+  text = 'Prueba el Nivel 0 gratis, sin cuenta ni tarjeta. Cuando quieras seguir, te apuntas al curso Web y avanzas nivel a nivel hasta publicar tu app.',
+  ctaHref = '/nivel/0',
+  ctaLabel = 'Probar gratis el Nivel 0',
+} = Astro.props;
 ---
 <section class="cta-band">
   <div class="wrap reveal">
-    <h2>Tu idea ya es un buen punto de partida.</h2>
-    <p>Prueba el Nivel 0 gratis, sin cuenta ni tarjeta. Cuando quieras seguir, te apuntas al curso Web y avanzas nivel a nivel hasta publicar tu app.</p>
-    <a href="/nivel/0" class="btn">Probar gratis el Nivel 0 <span class="ar">»</span></a>
+    <h2>{title}</h2>
+    <p>{text}</p>
+    <a href={ctaHref} class="btn">{ctaLabel} <span class="ar">»</span></a>
   </div>
 </section>
 
