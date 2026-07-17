@@ -1,0 +1,38 @@
+---
+// Banda de cierre de la landing. CTA al catálogo de cursos (#cursos).
+// Sustituye al antiguo CtaBand (que se movió a la página de curso).
+---
+<section class="cierre">
+  <div class="wrap reveal">
+    <div class="eyebrow eyebrow-on-ink">tu turno</div>
+    <h2>Tu idea, hacia delante.</h2>
+    <p>Ya sabes de qué va: eliges tu proyecto, aprendes los fundamentos construyéndolo y terminas con una app publicada. Elige tu curso y da el primer paso hoy; el primer nivel es gratis, sin cuenta ni tarjeta.</p>
+    <a href="#cursos" class="btn">Elige tu curso y empieza gratis <span class="ar">»</span></a>
+  </div>
+</section>
+
+<style>
+  .cierre { background: var(--ink); color: #fff; text-align: center; padding: 84px 0; }
+  .cierre h2 { font-size: clamp(32px, 5vw, 52px); color: #fff; margin: 14px 0; }
+  .cierre p { max-width: 52ch; margin: 0 auto 28px; color: #C0C2CB; font-size: 18px; }
+  .eyebrow-on-ink { color: var(--indigo-light); }
+
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .cierre .btn {
+    font-family: "Inter"; font-weight: 600; font-size: 15px;
+    padding: 13px 22px; border-radius: 11px;
+    background: var(--indigo); color: #fff; border: 1px solid var(--indigo);
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    transition: transform .14s var(--ease), box-shadow .14s var(--ease), background .14s var(--ease);
+  }
+  .cierre .btn:hover { transform: translateY(-2px); background: var(--indigo-l); box-shadow: 0 14px 32px -10px rgba(75, 73, 240, .6); }
+  .cierre .btn .ar { transition: transform .18s var(--ease); }
+  .cierre .btn:hover .ar { transform: translateX(3px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .cierre .btn:hover { transform: none !important; }
+  }
+</style>

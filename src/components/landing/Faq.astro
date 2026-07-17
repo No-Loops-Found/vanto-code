@@ -1,0 +1,104 @@
+---
+// Preguntas frecuentes de la landing — acordeón accesible + datos estructurados
+// (schema.org FAQPage). Fuente única (array `faqs`) para acordeón y JSON-LD:
+// así las preguntas del <script> nunca se desincronizan del contenido visible.
+const faqs: { q: string; a: string }[] = [
+  {
+    q: '¿Qué es Vanto Code?',
+    a: 'Vanto Code es una academia de programación por proyectos. En vez de aprender con ejercicios de usar y tirar, eliges tu propio proyecto —una app que te resuelve un problema real— y aprendes a programar construyéndola, desde cero hasta publicarla en internet. Aprendes exactamente los mismos fundamentos que en cualquier curso; lo único que cambia es con qué los practicas: con tu app.',
+  },
+  {
+    q: '¿Necesito saber programar para empezar?',
+    a: 'No. El curso está pensado para gente que empieza desde cero, sin experiencia previa ni estudios de informática. Se empieza por el principio de verdad: qué es programar, cómo se guarda un dato y cómo se toma una decisión en código. Si nunca has escrito una línea de código, este es tu sitio.',
+  },
+  {
+    q: '¿Cuánto cuesta?',
+    a: 'Puedes empezar gratis: el primer nivel está abierto, sin cuenta ni tarjeta, para que pruebes el método antes de decidir nada. Cuando quieras seguir, te apuntas al curso completo y avanzas nivel a nivel hasta publicar tu app.',
+  },
+  {
+    q: '¿Qué lenguaje de programación se aprende?',
+    a: 'Se aprende JavaScript, el lenguaje que entiende cualquier navegador web. Es una de las mejores opciones para empezar porque no requiere instalar nada y ves los resultados al instante. Con él cubres todos los fundamentos: variables, condiciones, bucles, funciones, objetos, interfaz y base de datos.',
+  },
+  {
+    q: '¿Necesito instalar algo en el ordenador?',
+    a: 'No hace falta instalar nada. Todo el curso funciona dentro del navegador. Usarás herramientas gratuitas y en la nube como GitHub con Codespaces para escribir código, Supabase para la base de datos y Vercel para publicar tu app. Cero instalaciones y cero configuración complicada.',
+  },
+  {
+    q: '¿Funciona en Windows, Mac o tablet?',
+    a: 'Sí. Como todo pasa en el navegador y en la nube, da igual tu sistema operativo: funciona en Windows, en Mac, en Linux e incluso en una tablet. No necesitas un ordenador potente ni un equipo concreto, solo conexión a internet y un navegador actualizado.',
+  },
+  {
+    q: '¿Qué es aprender a programar por proyectos?',
+    a: 'Aprender a programar por proyectos significa que, en lugar de resolver ejercicios sueltos que borras al terminar, construyes una aplicación real de principio a fin mientras aprendes. Cada fundamento nuevo lo estrenas en una función de tu propio proyecto, así que todo lo que estudias tiene un para qué inmediato y acabas con algo que se usa.',
+  },
+  {
+    q: '¿Terminaré con una app de verdad?',
+    a: 'Sí. El objetivo del curso es que termines con una aplicación web publicada en internet, con base de datos y una dirección propia que puedas compartir. No es un certificado y un repositorio muerto: es una app funcionando que puedes seguir usando y ampliando después.',
+  },
+  {
+    q: '¿Cuánto tiempo se tarda en completarlo?',
+    a: 'El curso Web está organizado en 12 niveles, del entorno inicial hasta publicar tu app. Cada persona avanza a su ritmo, sin plazos. Puedes hacer un nivel por sesión cuando tengas un rato o concentrarlo en pocas semanas; lo importante es que sigas avanzando con tu proyecto entre las manos.',
+  },
+  {
+    q: '¿Qué cursos hay disponibles?',
+    a: 'Hoy está disponible el curso Web, con el que creas y publicas tu primera app web con base de datos. Comparten el mismo método otros cursos que llegarán pronto: Datos, Móvil e IA. Todos siguen la misma idea: los fundamentos son fijos y tu proyecto es variable.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: f.a,
+    },
+  })),
+};
+---
+<section class="band" id="faq">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">preguntas frecuentes</div>
+      <h2>Lo que sueles preguntarte antes de empezar.</h2>
+      <p>Respuestas claras y sin letra pequeña. Si te queda alguna duda, escríbenos: mejor preguntar que quedarse con la mosca detrás de la oreja.</p>
+    </div>
+
+    <div class="faq reveal">
+      {
+        faqs.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+</section>
+
+<style>
+  .band { padding: 78px 0; position: relative; }
+  .band-head { max-width: 60ch; margin-bottom: 30px; }
+  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  .band-head p { font-size: 18px; color: #41444d; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .faq { max-width: 780px; }
+  .faq details { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 9px; background: var(--snow); overflow: hidden; }
+  .faq summary {
+    padding: 15px 18px; font-weight: 600; cursor: pointer; list-style: none;
+    font-size: 16px; display: flex; justify-content: space-between; gap: 12px; align-items: center;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--indigo); font-family: "JetBrains Mono"; font-size: 18px; flex-shrink: 0; }
+  .faq details[open] summary::after { content: "−"; }
+  .faq details p { padding: 0 18px 16px; color: #33363d; font-size: 15px; margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; } }
+</style>

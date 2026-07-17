@@ -1,0 +1,63 @@
+---
+// Datos estructurados (schema.org) + meta social para el <head> de la home.
+// Pensado para incluirse con slot="head":  <SeoJsonLd slot="head" />
+// No renderiza nada visible; solo <script type="application/ld+json"> y <meta>.
+const SITE_URL = 'https://vanto-code.vercel.app';
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Vanto Code',
+  url: SITE_URL,
+  description:
+    'Academia de programación por proyectos. Aprende a programar desde cero construyendo tu propia app y publícala en internet.',
+  sameAs: [],
+};
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Vanto Code',
+  url: SITE_URL,
+  inLanguage: 'es',
+  description:
+    'Aprende a programar por proyectos, desde cero y sin instalar nada. Tu idea, hacia delante.',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Vanto Code',
+    url: SITE_URL,
+  },
+};
+
+const course = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'vanto·code · Web',
+  url: `${SITE_URL}/#cursos`,
+  description:
+    'Crea y publica tu primera app web con base de datos, desde cero. Aprendes a programar en JavaScript construyendo tu propio proyecto, sin instalar nada, en 12 niveles hasta publicarlo en internet.',
+  inLanguage: 'es',
+  provider: {
+    '@type': 'Organization',
+    name: 'Vanto Code',
+    url: SITE_URL,
+  },
+};
+
+const ogTitle = 'Vanto Code — Aprende a programar construyendo tu propia app';
+const ogDescription =
+  'Academia de programación por proyectos. Empieza gratis, sin experiencia previa y sin instalar nada: aprende a programar en JavaScript creando tu primera app web y publícala en internet.';
+---
+<meta property="og:title" content={ogTitle} />
+<meta property="og:description" content={ogDescription} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={SITE_URL} />
+<meta property="og:site_name" content="Vanto Code" />
+<meta property="og:locale" content="es_ES" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={ogTitle} />
+<meta name="twitter:description" content={ogDescription} />
+
+<script type="application/ld+json" set:html={JSON.stringify(organization)} />
+<script type="application/ld+json" set:html={JSON.stringify(website)} />
+<script type="application/ld+json" set:html={JSON.stringify(course)} />

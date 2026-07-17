@@ -25,7 +25,7 @@ import { CURSOS } from '../../lib/courses';
           {c.disponible ? (
             <>
               <div class="meta">{c.niveles} niveles · Nivel 0 gratis</div>
-              <a id="webCta" class="cta-btn" href="/entrar?next=%2F%23cursos" data-first-level={String(c.primerNivel ?? 0)}>
+              <a id="webCta" class="cta-btn" href="/entrar?next=%2F%23cursos" data-curso={c.id}>
                 <span class="txt">Apuntarme</span> <span class="ar">»</span>
               </a>
             </>
@@ -101,8 +101,7 @@ import { CURSOS } from '../../lib/courses';
 
   const cta = document.getElementById('webCta') as HTMLAnchorElement | null;
   if (cta) {
-    const firstLevel = cta.dataset.firstLevel || '0';
-    const cursoUrl = `/nivel/${firstLevel}`;
+    const cursoUrl = `/curso/${cta.dataset.curso || 'web'}`;
     const setLabel = (t: string) => {
       const txt = cta.querySelector('.txt');
       if (txt) txt.textContent = t;

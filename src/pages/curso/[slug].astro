@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import Topbar from '../../components/landing/Topbar.astro';
+import Motion from '../../components/Motion.astro';
+import Herramientas from '../../components/landing/Herramientas.astro';
+import Ruta from '../../components/landing/Ruta.astro';
+import ProjectMotor from '../../components/landing/ProjectMotor.astro';
+import AppDefiner from '../../components/landing/AppDefiner.astro';
+import CtaBand from '../../components/landing/CtaBand.astro';
+import Footer from '../../components/landing/Footer.astro';
+import { CURSOS } from '../../lib/courses';
+
+export function getStaticPaths() {
+  return CURSOS.map((c) => ({ params: { slug: c.id }, props: { curso: c } }));
+}
+const { curso } = Astro.props;
+
+const links = curso.disponible
+  ? [
+      { href: '#ruta', label: 'La ruta' },
+      { href: '#tu-proyecto', label: 'Tu proyecto' },
+      { href: '#empezar', label: 'Define tu app' },
+    ]
+  : [{ href: '/#cursos', label: 'Todos los cursos' }];
+const cta = curso.disponible
+  ? { href: '/nivel/0', label: 'Empezar gratis' }
+  : { href: '/#cursos', label: 'Ver cursos' };
+---
+
+<Base title={`${curso.nombre} · Vanto Code`} description={curso.tagline}>
+  <Topbar links={links} cta={cta} />
+  <Motion />
+
+  <header class="curso-hero">
+    <div class="wrap">
+      <a class="volver" href="/#cursos">« Todos los cursos</a>
+      <div class="eyebrow">curso · {curso.destino.toLowerCase()}</div>
+      <h1><span class="wm">vanto·code</span> · {curso.destino}</h1>
+      <p class="tagline">{curso.tagline}</p>
+      {
+        curso.disponible ? (
+          <div class="hero-cta">
+            <a class="btn primary" href="/nivel/0">
+              Empezar gratis por el Nivel 0 <span class="ar">»</span>
+            </a>
+            <a class="btn ghost" href="#ruta">
+              Ver la ruta
+            </a>
+            <span class="meta">{curso.niveles} niveles · Nivel 0 gratis, sin cuenta</span>
+          </div>
+        ) : (
+          <div class="hero-cta">
+            <span class="soon-chip">Próximamente</span>
+            <a class="btn ghost" href="/#cursos">
+              Ver los cursos disponibles
+            </a>
+          </div>
+        )
+      }
+    </div>
+  </header>
+
+  {
+    curso.disponible ? (
+      <>
+        <Herramientas />
+        <Ruta />
+        <ProjectMotor />
+        <AppDefiner />
+        <CtaBand />
+      </>
+    ) : (
+      <section class="proximamente">
+        <div class="wrap">
+          <p class="big">Este curso está en camino.</p>
+          <p class="sub">
+            Mismo método —los fundamentos fijos, tu proyecto variable—, aplicado a {curso.destino}. Mientras
+            tanto, empieza por <a href="/curso/web">Web</a>: aprendes las bases que valen para todos.
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  <Footer />
+</Base>
+
+<style>
+  .curso-hero { background: var(--ink); color: #fff; padding: 56px 0 52px; }
+  .curso-hero .volver { font-family: 'JetBrains Mono'; font-size: 12.5px; color: #9A9BF5; text-decoration: none; }
+  .curso-hero .volver:hover { color: #fff; }
+  .curso-hero .eyebrow { font-family: 'JetBrains Mono'; font-size: 12.5px; color: #9A9BF5; margin: 22px 0 12px; text-transform: lowercase; }
+  .curso-hero .eyebrow::before { content: '» '; opacity: .7; }
+  .curso-hero h1 { color: #fff; font-size: clamp(38px, 6.4vw, 66px); line-height: 1.02; letter-spacing: -.03em; }
+  .curso-hero h1 .wm { font-family: 'Sora'; }
+  .curso-hero .tagline { font-size: 19px; color: #C0C2CB; max-width: 46ch; margin: 16px 0 26px; }
+  .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+  .btn { font-family: 'Inter'; font-weight: 600; font-size: 15px; padding: 13px 22px; border-radius: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: transform .15s var(--ease); }
+  .btn.primary { background: var(--indigo); color: #fff; }
+  .btn.ghost { border: 1px solid #43464f; color: #E7E8EE; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn .ar { transition: transform .18s var(--ease); }
+  .btn.primary:hover .ar { transform: translateX(3px); }
+  .hero-cta .meta { font-family: 'JetBrains Mono'; font-size: 12px; color: #83868F; }
+  .soon-chip { font-family: 'JetBrains Mono'; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #9A9BF5; border: 1px solid #43464f; border-radius: 999px; padding: 7px 14px; }
+
+  .proximamente { padding: 90px 0; text-align: center; }
+  .proximamente .big { font-family: 'Sora'; font-weight: 800; font-size: clamp(26px, 4vw, 38px); letter-spacing: -.02em; margin-bottom: 12px; }
+  .proximamente .sub { color: var(--muted); font-size: 18px; max-width: 52ch; margin: 0 auto; }
+  .proximamente a { color: var(--indigo-d); font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) { .btn:hover { transform: none !important; } }
+</style>
