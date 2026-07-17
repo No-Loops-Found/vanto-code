@@ -60,6 +60,7 @@ const responseSchema = {
       properties: {
         entidad: { type: 'string' }, // singular, PascalCase (Planta)
         plural: { type: 'string' }, // minúscula (plantas)
+        genero: { type: 'string', enum: ['f', 'm'] }, // f: la planta · m: el coche
         campos: {
           type: 'array',
           items: {
@@ -117,6 +118,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     'Además, extrae un MODELO ESTRUCTURADO de la app (campo "modelo") para poder generar código luego:\n' +
     '- entidad: la cosa principal que gestiona la app, en singular y PascalCase (Planta, Coche, Equipo).\n' +
     '- plural: su plural en minúscula (plantas, coches, equipos).\n' +
+    '- genero: "f" si esa palabra es femenina en español (la planta, la reparación) o "m" si masculina (el coche, el equipo).\n' +
     '- campos: 3-5 propiedades de esa entidad. nombre en camelCase (nombre, especie, fechaRiego), tipo ' +
     'entre texto/numero/fecha/booleano, y un valor de ejemplo realista.\n' +
     '- acciones: 2-4 acciones principales como nombres de función en camelCase (regar, diasSinAgua).\n' +
