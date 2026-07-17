@@ -67,7 +67,9 @@ const huerto = PROJECTS.huerto;
   .ra-name { color: #E7E8EE; font-weight: 500; }
   .gcell.feat { color: #B6B9C2; }
   .gcell.feat.soft { color: #767986; font-style: italic; }
-  .gcell.feat.mark { animation: remark .5s var(--ease); }
+  /* OJO: animar la celda (item de grid) con transform hace que Chrome la
+     dimensione al contenido y se encoja. Se anima el span interior. */
+  .gcell.feat.mark .feat-text { display: inline-block; animation: remark .45s var(--ease); }
   @keyframes remark { 0% { opacity: 0; transform: translateX(10px); } 100% { opacity: 1; transform: none; } }
   .stamp { display: inline-block; font-family: "JetBrains Mono"; font-size: 10px; color: var(--indigo-l); border: 1px solid var(--indigo); border-radius: 4px; padding: 1px 5px; margin-right: 8px; vertical-align: middle; }
   .stamp[hidden] { display: none; }
