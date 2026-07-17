@@ -1,59 +1,39 @@
 ---
-// Los cursos de la familia Vanto Code. Mismo método, distinto destino.
-const CURSOS = [
-  {
-    name: 'Web',
-    sub: 'De la idea a tu app con base de datos, publicada. El curso base.',
-    state: 'Disponible',
-    live: true,
-    href: '#ruta',
-  },
-  {
-    name: 'Datos',
-    sub: 'De la idea a tu panel: consultas, gráficas y decisiones con tus datos.',
-    state: 'Próximamente',
-    live: false,
-    href: null,
-  },
-  {
-    name: 'Móvil',
-    sub: 'De la idea a tu app en el bolsillo, instalable en el teléfono.',
-    state: 'Próximamente',
-    live: false,
-    href: null,
-  },
-  {
-    name: 'IA',
-    sub: 'De la idea a tu app inteligente, conectada a un modelo.',
-    state: 'Próximamente',
-    live: false,
-    href: null,
-  },
-];
+// Catálogo de cursos de la academia. Mismo método, distinto destino.
+// Las tarjetas se renderizan en servidor (los <style> scoped no aplican a HTML
+// inyectado por JS); el estado de sesión del botón "Apuntarme" lo ajusta el script.
+import { CURSOS } from '../../lib/courses';
 ---
-<section class="band" id="familia" style="padding-top:0">
+<section class="band" id="cursos" style="padding-top:0">
   <div class="wrap">
     <div class="band-head reveal">
-      <div class="eyebrow">la familia</div>
-      <h2>Una academia. Un curso por cada tipo de idea.</h2>
-      <p>Vanto Code es el método; cada curso avanza hacia un destino distinto. Mismos fundamentos —tu idea, hacia delante—, distinto tipo de app. Empiezas por el Web, que ya está disponible.</p>
+      <div class="eyebrow">los cursos</div>
+      <h2>Elige por dónde empiezas. Un curso por cada tipo de idea.</h2>
+      <p>Vanto Code es una academia: un método y varios cursos. El método no cambia —tú eliges el proyecto y aprendes los fundamentos construyéndolo—; lo que cambia es a qué destino llega tu app. Hoy puedes apuntarte al curso Web.</p>
     </div>
-    <div class="fam-grid">
-      {CURSOS.map((c) => {
-        const inner = (
-          <>
-            <span class={`state ${c.live ? 'live' : 'soon'}`}>{c.state}</span>
-            <div class="track">
-              <span class="brand">vanto</span><span class="code">code</span><span class="dotsep">·</span><span class="name">{c.name}</span>
-            </div>
-            <p class="sub">{c.sub}</p>
-            {c.live && <div class="go">Ver la ruta <span class="ar">»</span></div>}
-          </>
-        );
-        return c.href
-          ? <a class="fam-card reveal live" href={c.href}>{inner}</a>
-          : <div class="fam-card reveal soon">{inner}</div>;
-      })}
+    <div class="cursos-grid">
+      {CURSOS.map((c) => (
+        <div class={`curso-card reveal ${c.disponible ? 'live' : 'soon'}`}>
+          <div class="top">
+            <span class="em" aria-hidden="true">{c.emoji}</span>
+            <span class={`chip ${c.disponible ? 'on' : 'off'}`}>{c.disponible ? 'disponible' : 'próximamente'}</span>
+          </div>
+          <div class="track">
+            <span class="brand">vanto</span><span class="code">code</span><span class="dotsep">·</span><span class="name">{c.destino}</span>
+          </div>
+          <p class="sub">{c.tagline}</p>
+          {c.disponible ? (
+            <>
+              <div class="meta">{c.niveles} niveles · Nivel 0 gratis</div>
+              <a id="webCta" class="cta-btn" href="/entrar?next=%2F%23cursos" data-first-level={String(c.primerNivel ?? 0)}>
+                <span class="txt">Apuntarme</span> <span class="ar">»</span>
+              </a>
+            </>
+          ) : (
+            <div class="meta muted">Avísame cuando esté</div>
+          )}
+        </div>
+      ))}
     </div>
   </div>
 </section>
@@ -61,45 +41,122 @@ const CURSOS = [
 <style>
   .band { padding: 78px 0; position: relative; }
   .band-head { max-width: 60ch; margin-bottom: 38px; }
-  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 24ch; }
   .band-head p { font-size: 18px; color: #41444d; }
   .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
   .reveal.in { opacity: 1; transform: none; }
 
-  .fam-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  @media (max-width: 680px) { .fam-grid { grid-template-columns: 1fr; } }
+  .cursos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 680px) { .cursos-grid { grid-template-columns: 1fr; } }
 
-  .fam-card {
-    position: relative; display: block;
+  .curso-card {
+    position: relative; display: flex; flex-direction: column;
     background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px;
     padding: 24px; box-shadow: var(--shadow);
     transition: transform .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
   }
-  .fam-card.live { cursor: pointer; }
-  .fam-card.live:hover { transform: translateY(-4px); border-color: var(--indigo-l); }
-  .fam-card.soon { opacity: .82; }
+  .curso-card.live:hover { transform: translateY(-4px); border-color: var(--indigo-l); }
+  .curso-card.soon { opacity: .78; }
 
-  .fam-card .track { font-family: "Sora"; font-weight: 800; font-size: 21px; letter-spacing: -.03em; display: flex; align-items: baseline; }
-  .fam-card .brand { color: var(--ink); }
-  .fam-card .code { font-family: "JetBrains Mono"; font-weight: 500; font-size: 12px; color: var(--indigo-d); margin: 0 6px 0 3px; }
-  .fam-card .dotsep { color: var(--indigo); margin: 0 5px; }
-  .fam-card .name { color: var(--indigo-d); }
-  .fam-card .sub { color: #41444d; font-size: 14.5px; margin-top: 10px; max-width: 42ch; }
-
-  .fam-card .state {
-    position: absolute; top: 20px; right: 20px;
+  .curso-card .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .curso-card .em { font-size: 26px; line-height: 1; }
+  .curso-card .chip {
     font-family: "JetBrains Mono"; font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
     padding: 4px 8px; border-radius: 6px;
   }
-  .fam-card .state.live { background: #eeeefe; color: var(--indigo-d); border: 1px solid #cdccf7; }
-  .fam-card .state.soon { background: transparent; color: var(--muted); border: 1px solid var(--line-d); }
+  .curso-card .chip.on { background: #eeeefe; color: var(--indigo-d); border: 1px solid #cdccf7; }
+  .curso-card .chip.off { background: transparent; color: var(--muted); border: 1px solid var(--line-d); }
 
-  .fam-card .go { margin-top: 16px; font-family: "JetBrains Mono"; font-size: 12.5px; color: var(--indigo-d); display: inline-flex; align-items: center; gap: 6px; }
-  .fam-card .go .ar { transition: transform .18s var(--ease); }
-  .fam-card.live:hover .go .ar { transform: translateX(4px); }
+  .curso-card .track { font-family: "Sora"; font-weight: 800; font-size: 21px; letter-spacing: -.03em; display: flex; align-items: baseline; }
+  .curso-card .brand { color: var(--ink); }
+  .curso-card .code { font-family: "JetBrains Mono"; font-weight: 500; font-size: 12px; color: var(--indigo-d); margin: 0 6px 0 3px; }
+  .curso-card .dotsep { color: var(--indigo); margin: 0 5px; }
+  .curso-card .name { color: var(--indigo-d); }
+  .curso-card .sub { color: #41444d; font-size: 14.5px; margin-top: 10px; max-width: 42ch; }
+
+  .curso-card .meta { margin-top: 14px; font-family: "JetBrains Mono"; font-size: 12px; color: var(--muted); }
+  .curso-card .meta.muted { color: var(--muted); }
+
+  .cta-btn {
+    align-self: flex-start; margin-top: 16px;
+    font-family: "Inter"; font-weight: 600; font-size: 14px;
+    padding: 10px 18px; border-radius: 10px;
+    background: var(--indigo); border: 1px solid var(--indigo); color: #fff;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .14s var(--ease), box-shadow .14s var(--ease), opacity .14s var(--ease);
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(75, 73, 240, .6); }
+  .cta-btn[aria-disabled="true"] { opacity: .6; pointer-events: none; }
+  .cta-btn .ar { transition: transform .18s var(--ease); }
+  .cta-btn:hover .ar { transform: translateX(3px); }
 
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1 !important; transform: none !important; }
-    .fam-card.live:hover { transform: none !important; }
+    .curso-card.live:hover, .cta-btn:hover { transform: none !important; }
   }
 </style>
+
+<script>
+  import { browserClient } from '../../lib/supabase';
+
+  const cta = document.getElementById('webCta') as HTMLAnchorElement | null;
+  if (cta) {
+    const firstLevel = cta.dataset.firstLevel || '0';
+    const cursoUrl = `/nivel/${firstLevel}`;
+    const setLabel = (t: string) => {
+      const txt = cta.querySelector('.txt');
+      if (txt) txt.textContent = t;
+    };
+    const setContinuar = (label: string) => {
+      setLabel(label);
+      cta.setAttribute('href', cursoUrl);
+      cta.removeAttribute('data-enroll');
+    };
+
+    (async () => {
+      try {
+        const supabase = browserClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return; // sin sesión: se queda "Apuntarme" → /entrar
+
+        const res = await fetch('/api/inscripcion');
+        const inscrito =
+          res.ok && ((await res.json().catch(() => ({ cursos: [] }))).cursos || []).includes('web');
+
+        if (inscrito) {
+          setContinuar('Continuar');
+        } else {
+          // Con sesión pero sin inscribir: el botón se apunta al pulsar.
+          setLabel('Apuntarme');
+          cta.setAttribute('href', cursoUrl);
+          cta.dataset.enroll = '1';
+        }
+      } catch {
+        /* silencioso: se mantiene el estado por defecto (Apuntarme → /entrar) */
+      }
+    })();
+
+    cta.addEventListener('click', async (e) => {
+      if (cta.dataset.enroll !== '1') return; // anon o ya inscrito: navegación normal
+      e.preventDefault();
+      if (cta.getAttribute('aria-disabled') === 'true') return;
+      cta.setAttribute('aria-disabled', 'true');
+      try {
+        const r = await fetch('/api/inscripcion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ curso: 'web' }),
+        });
+        if (r.ok) {
+          delete cta.dataset.enroll;
+          setLabel('Ir al curso');
+          window.location.href = cursoUrl;
+        } else {
+          cta.removeAttribute('aria-disabled');
+        }
+      } catch {
+        cta.removeAttribute('aria-disabled');
+      }
+    });
+  }
+</script>

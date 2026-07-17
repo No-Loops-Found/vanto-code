@@ -41,5 +41,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       { onConflict: 'user_id,nivel' }
     );
   if (error) return json({ error: error.message }, 500);
+
+  // Avanzar en un nivel implica estar inscrito en el curso Web (best-effort).
+  await supabase
+    .from('inscripciones')
+    .upsert({ user_id: user.id, curso: 'web' }, { onConflict: 'user_id,curso' })
+    .then(() => {}, () => {});
+
   return json({ ok: true });
 };

@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Mark from '../components/Mark.astro';
 import { serverClient } from '../lib/supabase';
 import { MODULES } from '../lib/course-data';
+import { CURSOS, cursoById, type Curso } from '../lib/courses';
 
 export const prerender = false;
 
@@ -15,6 +16,8 @@ if (!user) {
   return Astro.redirect('/entrar?next=/cuenta');
 }
 
+// ── Datos del usuario: inscripciones + progreso + tests ────────────────
+const { data: inscRows } = await supabase.from('inscripciones').select('curso');
 const { data: progresoRows } = await supabase.from('progreso').select('nivel').eq('superado', true);
 const superados = new Set((progresoRows ?? []).map((r) => r.nivel as number));
 
@@ -24,28 +27,29 @@ const { data: quizRows } = await supabase
   .order('created_at', { ascending: false })
   .limit(8);
 
-// ── Cursos (hoy solo Web es real; el resto, próximamente) ──────────────
-const CURSOS = [
-  { id: 'web', nombre: 'vanto·code · Web', niveles: MODULES.length, disponible: true },
-  { id: 'datos', nombre: 'vanto·code · Datos', disponible: false },
-  { id: 'movil', nombre: 'vanto·code · Móvil', disponible: false },
-  { id: 'ia', nombre: 'vanto·code · IA', disponible: false },
-];
-const proximos = CURSOS.filter((c) => !c.disponible);
+// Set de cursos inscritos = inscripciones ∪ 'web' (si hay progreso, por robustez).
+const inscritosIds = new Set<string>((inscRows ?? []).map((r) => r.curso as string));
+if (superados.size > 0) inscritosIds.add('web');
+
+// Resolvemos cada id contra el catálogo, en el orden del catálogo (Web primero).
+const misCursos: Curso[] = CURSOS.filter((c) => inscritosIds.has(c.id));
 
 // ── Estado del curso Web a partir del progreso ─────────────────────────
+type EstadoCurso = 'sin empezar' | 'en curso' | 'completado';
+
 const totalWeb = MODULES.length;
 const hechosWeb = superados.size;
 const pctWeb = Math.round((hechosWeb / totalWeb) * 100);
-
-type EstadoCurso = 'sin empezar' | 'en curso' | 'completado';
 const estadoWeb: EstadoCurso =
   hechosWeb >= totalWeb ? 'completado' : hechosWeb > 0 ? 'en curso' : 'sin empezar';
 
 // CTA: continuar en el primer nivel no superado; si está completado, repasar.
 const siguiente = MODULES.find((m) => !superados.has(m.n)) ?? MODULES[0];
-const ctaHref = estadoWeb === 'completado' ? '/nivel/0' : `/nivel/${siguiente.n}`;
-const ctaLabel = estadoWeb === 'completado' ? 'Repasar' : estadoWeb === 'en curso' ? 'Continuar' : 'Empezar';
+const ctaHrefWeb = estadoWeb === 'completado' ? '/nivel/0' : `/nivel/${siguiente.n}`;
+const ctaLabelWeb =
+  estadoWeb === 'completado' ? 'Repasar' : estadoWeb === 'en curso' ? 'Continuar' : 'Empezar';
+
+const inscritoWeb = inscritosIds.has('web');
 ---
 
 <Base title="Mi cuenta · Vanto Code">
@@ -63,69 +67,99 @@ const ctaLabel = estadoWeb === 'completado' ? 'Repasar' : estadoWeb === 'en curs
   <main class="wrap cuenta">
     <p class="eyebrow">Tu cuenta</p>
     <h1>Hola, {user.email}</h1>
-    <p class="lead">Estos son tus cursos en Vanto Code. Tu idea, hacia delante.</p>
+    <p class="lead">Estos son los cursos a los que te has apuntado. Tu idea, hacia delante.</p>
 
     <section>
-      <h2 class="sec">Tus cursos</h2>
+      <h2 class="sec">Mis cursos</h2>
 
-      <!-- Curso Web: tarjeta destacada -->
-      <article class={`curso curso--web estado-${estadoWeb.replace(' ', '-')}`}>
-        <div class="curso-head">
-          <div>
-            <p class="curso-fam">Curso</p>
-            <h3 class="curso-nombre">vanto<span class="mono">·code · Web</span></h3>
+      {
+        misCursos.length === 0 ? (
+          <div class="empty">
+            <p class="empty-title">Aún no te has apuntado a ningún curso.</p>
+            <p class="empty-note">
+              Elige tu proyecto y aprende programando lo que de verdad quieres construir.
+            </p>
+            <a class="cta" href="/#cursos">
+              Explora los cursos <span aria-hidden="true">»</span>
+            </a>
           </div>
-          <span class="chip">{estadoWeb}</span>
-        </div>
+        ) : (
+          <div class="cursos">
+            {misCursos.map((c) => {
+              const isWeb = c.id === 'web';
+              const estadoCls = isWeb ? `estado-${estadoWeb.replace(' ', '-')}` : '';
+              return (
+                <article class={`curso ${estadoCls}`}>
+                  <div class="curso-head">
+                    <div>
+                      <p class="curso-fam">Curso</p>
+                      <h3 class="curso-nombre">
+                        vanto<span class="mono">·code · {c.destino}</span>
+                      </h3>
+                    </div>
+                    {isWeb && <span class="chip">{estadoWeb}</span>}
+                  </div>
 
-        <div class="progreso">
-          <div class="bar"><span style={`width:${pctWeb}%`}></span></div>
-          <div class="progreso-meta">
-            <span class="frac">{hechosWeb}<em>/ {totalWeb}</em> niveles</span>
-            <span class="pct">{pctWeb}%</span>
+                  {isWeb ? (
+                    <div class="progreso">
+                      <div class="bar">
+                        <span style={`width:${pctWeb}%`} />
+                      </div>
+                      <div class="progreso-meta">
+                        <span class="frac">
+                          {hechosWeb}
+                          <em>/ {totalWeb}</em> niveles
+                        </span>
+                        <span class="pct">{pctWeb}%</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p class="curso-tagline">{c.tagline}</p>
+                  )}
+
+                  <div class="curso-acciones">
+                    {isWeb ? (
+                      <a class="cta" href={ctaHrefWeb}>
+                        {ctaLabelWeb} <span aria-hidden="true">»</span>
+                      </a>
+                    ) : c.disponible && c.primerNivel != null ? (
+                      <a class="cta" href={`/nivel/${c.primerNivel}`}>
+                        Empezar <span aria-hidden="true">»</span>
+                      </a>
+                    ) : (
+                      <span class="chip chip--soon">próximamente</span>
+                    )}
+                    <button class="baja" type="button" data-curso={c.id}>
+                      Darme de baja
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-        </div>
-
-        <a class="cta" href={ctaHref}>{ctaLabel} <span aria-hidden="true">»</span></a>
-      </article>
-
-      <!-- Cursos próximamente -->
-      <div class="proximos">
-        {
-          proximos.map((c) => (
-            <article class="curso curso--soon" aria-disabled="true">
-              <div class="curso-head">
-                <div>
-                  <p class="curso-fam">Curso</p>
-                  <h3 class="curso-nombre">{c.nombre}</h3>
-                </div>
-                <span class="chip chip--soon">próximamente</span>
-              </div>
-              <p class="soon-note">Mismo método, distinto tipo de app.</p>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-
-    <!-- Detalle del curso Web -->
-    <section class="detalle">
-      <h2 class="sec">Detalle · vanto·code · Web</h2>
-      <ol class="niveles">
-        {
-          MODULES.map((m) => (
-            <li class={superados.has(m.n) ? 'done' : ''}>
-              <span class="marca">{superados.has(m.n) ? '✓' : m.label}</span>
-              <a href={`/nivel/${m.n}`}>{m.title}</a>
-              {m.tool && <span class="tool">{m.tool}</span>}
-            </li>
-          ))
-        }
-      </ol>
+        )
+      }
     </section>
 
     {
-      quizRows && quizRows.length > 0 && (
+      inscritoWeb && (
+        <section class="detalle">
+          <h2 class="sec">Detalle · vanto·code · Web</h2>
+          <ol class="niveles">
+            {MODULES.map((m) => (
+              <li class={superados.has(m.n) ? 'done' : ''}>
+                <span class="marca">{superados.has(m.n) ? '✓' : m.label}</span>
+                <a href={`/nivel/${m.n}`}>{m.title}</a>
+                {m.tool && <span class="tool">{m.tool}</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    {
+      inscritoWeb && quizRows && quizRows.length > 0 && (
         <section class="detalle">
           <h2 class="sec">Tests recientes</h2>
           <ul class="quizzes">
@@ -161,12 +195,16 @@ const ctaLabel = estadoWeb === 'completado' ? 'Repasar' : estadoWeb === 'en curs
 
   section { margin-bottom: 40px; }
 
+  /* Lista de cursos */
+  .cursos { display: grid; gap: 16px; }
+
   /* Tarjeta de curso */
   .curso { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
   .curso-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
   .curso-fam { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
   .curso-nombre { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -.02em; }
   .curso-nombre .mono { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 16px; }
+  .curso-tagline { color: var(--muted); font-size: 14px; margin: 18px 0 20px; }
 
   /* Chips (JetBrains Mono) */
   .chip { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: .02em; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line-d); background: var(--paper-2); color: var(--muted); white-space: nowrap; flex: none; }
@@ -184,17 +222,23 @@ const ctaLabel = estadoWeb === 'completado' ? 'Repasar' : estadoWeb === 'en curs
   .frac em { color: var(--muted); font-style: normal; font-weight: 400; font-size: 14px; margin: 0 4px; }
   .pct { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 13px; }
 
+  /* Acciones de la tarjeta */
+  .curso-acciones { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+
   /* CTA — índigo solo en la acción */
   .cta { display: inline-flex; align-items: center; gap: 8px; background: var(--indigo); color: #fff; text-decoration: none; font-weight: 600; font-size: 15px; padding: 11px 20px; border-radius: 11px; transition: transform .2s var(--ease), background .2s var(--ease); }
   .cta span { transition: transform .2s var(--ease); }
   .cta:hover { background: var(--indigo-d); }
   .cta:hover span { transform: translateX(3px); }
 
-  /* Cursos próximamente */
-  .proximos { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 12px; }
-  .curso--soon { padding: 18px; opacity: .62; }
-  .curso--soon .curso-nombre { font-size: 17px; }
-  .soon-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+  /* Darse de baja — discreto */
+  .baja { background: none; border: none; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 6px 2px; }
+  .baja:hover { color: var(--rojo); }
+
+  /* Estado vacío */
+  .empty { background: var(--snow); border: 1px solid var(--line-d); border-radius: 16px; padding: 34px 28px; box-shadow: var(--shadow); text-align: center; }
+  .empty-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 19px; margin: 0 0 8px; }
+  .empty-note { color: var(--muted); font-size: 14px; margin: 0 auto 22px; max-width: 40ch; }
 
   /* Detalle: niveles */
   .detalle .sec { color: var(--muted); font-size: 15px; text-transform: none; }
@@ -212,14 +256,42 @@ const ctaLabel = estadoWeb === 'completado' ? 'Repasar' : estadoWeb === 'en curs
 
   @media (max-width: 520px) {
     .curso-head { flex-direction: column; }
+    .curso-acciones { flex-direction: column-reverse; align-items: stretch; }
     .cta { width: 100%; justify-content: center; }
+    .baja { text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar span, .cta, .cta span { transition: none; }
   }
 </style>
 
 <script>
   import { browserClient } from '../lib/supabase';
+
   document.getElementById('logout')?.addEventListener('click', async () => {
     await browserClient().auth.signOut();
     location.assign('/');
+  });
+
+  // Darse de baja de un curso.
+  document.querySelectorAll<HTMLButtonElement>('.baja').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const curso = btn.dataset.curso;
+      if (!curso) return;
+      if (!confirm('¿Seguro que quieres darte de baja de este curso?')) return;
+      btn.disabled = true;
+      const res = await fetch('/api/inscripcion', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ curso }),
+      });
+      if (res.ok) {
+        location.reload();
+      } else {
+        btn.disabled = false;
+        alert('No se pudo completar la baja. Inténtalo de nuevo.');
+      }
+    });
   });
 </script>
