@@ -21,6 +21,7 @@ if (!curso) return new Response(null, { status: 404 });
 // Estado del alumno para personalizar los CTAs (evita textos de "apuntarme"
 // cuando ya está inscrito).
 let enrolled = false;
+let loggedIn = false;
 let nextHref = '/nivel/0';
 let nextN = 0;
 if (curso.disponible) {
@@ -28,6 +29,7 @@ if (curso.disponible) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  loggedIn = !!user;
   if (user) {
     const [{ data: ins }, { data: prog }] = await Promise.all([
       supabase.from('inscripciones').select('curso').eq('curso', curso.id),
@@ -112,7 +114,7 @@ const ctaBand = enrolled
     curso.disponible ? (
       <>
         <Herramientas />
-        <Ruta />
+        <Ruta loggedIn={loggedIn} />
         <ProjectMotor />
         <AppDefiner />
         <CtaBand

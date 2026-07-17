@@ -73,8 +73,10 @@ const {
   .tb-logo .lw { font-family: "Sora"; font-weight: 800; font-size: 19px; letter-spacing: -.03em; color: var(--ink); }
   .tb-logo .code { font-family: "JetBrains Mono"; font-weight: 500; font-size: 12px; color: var(--indigo-d); }
   .tb-nav { display: flex; gap: 24px; align-items: center; }
-  .tb-nav a { font-size: 14.5px; color: var(--muted); font-weight: 500; transition: color .15s; text-decoration: none; }
-  .tb-nav a:hover { color: var(--ink); }
+  /* :not(.btn) evita pisar el color blanco del botón CTA (el tipo `a` de
+     `.tb-nav a` gana en especificidad al `.btn.indigo` con el scoping de Astro). */
+  .tb-nav a:not(.btn) { font-size: 14.5px; color: var(--muted); font-weight: 500; transition: color .15s; text-decoration: none; }
+  .tb-nav a:not(.btn):hover { color: var(--ink); }
   @media (max-width: 720px) { .tb-nav a:not(.btn):not(.tb-auth) { display: none; } }
   .tb-auth { font-weight: 600 !important; color: var(--indigo-d) !important; }
 
