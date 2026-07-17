@@ -54,14 +54,6 @@
   .result-card .rk { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-l); margin-bottom: 6px; }
   .result-card h3 { font-size: 20px; color: #fff; margin-bottom: 6px; }
   .result-card .summary { font-size: 14px; color: #B6B9C2; margin-bottom: 16px; }
-  .slotline { padding: 12px 0; border-bottom: 1px solid var(--ink-3); }
-  .slotline:last-child { border-bottom: none; }
-  .slotline .st { color: #E7E8EE; font-size: 14.5px; font-weight: 500; display: flex; align-items: baseline; gap: 8px; }
-  .slotline .st .num { font-family: "JetBrains Mono"; font-size: 11px; color: var(--indigo-l); }
-  .slotline .como { color: #C0C2CB; font-size: 13.5px; margin-top: 6px; line-height: 1.5; }
-  .slotline .ej { background: #2b2e37; border: 1px solid #3a3d47; border-radius: 8px; padding: 8px 10px; margin-top: 8px; overflow-x: auto; font-family: "JetBrains Mono"; font-size: 12px; line-height: 1.6; color: #D7D8E0; white-space: pre; }
-  .slotline .sf { color: #767986; font-size: 13px; font-style: italic; margin-top: 5px; }
-
   .btn {
     font-family: "Inter"; font-weight: 600; font-size: 14.5px;
     padding: 11px 19px; border-radius: 10px;
@@ -81,6 +73,18 @@
     .reveal { opacity: 1 !important; transform: none !important; }
     .btn:hover { transform: none !important; }
   }
+</style>
+
+<!-- El resultado (.slotline …) lo inyecta JS: estilos globales acotados a #empezar. -->
+<style is:global>
+  #empezar .slotline { padding: 12px 0; border-bottom: 1px solid var(--ink-3); }
+  #empezar .slotline:last-child { border-bottom: none; }
+  #empezar .slotline .st { color: #E7E8EE; font-size: 14.5px; font-weight: 500; display: flex; align-items: baseline; gap: 8px; }
+  #empezar .slotline .st .num { font-family: "JetBrains Mono"; font-size: 11px; color: var(--indigo-l); }
+  #empezar .slotline .como { color: #C0C2CB; font-size: 13.5px; margin-top: 6px; line-height: 1.5; }
+  #empezar .slotline .ej { background: #2b2e37; border: 1px solid #3a3d47; border-radius: 8px; padding: 8px 10px; margin-top: 8px; overflow-x: auto; font-family: "JetBrains Mono"; font-size: 12px; line-height: 1.6; color: #D7D8E0; white-space: pre; }
+  #empezar .slotline .chips .cc { font-size: 12.5px; }
+  #empezar .slotline .sf { color: #767986; font-size: 13px; font-style: italic; margin-top: 5px; }
 </style>
 
 <script>

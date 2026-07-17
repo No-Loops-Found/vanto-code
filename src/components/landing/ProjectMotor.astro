@@ -16,44 +16,48 @@
   </div>
 </section>
 
-<style>
-  .band { padding: 78px 0; position: relative; }
-  .band.dark { background: var(--ink); color: var(--paper); }
-  .band.dark .eyebrow { color: var(--indigo-l); }
-  .band-head { max-width: 60ch; margin-bottom: 38px; }
-  .band h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
-  .band.dark .band-head p { font-size: 18px; color: #C0C2CB; }
-  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
-  .reveal.in { opacity: 1; transform: none; }
+<!--
+  OJO: el grid y los chips se generan por JS (innerHTML), así que sus elementos NO
+  llevan el atributo de scope de Astro. Por eso estos estilos van `is:global` pero
+  acotados a `#tu-proyecto` (no se filtran fuera de la sección).
+-->
+<style is:global>
+  #tu-proyecto { padding: 78px 0; position: relative; background: var(--ink); color: var(--paper); }
+  #tu-proyecto .eyebrow { color: var(--indigo-l); }
+  #tu-proyecto .band-head { max-width: 60ch; margin-bottom: 38px; }
+  #tu-proyecto h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 12px 0 14px; max-width: 22ch; }
+  #tu-proyecto .band-head p { font-size: 18px; color: #C0C2CB; }
+  #tu-proyecto .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  #tu-proyecto .reveal.in { opacity: 1; transform: none; }
 
-  .picker { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 24px; }
-  .chip {
+  #tu-proyecto .picker { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 24px; }
+  #tu-proyecto .chip {
     font-family: "JetBrains Mono"; font-size: 13px; font-weight: 500;
     background: transparent; color: #C9CBD4; border: 1px solid var(--ink-3); border-radius: 999px;
     padding: 9px 15px; cursor: pointer; transition: all .16s var(--ease);
-    display: flex; gap: 8px; align-items: center;
+    display: inline-flex; gap: 8px; align-items: center;
   }
-  .chip:hover { border-color: var(--indigo); color: #fff; }
-  .chip.active { background: var(--indigo); border-color: var(--indigo); color: #fff; }
-  .grid-wrap { border: 1px solid var(--ink-3); border-radius: 16px; overflow: hidden; background: var(--ink-2); }
-  .grid-head { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(240px, 1.5fr); border-bottom: 1px solid var(--ink-3); }
-  .grid-head div { padding: 13px 18px; font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #8B8E97; }
-  .grid-head div:first-child { border-right: 1px solid var(--ink-3); color: var(--indigo-l); }
-  .grow { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(240px, 1.5fr); border-bottom: 1px solid #23262e; }
-  .grow:last-child { border-bottom: none; }
-  .gcell { padding: 13px 18px; font-size: 14.5px; }
-  .gcell.ra { border-right: 1px solid var(--ink-3); display: flex; gap: 12px; align-items: flex-start; }
-  .ra-code { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-l); font-weight: 600; flex-shrink: 0; padding-top: 2px; width: 26px; }
-  .ra-name { color: #E7E8EE; font-weight: 500; }
-  .gcell.feat { color: #B6B9C2; }
-  .gcell.feat.soft { color: #767986; font-style: italic; }
-  .gcell.feat.mark { animation: remark .5s var(--ease); }
+  #tu-proyecto .chip:hover { border-color: var(--indigo); color: #fff; }
+  #tu-proyecto .chip.active { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+  #tu-proyecto .grid-wrap { border: 1px solid var(--ink-3); border-radius: 16px; overflow: hidden; background: var(--ink-2); }
+  #tu-proyecto .grid-head { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(240px, 1.5fr); border-bottom: 1px solid var(--ink-3); }
+  #tu-proyecto .grid-head div { padding: 13px 18px; font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #8B8E97; }
+  #tu-proyecto .grid-head div:first-child { border-right: 1px solid var(--ink-3); color: var(--indigo-l); }
+  #tu-proyecto .grow { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(240px, 1.5fr); border-bottom: 1px solid #23262e; }
+  #tu-proyecto .grow:last-child { border-bottom: none; }
+  #tu-proyecto .gcell { padding: 13px 18px; font-size: 14.5px; }
+  #tu-proyecto .gcell.ra { border-right: 1px solid var(--ink-3); display: flex; gap: 12px; align-items: flex-start; }
+  #tu-proyecto .ra-code { font-family: "JetBrains Mono"; font-size: 12px; color: var(--indigo-l); font-weight: 600; flex-shrink: 0; padding-top: 2px; width: 26px; }
+  #tu-proyecto .ra-name { color: #E7E8EE; font-weight: 500; }
+  #tu-proyecto .gcell.feat { color: #B6B9C2; }
+  #tu-proyecto .gcell.feat.soft { color: #767986; font-style: italic; }
+  #tu-proyecto .gcell.feat.mark { animation: remark .5s var(--ease); }
   @keyframes remark { 0% { opacity: 0; transform: translateX(10px); } 100% { opacity: 1; transform: none; } }
-  .feat .stamp { display: inline-block; font-family: "JetBrains Mono"; font-size: 10px; color: var(--indigo-l); border: 1px solid var(--indigo); border-radius: 4px; padding: 1px 5px; margin-right: 8px; vertical-align: middle; }
-  .grid-foot { padding: 14px 18px; font-family: "JetBrains Mono"; font-size: 12px; color: #8B8E97; background: #191c22; border-top: 1px solid var(--ink-3); }
-  .grid-foot b { color: var(--indigo-l); }
+  #tu-proyecto .feat .stamp { display: inline-block; font-family: "JetBrains Mono"; font-size: 10px; color: var(--indigo-l); border: 1px solid var(--indigo); border-radius: 4px; padding: 1px 5px; margin-right: 8px; vertical-align: middle; }
+  #tu-proyecto .grid-foot { padding: 14px 18px; font-family: "JetBrains Mono"; font-size: 12px; color: #8B8E97; background: #191c22; border-top: 1px solid var(--ink-3); }
+  #tu-proyecto .grid-foot b { color: var(--indigo-l); }
 
-  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; } }
+  @media (prefers-reduced-motion: reduce) { #tu-proyecto .reveal { opacity: 1 !important; transform: none !important; } }
 </style>
 
 <script>
